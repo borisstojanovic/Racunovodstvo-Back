@@ -52,17 +52,13 @@ public class BootstrapData implements CommandLineRunner {
 
         log.info("Loading Data...");
 
-        Permission permission1 = new Permission();
-        permission1.setName("permission1");
-        permissionRepository.save(permission1);
+        List<Permission> user1Permissions = new ArrayList<>();
 
-        Permission permission2 = new Permission();
-        permission2.setName("permission2");
-        permissionRepository.save(permission2);
-
-        Permission permission3 = new Permission();
-        permission3.setName("permission3");
-        permissionRepository.save(permission3);
+        for (PermissionType value: PermissionType.values()) {
+            Permission permission = new Permission();
+            permission.setName(value.label);
+            user1Permissions.add(permissionRepository.save(permission));
+        }
 
         User user1 = new User();
         user1.setUsername("user1");
@@ -76,10 +72,6 @@ public class BootstrapData implements CommandLineRunner {
         user2.setFirstName("Marko");
         user2.setLastName("Markovic");
 
-        List<Permission> user1Permissions = new ArrayList<>();
-        user1Permissions.add(permission1);
-        user1Permissions.add(permission2);
-        user1Permissions.add(permission3);
         user1.setPermissions(user1Permissions);
 
         this.userRepository.save(user1);
@@ -93,8 +85,6 @@ public class BootstrapData implements CommandLineRunner {
         f3.setIznos(3000.00);
         Faktura f4 = getDefaultFaktura();
         f4.setIznos(4000.00);
-
-
 
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);
