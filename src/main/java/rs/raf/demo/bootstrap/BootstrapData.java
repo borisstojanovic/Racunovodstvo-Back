@@ -32,12 +32,14 @@ public class BootstrapData implements CommandLineRunner {
         this.fakturaRepository = fakturaRepository;
     }
 
+    private static int k = 0;
     private Faktura getDefaultFaktura(){
         Faktura f1 = new Faktura();
-        f1.setBrojFakture("1");
+        f1.setBrojFakture(String.valueOf(k++));
         f1.setIznos(1000.00);
         f1.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         f1.setDatumIzdavanja(new Date());
+        f1.setRokZaPlacanje(new Date());
         f1.setDatumPlacanja(new Date());
         f1.setKurs(117.8);
         f1.setNaplata(1000.00);

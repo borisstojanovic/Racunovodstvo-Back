@@ -12,12 +12,14 @@ import java.util.Date;
 @PrimaryKeyJoinColumn(name = "fakturaId")
 public class Faktura extends Dokument{
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String brojFakture;
     @Column(nullable = false)
     private Date datumIzdavanja;
-    @Column(nullable = false)
+    @Column
     private Date datumPlacanja;
+    @Column(nullable = false)
+    private Date rokZaPlacanje;
     @Column(nullable = false)
     private Double prodajnaVrednost;
     @Column
