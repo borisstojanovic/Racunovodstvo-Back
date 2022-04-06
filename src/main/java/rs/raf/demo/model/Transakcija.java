@@ -28,7 +28,7 @@ public class Transakcija extends Dokument{
     private String komentar;
     @ManyToOne
     @JoinColumn(name = "preduzeceId")
-    private Preduzece komitent;
+    private Preduzece preduzece;
     @ManyToOne
     @JoinColumn(name = "sifra")
     private SifraTransakcije sifraTransakcije;
