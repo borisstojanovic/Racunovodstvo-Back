@@ -12,6 +12,7 @@ import rs.raf.demo.relations.*;
 import javax.persistence.criteria.*;
 
 import java.util.Date;
+import java.util.Objects;
 
 
 @AllArgsConstructor
@@ -67,5 +68,22 @@ public class RacunSpecification<T> implements Specification<T> {
             return relations.equalTo();
         }
         throw new OperationNotSupportedException(String.format("Nepoznata operacija \"%s\"",criteria.getOperation()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RacunSpecification<?> that = (RacunSpecification<?>) o;
+        return Objects.equals(criteria, that.criteria);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(criteria);
     }
 }
