@@ -138,11 +138,15 @@ public class BootstrapData implements CommandLineRunner {
         Faktura f4 = getDefaultFaktura();
         f4.setIznos(4000.00);
 
+        Faktura f5 = getDefaultFaktura();
+        f5.setIznos(3000.00);
+        f5.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
 
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);
         this.fakturaRepository.save(f3);
         this.fakturaRepository.save(f4);
+        this.fakturaRepository.save(f5);
 
         KontnaGrupa kg1 = new KontnaGrupa();
         kg1.setBrojKonta("0");
