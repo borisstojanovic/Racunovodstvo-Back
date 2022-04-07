@@ -10,8 +10,6 @@ import rs.raf.demo.services.IKontnaGrupaService;
 
 import java.util.*;
 
-import static rs.raf.demo.utils.ApiUtil.*;
-
 @Service
 public class KontnaGrupaService implements IKontnaGrupaService {
     KontnaGrupaRepository kontnaGrupaRepository;
@@ -33,10 +31,6 @@ public class KontnaGrupaService implements IKontnaGrupaService {
 
     public KontnaGrupa findKontnaGrupaById(String id) {
         return findById(id).orElseThrow(NoSuchElementException::new);
-    }
-
-    public KontnaGrupa update(String id) {
-        return save(findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     @Override

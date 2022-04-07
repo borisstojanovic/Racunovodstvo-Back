@@ -10,6 +10,7 @@ import rs.raf.demo.model.Knjizenje;
 import rs.raf.demo.model.Konto;
 import rs.raf.demo.repositories.KnjizenjeRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,6 +18,9 @@ import javax.persistence.EntityNotFoundException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +39,8 @@ class KnjizenjeServiceTest {
     private Konto konto3;
 
     private Knjizenje knjizenje;
+
+    private static final Long MOCK_ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -68,7 +74,7 @@ class KnjizenjeServiceTest {
         assertEquals(-500, saldo);
     }
 
-    @Test()
+    @Test
     void testKnjizenjeNotFound() {
         when(knjizenjeRepository.findById(any(Long.class))).thenReturn(java.util.Optional.ofNullable(null));
         when(knjizenjeRepository.findById(any(Long.class))).thenReturn(java.util.Optional.ofNullable(null));
@@ -77,7 +83,7 @@ class KnjizenjeServiceTest {
         assertThrows(EntityNotFoundException.class, () -> knjizenjeService.getSumaPotrazujeZaKnjizenje(2L));
     }
 
-    @Test()
+    @Test
     void testDugujePotrazujeNotSet() {
         konto1 = new Konto();
         knjizenje.setKonto(List.of(konto1, konto2, konto3));
@@ -90,5 +96,28 @@ class KnjizenjeServiceTest {
         assertEquals(2000, sumaDuguje);
         assertEquals(2000, sumaPotrazuje);
         assertEquals(0, saldo);
+    }
+
+    @Test
+    void testSave() {
+        Knjizenje knjizenje = new Knjizenje();
+        given(knjizenjeRepository.save(knjizenje)).willReturn(knjizenje);
+
+        assertEquals(knjizenje, knjizenjeService.save(knjizenje));
+    }
+
+    @Test
+    void testDeleteById() {
+        knjizenjeService.deleteById(MOCK_ID);
+
+        then(knjizenjeRepository).should(times(1)).deleteById(MOCK_ID);
+    }
+
+    @Test
+    void testFindAll() {
+        List<Knjizenje> knjizenja = new ArrayList<>();
+        given(knjizenjeRepository.findAll()).willReturn(knjizenja);
+
+        assertEquals(knjizenja, knjizenjeService.findAll());
     }
 }

@@ -18,7 +18,7 @@ public class KnjizenjeConverter {
     @Autowired
     private IKnjizenjeService knjizenjeService;
 
-    public Page convert(List<Knjizenje> knjizenja) {
+    public Page<KnjizenjeResponse> convert(List<Knjizenje> knjizenja) {
         List<KnjizenjeResponse> responses = new ArrayList<>();
         for (Knjizenje currKnjizenje : knjizenja) {
             KnjizenjeResponse response = new KnjizenjeResponse();
@@ -36,6 +36,6 @@ public class KnjizenjeConverter {
             response.setSaldo(knjizenjeService.getSaldoZaKnjizenje(currKnjizenje.getKnjizenjeId()));
             responses.add(response);
         }
-        return new PageImpl(responses);
+        return new PageImpl<>(responses);
     }
 }

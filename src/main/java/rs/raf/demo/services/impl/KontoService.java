@@ -38,10 +38,6 @@ public class KontoService implements IService<Konto, Long> {
         return kontoRepository.findById(id);
     }
 
-    public Konto update(Long id) {
-        return save(findById(id).orElseThrow(NoSuchElementException::new));
-    }
-
     @Override
     public List<Konto> findAll() {
         return kontoRepository.findAll();
