@@ -56,7 +56,7 @@ class KnjizenjeServiceTest {
     }
 
     @Test
-    public void testHappyPath() {
+    void testHappyPath() {
         when(knjizenjeRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(knjizenje));
 
         double sumaDuguje = knjizenjeService.getSumaDugujeZaKnjizenje(knjizenje.getKnjizenjeId());
@@ -69,7 +69,7 @@ class KnjizenjeServiceTest {
     }
 
     @Test()
-    public void testKnjizenjeNotFound() {
+    void testKnjizenjeNotFound() {
         when(knjizenjeRepository.findById(any(Long.class))).thenReturn(java.util.Optional.ofNullable(null));
         when(knjizenjeRepository.findById(any(Long.class))).thenReturn(java.util.Optional.ofNullable(null));
 
@@ -78,7 +78,7 @@ class KnjizenjeServiceTest {
     }
 
     @Test()
-    public void testDugujePotrazujeNotSet() {
+    void testDugujePotrazujeNotSet() {
         konto1 = new Konto();
         knjizenje.setKonto(List.of(konto1, konto2, konto3));
         when(knjizenjeRepository.findById(any(Long.class))).thenReturn(java.util.Optional.ofNullable(knjizenje));

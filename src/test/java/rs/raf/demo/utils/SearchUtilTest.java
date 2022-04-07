@@ -18,7 +18,7 @@ class SearchUtilTest {
     }
 
     @Test
-    public void testHappyPath() {
+    void testHappyPath() {
         String search = "datumKnjizenja>10000";
 
         RacunSpecification racunSpecification = (RacunSpecification)searchUtil.getSpec(search);
@@ -28,7 +28,7 @@ class SearchUtilTest {
     }
 
     @Test
-    public void testGreaterOrEqualNotSupported() {
+    void testGreaterOrEqualNotSupported() {
         String search = "datumKnjizenja<=10000";
 
         RacunSpecification racunSpecification = (RacunSpecification)searchUtil.getSpec(search);
@@ -38,21 +38,21 @@ class SearchUtilTest {
     }
 
     @Test
-    public void testNotEqualNotSupported() {
+    void testNotEqualNotSupported() {
         String search = "datumKnjizenja!=10000";
 
         assertThrows(OperationNotSupportedException.class, () -> searchUtil.getSpec(search));
     }
 
     @Test
-    public void testWrongEqualSymbol() {
+    void testWrongEqualSymbol() {
         String search = "datumKnjizenja=10000";
 
         assertThrows(OperationNotSupportedException.class, () -> searchUtil.getSpec(search));
     }
 
     @Test
-    public void testEmptySearch() {
+    void testEmptySearch() {
         String search = " ";
 
         assertThrows(OperationNotSupportedException.class, () -> searchUtil.getSpec(search));
