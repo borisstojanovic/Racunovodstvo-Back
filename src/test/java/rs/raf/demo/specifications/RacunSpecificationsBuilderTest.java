@@ -2,6 +2,7 @@ package rs.raf.demo.specifications;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -31,5 +32,21 @@ class RacunSpecificationsBuilderTest {
         List<SearchCriteria> newParam = getParams(newBuilder);
         assertEquals(builder, newBuilder);
         assertEquals(param, newParam);
+    }
+
+    @Test
+    void testBuildNull() {
+        Specification specification = builder.build();
+
+        assertEquals(null, specification);
+    }
+
+    @Test
+    void testBuild() {
+        builder = builder.with("knjizenje", ":", "5");
+
+        Specification result = new RacunSpecification(new SearchCriteria("knjizenje", ":", "5"));
+
+        assertEquals(result, builder.build());
     }
 }
