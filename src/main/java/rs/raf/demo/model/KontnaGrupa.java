@@ -23,7 +23,6 @@ public class KontnaGrupa {
     private String nazivKonta;
     @JsonIgnore
     @OneToMany(mappedBy = "kontnaGrupa", fetch =  FetchType.EAGER)
-    @JsonIgnore
     private List<Konto> konto;
 
 
