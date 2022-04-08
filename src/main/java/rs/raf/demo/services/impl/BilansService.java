@@ -28,8 +28,6 @@ public class BilansService {
             bilansStanja.addAll(kontoRepository.findAllBilansStanja(bd.getDatumOd(),bd.getDatumDo()));
         }
         bilansStanja = sumValues(bilansStanja);
-        System.out.println("BILANS STANJA SERVICE");
-        System.out.println(bilansStanja);
         return sortBilans(sumGroupedBilans(bilansStanja,threeChars,twoChars,oneChar));
     }
 
@@ -42,15 +40,12 @@ public class BilansService {
             bilansUspeha.addAll(kontoRepository.findAllBilansUspeha(bd.getDatumOd(),bd.getDatumDo()));
         }
         bilansUspeha = sumValues(bilansUspeha);
-        System.out.println(bilansUspeha);
         return sortBilans(sumGroupedBilans(bilansUspeha,threeChars,twoChars,oneChar));
     }
 
     public List<BilansResponse> findBrutoBilans(BilansRequest bilansRequest){
         List<BilansResponse> bilansList = getBilans(bilansRequest.getDatumOd(),bilansRequest.getDatumDo());
         List<BilansResponse> brutoBilans = new ArrayList<>();
-        System.out.println("BRUTO BILANS SERVICE");
-        System.out.println(bilansList);
         int i=-1,j=-1;
         for(BilansResponse b : bilansList){
             if(b.getBrojKonta().equals(bilansRequest.getKontoOd().getBrojKonta())){
@@ -59,13 +54,11 @@ public class BilansService {
             }
             if(b.getBrojKonta().equals(bilansRequest.getKontoDo().getBrojKonta()))
                 j = bilansList.indexOf(b);
-            System.out.println(j);
         }
         if(i != -1 && j!=-1)
             for(int k = i;k<=j;k++){
                 brutoBilans.add(bilansList.get(k));
             }
-        System.out.println(brutoBilans);
         return sortBilans(brutoBilans);
     }
 
@@ -80,12 +73,7 @@ public class BilansService {
     }
 
     private List<BilansResponse> sortBilans(List<BilansResponse> bilansResponses){
-        Collections.sort(bilansResponses, new Comparator<BilansResponse>() {
-            @Override
-            public int compare(BilansResponse o1, BilansResponse o2) {
-                return o1.getBrojKonta().compareTo(o2.getBrojKonta());
-            }
-        });
+        Collections.sort(bilansResponses, Comparator.comparing(BilansResponse::getBrojKonta));
         return bilansResponses;
     }
 
@@ -97,9 +85,6 @@ public class BilansService {
             if(!sum.containsKey(b.getBrojKonta())){
                 sum.put(b.getBrojKonta(),b);
             }else{
-                Double duguje = sum.get(b.getBrojKonta()).getDuguje()+b.getDuguje();
-                Double potrazuje = sum.get(b.getBrojKonta()).getPotrazuje()+b.getPotrazuje();
-                Long brojStavki = sum.get(b.getBrojKonta()).getBrojStavki()+b.getBrojStavki();
                 sum.put(b.getBrojKonta(),b);
             }
         }
