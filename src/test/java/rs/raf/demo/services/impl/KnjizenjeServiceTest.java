@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rs.raf.demo.model.Dokument;
 import rs.raf.demo.model.Knjizenje;
 import rs.raf.demo.model.Konto;
 import rs.raf.demo.repositories.KnjizenjeRepository;
@@ -96,14 +97,6 @@ class KnjizenjeServiceTest {
         assertEquals(2000, sumaDuguje);
         assertEquals(2000, sumaPotrazuje);
         assertEquals(0, saldo);
-    }
-
-    @Test
-    void testSave() {
-        Knjizenje knjizenje = new Knjizenje();
-        given(knjizenjeRepository.save(knjizenje)).willReturn(knjizenje);
-
-        assertEquals(knjizenje, knjizenjeService.save(knjizenje));
     }
 
     @Test
