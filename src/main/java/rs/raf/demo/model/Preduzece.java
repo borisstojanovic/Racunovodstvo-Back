@@ -51,8 +51,5 @@ public class Preduzece {
     @JsonIgnore
     @OneToMany(mappedBy = "preduzece")
     private List<Zaposleni> zaposleni;
-    @JsonIgnore
-    @OneToMany(mappedBy = "preduzece")
-    private List<Transakcija> transakcija;
 
 }
