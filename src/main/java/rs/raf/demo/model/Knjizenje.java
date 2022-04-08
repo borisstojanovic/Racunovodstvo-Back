@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -18,12 +20,11 @@ public class Knjizenje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long knjizenjeId;
     @Column(nullable = false)
-    @NotBlank(message = "Datum je obavezna")
     private Date datumKnjizenja;
-    @ManyToOne
-    @JoinColumn(name = "knjizenje")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "dokument")
     private Dokument dokument;
     @JsonIgnore
-    @OneToMany(mappedBy = "knjizenje", fetch =  FetchType.EAGER)
+    @OneToMany(mappedBy = "knjizenje",cascade = CascadeType.ALL)
     private List<Konto> konto;
 }

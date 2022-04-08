@@ -21,6 +21,6 @@ public class Dokument {
     @Enumerated(EnumType.STRING)
     private TipDokumenta tipDokumenta;
     @JsonIgnore
-    @OneToMany(mappedBy = "dokument")
+    @OneToMany(mappedBy = "dokument",cascade = CascadeType.ALL)
     private List<Knjizenje> knjizenje;
 }
