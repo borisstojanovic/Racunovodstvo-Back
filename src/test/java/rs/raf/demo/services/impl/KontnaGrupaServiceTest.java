@@ -32,7 +32,7 @@ class KontnaGrupaServiceTest {
     @Mock
     private KontnaGrupaRepository kontnaGrupaRepository;
 
-    private static final String MOCK_ID = "DUMMY_ID";
+    private static final long MOCK_ID = 1234L;
 
     @Test
     void testFindKontnaGrupaByIdSuccess() {
