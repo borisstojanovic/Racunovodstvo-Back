@@ -1,5 +1,8 @@
 package rs.raf.demo.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -66,5 +69,13 @@ public interface KontoRepository extends JpaRepository<Konto, Long> {
     @Query(value = "select new rs.raf.demo.responses.BilansResponse(k.kontnaGrupa.brojKonta , k.kontnaGrupa.nazivKonta, k.knjizenje.datumKnjizenja)" +
             " from Konto k where length(k.kontnaGrupa.brojKonta)=1 and (k.kontnaGrupa.brojKonta like '5%' or k.kontnaGrupa.brojKonta like '6%') group by k.kontnaGrupa")
     List<BilansResponse> findBilansUspehaFirstGroup();
+
+    public List<Konto> findAll();
+
+    List<Konto> findKontoByKontnaGrupaBrojKonta(String kontnaGrupaId);
+
+    List<Konto> findAll(Specification<Konto> spec);
+
+    Page<Konto> findAll(Specification<Konto> spec, Pageable pageSort);
 
 }

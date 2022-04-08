@@ -1,11 +1,10 @@
 package rs.raf.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Entity
 @Getter
@@ -23,6 +22,7 @@ public class Konto {
     @JoinColumn(name = "kontnaGrupaId")
     private KontnaGrupa kontnaGrupa;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "knjizenjeId")
     private Knjizenje knjizenje;
 }

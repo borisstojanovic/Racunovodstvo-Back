@@ -11,6 +11,7 @@ import rs.raf.demo.model.Preduzece;
 import rs.raf.demo.services.IService;
 import rs.raf.demo.services.impl.PreduzeceService;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,9 +41,9 @@ public class PreduzeceRestController {
         Optional<Preduzece> optionalPreduzece = preduzeceService.findById(id);
         if(optionalPreduzece.isPresent()) {
             return ResponseEntity.ok(optionalPreduzece.get());
-        } else {
-            return ResponseEntity.notFound().build();
         }
+
+        throw new EntityNotFoundException();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -57,29 +58,20 @@ public class PreduzeceRestController {
         Optional<Preduzece> optionalPreduzece = preduzeceService.findById(preduzece.getPreduzeceId());
         if(optionalPreduzece.isPresent()) {
             return ResponseEntity.ok(preduzeceService.save(preduzece));
-        } else {
-            return ResponseEntity.notFound().build();
         }
+
+        throw new EntityNotFoundException();
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deletePreduzece(@PathVariable("id") Long id){
-        preduzeceService.deleteById(id);
-        return ResponseEntity.ok().build();
+        Optional<Preduzece> optionalPreduzece = preduzeceService.findById(id);
+
+        if (optionalPreduzece.isPresent()) {
+            preduzeceService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+
+        throw new EntityNotFoundException();
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
-
-
 }

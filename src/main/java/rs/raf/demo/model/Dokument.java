@@ -18,9 +18,11 @@ public class Dokument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dokumentId;
     @Column(nullable = false)
+    private String brojDokumenta;
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TipDokumenta tipDokumenta;
     @JsonIgnore
-    @OneToMany(mappedBy = "dokument",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "dokument")
     private List<Knjizenje> knjizenje;
 }
