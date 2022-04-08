@@ -11,7 +11,6 @@ import rs.raf.demo.model.*;
 import rs.raf.demo.model.enums.TipDokumenta;
 import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.*;
-import rs.raf.demo.responses.KnjizenjeResponse;
 
 import java.util.*;
 
@@ -27,6 +26,7 @@ public class BootstrapData implements CommandLineRunner {
     private final KontnaGrupaRepository kontnaGrupaRepository;
     private final KontoRepository kontoRepository;
     private final KnjizenjeRepository knjizenjeRepository;
+    private final KoeficijentRepository koeficijentRepository;
 
     @Autowired
     public BootstrapData(UserRepository userRepository,
@@ -36,7 +36,8 @@ public class BootstrapData implements CommandLineRunner {
                          KontoRepository kontoRepository,
                          KontnaGrupaRepository kontnaGrupaRepository,
                          KnjizenjeRepository knjizenjeRepository,
-                         PreduzeceRepository preduzeceRepository) {
+                         PreduzeceRepository preduzeceRepository,
+                         KoeficijentRepository koeficijentRepository) {
         this.userRepository = userRepository;
         this.permissionRepository = permissionRepository;
         this.fakturaRepository = fakturaRepository;
@@ -45,6 +46,7 @@ public class BootstrapData implements CommandLineRunner {
         this.kontoRepository = kontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
         this.kontnaGrupaRepository = kontnaGrupaRepository;
+        this.koeficijentRepository = koeficijentRepository;
     }
 
     private Preduzece getDefaultPreduzece(){
@@ -216,6 +218,21 @@ public class BootstrapData implements CommandLineRunner {
         konto2.setKnjizenje(knjizenje);
         konto3.setKnjizenje(knjizenje);
         kontoRepository.save(konto1);
+
+        Koeficijent koeficijent = new Koeficijent();
+        koeficijent.setDate(new Date());
+        koeficijent.setNajnizaOsnovica(30880.0);
+        koeficijent.setNajvisaOsnovica(441440.0);
+        koeficijent.setPoreskoOslobadjanje(19300.0);
+        koeficijent.setKoeficijentPoreza(10.0);
+        koeficijent.setPenzionoOsiguranje1(14.0);
+        koeficijent.setPenzionoOsiguranje2(11.0);
+        koeficijent.setZdravstvenoOsiguranje1(5.15);
+        koeficijent.setZdravstvenoOsiguranje2(5.15);
+        koeficijent.setNezaposlenost1(0.75);
+        koeficijent.setNezaposlenost2(0.0);
+        koeficijent.setStatus(true);
+        this.koeficijentRepository.save(koeficijent);
 
         log.info("Data loaded!");
     }
