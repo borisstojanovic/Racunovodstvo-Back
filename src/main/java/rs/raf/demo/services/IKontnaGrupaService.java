@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import rs.raf.demo.model.KontnaGrupa;
 
-public interface IKontnaGrupaService extends IService<KontnaGrupa, String> {
+public interface IKontnaGrupaService extends IService<KontnaGrupa, Long> {
     Page<KontnaGrupa> findAll(Pageable sort);
-    KontnaGrupa findKontnaGrupaById(String id);
+    KontnaGrupa findKontnaGrupaById(Long id);
 }

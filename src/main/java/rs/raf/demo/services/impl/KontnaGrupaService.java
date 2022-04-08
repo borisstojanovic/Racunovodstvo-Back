@@ -10,6 +10,7 @@ import rs.raf.demo.services.IKontnaGrupaService;
 
 import java.util.*;
 
+
 @Service
 public class KontnaGrupaService implements IKontnaGrupaService {
     KontnaGrupaRepository kontnaGrupaRepository;
@@ -25,11 +26,13 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
     @Override
-    public Optional<KontnaGrupa> findById(String id) {
+    public Optional<KontnaGrupa> findById(Long id) {
         return kontnaGrupaRepository.findById(id);
     }
 
-    public KontnaGrupa findKontnaGrupaById(String id) {
+
+    @Override
+    public KontnaGrupa findKontnaGrupaById(Long id) {
         return findById(id).orElseThrow(NoSuchElementException::new);
     }
 
@@ -42,7 +45,7 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         kontnaGrupaRepository.deleteById(id);
     }
 }
