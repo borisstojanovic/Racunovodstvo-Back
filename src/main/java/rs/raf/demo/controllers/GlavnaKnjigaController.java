@@ -29,18 +29,21 @@ public class GlavnaKnjigaController {
         this.searchUtil = new SearchUtil<>();
     }
 
-    @GetMapping(value = "/{kontnaGrupa}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPreduzeceById(
-            @PathVariable("kontnaGrupa") String kontnaGrupa,
             @RequestParam(name = "search", required = false, defaultValue = "") String search,
             @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
             @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
             @RequestParam(defaultValue = "kontoId")  String[] sort
             ) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
-        if (search.length() > 0) search += ",";
-        Specification<Konto> spec = this.searchUtil.getSpec(search + "kontnaGrupa:" + kontnaGrupa + ",");
-        return ResponseEntity.ok(this.kontoService.findAllGlavnaKnjigaResponse(spec, pageSort));
+        Specification<Konto> spec = this.searchUtil.getSpec(search);
+        return ResponseEntity.ok(this.kontoService.findAllGlavnaKnjigaResponseWithFilter(spec, pageSort));
+    }
+
+    @GetMapping(value = "/all",
+                produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(this.kontoService.findAllGlavnaKnjigaResponse());
     }
 }

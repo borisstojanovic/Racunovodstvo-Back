@@ -19,10 +19,10 @@ public class Konto {
     @Column
     private Double duguje;
     @ManyToOne
-    @JoinColumn(name = "kontnaGrupaId")
+    @JoinColumn(name = "kontnaGrupaId", nullable = false)
     private KontnaGrupa kontnaGrupa;
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "knjizenjeId")
+    @JoinColumn(name = "knjizenjeId", nullable = false)
     private Knjizenje knjizenje;
 }

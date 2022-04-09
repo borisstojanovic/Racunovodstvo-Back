@@ -60,7 +60,11 @@ public class KontoService implements IService<Konto, Long> {
         return this.kontoRepository.findAll(spec);
     }
 
-    public Page<GlavnaKnjigaResponse> findAllGlavnaKnjigaResponse(Specification<Konto> spec, Pageable pageSort) {
+    public Page<GlavnaKnjigaResponse> findAllGlavnaKnjigaResponseWithFilter(Specification<Konto> spec, Pageable pageSort) {
         return this.kontoConverter.convert(this.kontoRepository.findAll(spec, pageSort).getContent());
+    }
+
+    public Page<GlavnaKnjigaResponse> findAllGlavnaKnjigaResponse() {
+        return this.kontoConverter.convert(this.kontoRepository.findAll());
     }
 }

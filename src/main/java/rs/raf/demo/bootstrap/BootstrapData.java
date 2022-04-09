@@ -205,15 +205,21 @@ public class BootstrapData implements CommandLineRunner {
         Konto konto1 = new Konto();
         konto1.setDuguje(1000.0);
         konto1.setPotrazuje(500.0);
+        konto1.setKnjizenje(knj1);
+        konto1.setKontnaGrupa(kg1);
         konto1 = kontoRepository.save(konto1);
 
         Konto konto2 = new Konto();
         konto2.setDuguje(2000.0);
+        konto2.setKnjizenje(knj1);
+        konto2.setKontnaGrupa(kg1);
         konto2.setPotrazuje(1000.0);
         kontoRepository.save(konto2);
 
         Konto konto3 = new Konto();
         konto3.setDuguje(0.0);
+        konto3.setKnjizenje(knj1);
+        konto3.setKontnaGrupa(kg1);
         konto3.setPotrazuje(1000.0);
         kontoRepository.save(konto3);
 
