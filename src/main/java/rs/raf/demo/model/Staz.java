@@ -19,8 +19,4 @@ public class Staz {
     private Date pocetakRada;
     @Column
     private Date krajRada;
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "zaposleniId")
-    private Zaposleni zaposleni;
 }

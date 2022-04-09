@@ -247,9 +247,8 @@ public class BootstrapData implements CommandLineRunner {
         Staz staz = new Staz();
         staz.setPocetakRada(new Date());
         staz.setKrajRada(null);
-        staz.setZaposleni(zaposleni);
         stazRepository.save(staz);
-
+        zaposleni.setStaz(List.of(staz));
 
         log.info("Data loaded!");
     }

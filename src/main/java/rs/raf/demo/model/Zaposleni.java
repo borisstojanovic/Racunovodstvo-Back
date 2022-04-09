@@ -50,7 +50,7 @@ public class Zaposleni {
     private String stepenObrazovanja;
     @Column
     private Long brojRadneKnjizice;
-    @OneToMany(mappedBy = "zaposleni")
+    @OneToMany
     private List<Staz> staz;
     @Column
     @Enumerated(EnumType.STRING)
