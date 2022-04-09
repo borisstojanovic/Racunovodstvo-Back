@@ -21,7 +21,7 @@ public class BilansResponse {
         this.potrazuje = potrazuje;
         this.brojKonta = brojKonta;
         this.nazivKonta = nazivKonta;
-        this.brojStavki = 1L;
+        this.brojStavki = brojKonta.length() > 3 ? 1L : 0L;
         this.saldo = duguje - potrazuje;
     }
 
