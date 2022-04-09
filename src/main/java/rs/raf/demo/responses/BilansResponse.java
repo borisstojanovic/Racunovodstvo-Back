@@ -3,7 +3,7 @@ package rs.raf.demo.responses;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -15,32 +15,7 @@ public class BilansResponse {
     private String nazivKonta;
     private Long brojStavki;
     private Double saldo;
-    private Date datumKnjizenja;
 
-    public BilansResponse(Double duguje, Double potrazuje, String brojKonta, String nazivKonta, Long brojStavki, Date datumKnjizenja) {
-        this.duguje = duguje;
-        this.potrazuje = potrazuje;
-        this.brojKonta = brojKonta;
-        this.nazivKonta = nazivKonta;
-        this.brojStavki = brojStavki;
-        this.datumKnjizenja = datumKnjizenja;
-    }
-    public BilansResponse(String brojKonta, String nazivKonta, Date datumKnjizenja){
-        this.brojKonta = brojKonta;
-        this.nazivKonta = nazivKonta;
-        this.potrazuje = 0.0;
-        this.duguje = 0.0;
-        this.brojStavki = 0L;
-        this.datumKnjizenja = datumKnjizenja;
-    }
-    public BilansResponse(String brojKonta, String nazivKonta, Date datumKnjizenja, Double duguje, Double potrazuje){
-        this.brojKonta = brojKonta;
-        this.nazivKonta = nazivKonta;
-        this.potrazuje = potrazuje;
-        this.duguje = duguje;
-        this.brojStavki = 0L;
-        this.datumKnjizenja = datumKnjizenja;
-    }
     public BilansResponse(Double duguje, Double potrazuje, String brojKonta, String nazivKonta) {
         this.duguje = duguje;
         this.potrazuje = potrazuje;
@@ -60,5 +35,26 @@ public class BilansResponse {
                 ", brojStavki=" + brojStavki +
                 ", saldo=" + saldo +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        BilansResponse that = (BilansResponse) o;
+
+        return Objects.equals(that.getBrojKonta(), this.getBrojKonta());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = brojKonta.hashCode();
+        result = 31 * result + nazivKonta.hashCode();
+        return result;
     }
 }

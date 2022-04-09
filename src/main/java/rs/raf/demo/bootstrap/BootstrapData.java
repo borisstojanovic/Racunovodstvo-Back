@@ -162,10 +162,18 @@ public class BootstrapData implements CommandLineRunner {
         KontnaGrupa kg4 = new KontnaGrupa();
         kg4.setBrojKonta("11");
         kg4.setNazivKonta("Naziv kontne grupe 11");
+        KontnaGrupa kg5 = new KontnaGrupa();
+        kg5.setBrojKonta("011");
+        kg5.setNazivKonta("Naziv kontne grupe 011");
+        KontnaGrupa kg6 = new KontnaGrupa();
+        kg6.setBrojKonta("0111");
+        kg6.setNazivKonta("Naziv kontne grupe 0111");
         this.kontnaGrupaRepository.save(kg1);
         this.kontnaGrupaRepository.save(kg2);
         this.kontnaGrupaRepository.save(kg3);
         this.kontnaGrupaRepository.save(kg4);
+        this.kontnaGrupaRepository.save(kg5);
+        this.kontnaGrupaRepository.save(kg6);
 
         Knjizenje knj1 = new Knjizenje();
         knj1.setDatumKnjizenja(new Date());
@@ -206,8 +214,18 @@ public class BootstrapData implements CommandLineRunner {
         k6.setPotrazuje(300.0);
         k6.setKontnaGrupa(kg3);
         k6.setKnjizenje(knj2);
+        Konto k7 = new Konto();
+        k7.setDuguje(500.0);
+        k7.setPotrazuje(300.0);
+        k7.setKontnaGrupa(kg5);
+        k7.setKnjizenje(knj1);
+        Konto k8 = new Konto();
+        k8.setDuguje(1200.0);
+        k8.setPotrazuje(300.0);
+        k8.setKontnaGrupa(kg6);
+        k8.setKnjizenje(knj2);
 
-        this.kontoRepository.saveAll(Arrays.asList(k1, k2, k3, k4, k5, k6));
+        this.kontoRepository.saveAll(Arrays.asList(k1, k2, k3, k4, k5, k6, k7, k8));
 
         Konto konto1 = new Konto();
         konto1.setDuguje(1000.0);
