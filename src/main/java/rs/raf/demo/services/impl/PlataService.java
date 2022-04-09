@@ -56,11 +56,12 @@ public class PlataService implements IService<Plata, Long> {
     }
 
     private void updateDatumDoNaStarojPlati(Zaposleni zaposleni) {
-        Specification<Plata> spec = this.searchUtil.getSpec(String.format("zaposleni:%d", zaposleni.getZaposleniId()));
-        Plata plata = plataRepository.findAll(spec)
-                                     .stream()
-                                     .filter(currPlata -> currPlata.getDatumDo() == null)
-                                     .collect(Collectors.toList()).get(0);
+        List<Plata> plate = plataRepository.findAll()
+                                           .stream()
+                                           .filter(plata -> plata.getZaposleni().getZaposleniId().equals(zaposleni.getZaposleniId()) && plata.getDatumDo() == null)
+                                           .collect(Collectors.toList());
+
+        Plata plata = plate.get(0);
         plata.setDatumDo(new Date());
         plataRepository.save(plata);
     }
