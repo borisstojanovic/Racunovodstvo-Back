@@ -21,7 +21,8 @@ public class KontoConverter {
                         konto.getDuguje(),
                         konto.getDuguje() - konto.getPotrazuje(),
                         konto.getKontnaGrupa().getNazivKonta(),
-                        konto.getKontnaGrupa().getBrojKonta())
+                        konto.getKontnaGrupa().getBrojKonta(),
+                        konto.getKnjizenje().getKomentar())
         ).collect(Collectors.toList()));
     }
 }

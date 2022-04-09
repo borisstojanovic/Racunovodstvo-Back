@@ -15,4 +15,5 @@ public class GlavnaKnjigaResponse {
     Double saldo;
     String nazivKonta;
     String konto;
+    String komentar;
 }
