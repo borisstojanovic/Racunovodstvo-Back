@@ -31,6 +31,7 @@ public class BootstrapData implements CommandLineRunner {
     private final ZaposleniRepository zaposleniRepository;
     private final StazRepository stazRepository;
     private final PlataRepository plataRepository;
+    private final KoeficijentRepository koeficijentRepository;
 
     @Autowired
     public BootstrapData(UserRepository userRepository,
@@ -43,7 +44,8 @@ public class BootstrapData implements CommandLineRunner {
                          PreduzeceRepository preduzeceRepository,
                          ZaposleniRepository zaposleniRepository,
                          StazRepository stazRepository,
-                         PlataRepository plataRepository) {
+                         PlataRepository plataRepository,
+                         KoeficijentRepository koeficijentRepository) {
         this.userRepository = userRepository;
         this.permissionRepository = permissionRepository;
         this.fakturaRepository = fakturaRepository;
@@ -55,6 +57,7 @@ public class BootstrapData implements CommandLineRunner {
         this.zaposleniRepository = zaposleniRepository;
         this.stazRepository = stazRepository;
         this.plataRepository = plataRepository;
+        this.koeficijentRepository = koeficijentRepository;
     }
 
     private Preduzece getDefaultPreduzece(){
@@ -250,9 +253,22 @@ public class BootstrapData implements CommandLineRunner {
         Plata plata = new Plata();
         plata.setNetoPlata(100000.0);
         plata.setZaposleni(zaposleni);
-        plata.setDatum(new Date());
+        plata.setDatumOd(new Date());
+        plata.setDatumDo(null);
         plataRepository.save(plata);
 
+        Koeficijent koeficijent = new Koeficijent();
+        koeficijent.setKoeficijentPoreza(1d);
+        koeficijent.setNezaposlenost1(2d);
+        koeficijent.setNezaposlenost2(10d);
+        koeficijent.setPenzionoOsiguranje1(5d);
+        koeficijent.setPenzionoOsiguranje2(50d);
+        koeficijent.setNajnizaOsnovica(1d);
+        koeficijent.setNajvisaOsnovica(1d);
+        koeficijent.setZdravstvenoOsiguranje1(5d);
+        koeficijent.setZdravstvenoOsiguranje2(5d);
+        koeficijent.setPoreskoOslobadjanje(23.4);
+        koeficijentRepository.save(koeficijent);
 
         log.info("Data loaded!");
     }

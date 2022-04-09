@@ -29,7 +29,9 @@ public class Plata {
     @Column
     private Double ukupanTrosakZarade;
     @Column(nullable = false)
-    private Date datum;
+    private Date datumOd;
+    @Column
+    private Date datumDo;
     @Column
     private String komentar;
     @ManyToOne
