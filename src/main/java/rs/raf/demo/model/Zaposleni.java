@@ -2,6 +2,7 @@ package rs.raf.demo.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Value;
 import rs.raf.demo.model.enums.PolZaposlenog;
 import rs.raf.demo.model.enums.RadnaPozicija;
 import rs.raf.demo.model.enums.StatusZaposlenog;
