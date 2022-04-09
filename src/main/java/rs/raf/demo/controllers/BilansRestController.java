@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.requests.BilansDateRequest;
-import rs.raf.demo.requests.BilansRequest;
 import rs.raf.demo.services.impl.BilansService;
 
 import java.util.Date;
@@ -27,20 +26,20 @@ public class BilansRestController {
 
 
     @GetMapping(value = "/bilansStanja", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getBilansStanja(@RequestParam List<BilansDateRequest> dates) {
-        if (bilansService.findBilansStanja(dates).isEmpty()) {
+    public ResponseEntity<?> getBilansStanja(@RequestParam List<Date> datumiOd, @RequestParam List<Date> datumiDo) {
+        if (bilansService.findBilansStanja(datumiOd, datumiDo).isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(bilansService.findBilansStanja(dates));
+            return ResponseEntity.ok(bilansService.findBilansStanja(datumiOd, datumiDo));
         }
     }
 
     @GetMapping(value = "/bilansUspeha", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getBilansUspeha(@RequestParam List<BilansDateRequest> dates) {
-        if (bilansService.findBilansUspeha(dates).isEmpty()) {
+    public ResponseEntity<?> getBilansUspeha(@RequestParam List<Date> datumiOd, @RequestParam List<Date> datumiDo) {
+        if (bilansService.findBilansUspeha(datumiOd, datumiDo).isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(bilansService.findBilansUspeha(dates));
+            return ResponseEntity.ok(bilansService.findBilansUspeha(datumiOd, datumiDo));
         }
     }
 

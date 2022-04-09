@@ -24,25 +24,25 @@ public class BilansService {
         this.kontoRepository = kontoRepository;
     }
 
-    public List<BilansResponse> findBilansStanja(List<BilansDateRequest> datumi) {
+    public List<BilansResponse> findBilansStanja(List<Date> datumiOd, List<Date> datumiDo) {
         List<BilansResponse> threeChars = kontoRepository.findBilansStanjaThirdGroup();
         List<BilansResponse> twoChars = kontoRepository.findBilansStanjaSecondGroup();
         List<BilansResponse> oneChar = kontoRepository.findBilansStanjaFirstGroup();
         List<BilansResponse> bilansStanja = new ArrayList<>();
-        for (BilansDateRequest bd : datumi) {
-            bilansStanja.addAll(kontoRepository.findAllBilansStanja(bd.getDatumOd(), bd.getDatumDo()));
+        for (int i = 0; i < datumiDo.size() && i < datumiOd.size(); i++) {
+            bilansStanja.addAll(kontoRepository.findAllBilansStanja(datumiOd.get(i), datumiDo.get(i)));
         }
         bilansStanja = sumValues(bilansStanja);
         return sortBilans(sumGroupedBilans(bilansStanja, threeChars, twoChars, oneChar));
     }
 
-    public List<BilansResponse> findBilansUspeha(List<BilansDateRequest> datumi) {
+    public List<BilansResponse> findBilansUspeha(List<Date> datumiOd, List<Date> datumiDo) {
         List<BilansResponse> threeChars = kontoRepository.findBilansUspehaThirdGroup();
         List<BilansResponse> twoChars = kontoRepository.findBilansUspehaSecondGroup();
         List<BilansResponse> oneChar = kontoRepository.findBilansUspehaFirstGroup();
         List<BilansResponse> bilansUspeha = new ArrayList<>();
-        for (BilansDateRequest bd : datumi) {
-            bilansUspeha.addAll(kontoRepository.findAllBilansUspeha(bd.getDatumOd(), bd.getDatumDo()));
+        for (int i = 0; i < datumiDo.size() && i < datumiOd.size(); i++) {
+            bilansUspeha.addAll(kontoRepository.findAllBilansUspeha(datumiOd.get(i), datumiDo.get(i)));
         }
         bilansUspeha = sumValues(bilansUspeha);
         return sortBilans(sumGroupedBilans(bilansUspeha, threeChars, twoChars, oneChar));
