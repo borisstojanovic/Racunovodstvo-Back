@@ -46,9 +46,10 @@ public class Preduzece {
     @Column
     private String komentar;
     @JsonIgnore
-    @OneToMany(mappedBy = "preduzece", fetch =  FetchType.EAGER)
+    @OneToMany(mappedBy = "preduzece")
     private List<Faktura> fakture;
     @JsonIgnore
     @OneToMany(mappedBy = "preduzece")
     private List<Zaposleni> zaposleni;
+
 }

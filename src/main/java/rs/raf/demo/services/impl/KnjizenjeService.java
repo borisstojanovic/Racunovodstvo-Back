@@ -100,10 +100,10 @@ public class KnjizenjeService implements IKnjizenjeService {
         if (optionalKnjizenje.isPresent()) {
             List<Konto> allKonto = optionalKnjizenje.get().getKonto();
             return allKonto.stream()
-                           .map(Konto::getPotrazuje)
-                           .filter(Objects::nonNull)
-                           .mapToDouble(d -> d)
-                           .sum();
+                    .map(Konto::getPotrazuje)
+                    .filter(Objects::nonNull)
+                    .mapToDouble(d -> d)
+                    .sum();
         } else {
             throw new EntityNotFoundException();
         }
@@ -115,10 +115,10 @@ public class KnjizenjeService implements IKnjizenjeService {
         if (optionalKnjizenje.isPresent()) {
             List<Konto> allKonto = optionalKnjizenje.get().getKonto();
             return allKonto.stream()
-                           .map(Konto::getDuguje)
-                           .filter(Objects::nonNull)
-                           .mapToDouble(d -> d)
-                           .sum();
+                    .map(Konto::getDuguje)
+                    .filter(Objects::nonNull)
+                    .mapToDouble(d -> d)
+                    .sum();
         } else {
             throw new EntityNotFoundException();
         }
