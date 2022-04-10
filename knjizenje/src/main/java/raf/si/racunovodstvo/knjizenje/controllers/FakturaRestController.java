@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import raf.si.racunovodstvo.knjizenje.model.Faktura;
 import raf.si.racunovodstvo.knjizenje.model.FakturaWithPreduzece;
 import raf.si.racunovodstvo.knjizenje.model.Preduzece;
@@ -52,51 +57,42 @@ public class FakturaRestController {
 
     private final SearchUtil<Faktura> searchUtil;
 
-    private String preduzeceUrl = "http://localhost:8081/api/preduzece";
+    private RestTemplate restTemplate;
 
-    public FakturaRestController(FakturaService fakturaService) {
+    private String URL = "http://preduzece/api/preduzece/%d";
+
+    public FakturaRestController(FakturaService fakturaService, RestTemplate restTemplate) {
         this.fakturaService = fakturaService;
+        this.restTemplate = restTemplate;
         this.searchUtil = new SearchUtil<>();
     }
-    private Preduzece getPreduzeceById(long id) throws IOException {
+    private Preduzece getPreduzeceById(long id, String token) throws IOException {
 
-        URL url = new URL(preduzeceUrl + "/" + id);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        con.setReadTimeout(5000);
-        con.connect();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", token);
 
-        int code = con.getResponseCode();
+        HttpEntity request = new HttpEntity(headers);
 
-        if(code == 404){
-            return null;
-        }
+        // baca izuzetak ako nije ispravak token
+        ResponseEntity<String> response = restTemplate.exchange(String.format(URL, id), HttpMethod.GET, request, String.class);
 
-        BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuffer content = new StringBuffer();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
-
-        String result = content.toString();
+        String result = response.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(result, Preduzece.class);
     }
 
-    private FakturaWithPreduzece addPreduzeceToFaktura(Faktura faktura) throws IOException {
+    private FakturaWithPreduzece addPreduzeceToFaktura(Faktura faktura, String token) throws IOException {
 
-        FakturaWithPreduzece fakturaWithPreduzece = new FakturaWithPreduzece(faktura,getPreduzeceById(faktura.getPreduzeceId()));
+        FakturaWithPreduzece fakturaWithPreduzece = new FakturaWithPreduzece(faktura,getPreduzeceById(faktura.getPreduzeceId(), token));
         return fakturaWithPreduzece;
     }
 
-    private List<FakturaWithPreduzece> addPreduzeceToFakturaList(List<Faktura> sveFakture) throws IOException {
+    private List<FakturaWithPreduzece> addPreduzeceToFakturaList(List<Faktura> sveFakture, String token) throws IOException {
 
         List<FakturaWithPreduzece> sveFaktureWithPreduzece = new ArrayList<>();
         for(Faktura faktura:sveFakture){
-            sveFaktureWithPreduzece.add(addPreduzeceToFaktura(faktura));
+            sveFaktureWithPreduzece.add(addPreduzeceToFaktura(faktura, token));
         }
         return sveFaktureWithPreduzece;
     }
@@ -110,34 +106,35 @@ public class FakturaRestController {
     public ResponseEntity<?> getFakture(
             @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
             @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
-            @RequestParam(defaultValue = "dokumentId")  String[] sort
+            @RequestParam(defaultValue = "dokumentId")  String[] sort,
+            @RequestHeader(name="Authorization") String token
     ) throws IOException {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
-        return ResponseEntity.ok(addPreduzeceToFakturaList(fakturaService.findAll(pageSort).toList()));
+        return ResponseEntity.ok(addPreduzeceToFakturaList(fakturaService.findAll(pageSort).toList(), token));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search") String search) throws IOException {
+    public ResponseEntity<?> search(@RequestParam(name = "search") String search, @RequestHeader(name="Authorization") String token) throws IOException {
         Specification<Faktura> spec = this.searchUtil.getSpec(search);
 
         List<Faktura> result = fakturaService.findAll(spec);
 
-        return ResponseEntity.ok(addPreduzeceToFakturaList(result));
+        return ResponseEntity.ok(addPreduzeceToFakturaList(result, token));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createFaktura(@Valid @RequestBody Faktura faktura) throws IOException {
+    public ResponseEntity<?> createFaktura(@Valid @RequestBody Faktura faktura, @RequestHeader(name="Authorization") String token) throws IOException {
 
-        if(getPreduzeceById(faktura.getPreduzeceId())== null){
+        if(getPreduzeceById(faktura.getPreduzeceId(), token)== null){
             throw new PersistenceException(String.format("Ne postoji preduzece sa id-jem %s",faktura.getPreduzeceId()));
         }
         return ResponseEntity.ok(fakturaService.save(faktura));
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateFaktura(@Valid @RequestBody Faktura faktura) throws IOException {
+    public ResponseEntity<?> updateFaktura(@Valid @RequestBody Faktura faktura, @RequestHeader(name="Authorization") String token) throws IOException {
         Long preduzeceId = faktura.getPreduzeceId();
-        if(preduzeceId != null && getPreduzeceById(faktura.getPreduzeceId()) == null){
+        if(preduzeceId != null && getPreduzeceById(faktura.getPreduzeceId(), token) == null){
             throw new PersistenceException(String.format("Ne postoji preduzece sa id-jem %s",faktura.getPreduzeceId()));
         }
 
