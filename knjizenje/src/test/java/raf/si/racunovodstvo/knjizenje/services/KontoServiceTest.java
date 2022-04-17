@@ -6,21 +6,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import raf.si.racunovodstvo.knjizenje.converter.KontoConverter;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
+import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
 import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class KontoServiceTest {
@@ -30,6 +35,8 @@ class KontoServiceTest {
 
     @Mock
     private KontoRepository kontoRepository;
+    @Mock
+    private KontoConverter kontoConverter;
 
     private static final Long MOCK_ID = 1L;
     private static final String MOCK_BROJ_KONTA = "1";
@@ -84,5 +91,50 @@ class KontoServiceTest {
         kontoService.deleteById(MOCK_ID);
 
         then(kontoRepository).should(times(1)).deleteById(MOCK_ID);
+    }
+
+    @Test
+    void testFindAllGlavnaKnjigaResponseWithFilter(){
+        List<Konto> kontoList = new ArrayList<>();
+        Konto kont = new Konto();
+        kontoList.add(kont);
+
+        Pageable pageSort = PageRequest.of(0, 5, Sort.by(Sort.Order.asc("kontoId")));
+
+        Specification<Konto> specification =
+                new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
+
+        GlavnaKnjigaResponse gkr = new GlavnaKnjigaResponse(
+                1L, new Date(), 1.0, 1.0,0.0, new String(), new String(), new String());
+
+        Page<GlavnaKnjigaResponse> page = new PageImpl<>(kontoList.stream().map(konto -> gkr)
+                .collect(Collectors.toList()));
+
+        Page<Konto> pageKonto = new PageImpl<>(kontoList.stream().map(konto -> kont)
+                .collect(Collectors.toList()));
+
+        lenient().when(kontoRepository.findAll(specification, pageSort)).thenReturn(pageKonto);
+        lenient().when(kontoConverter.convert(kontoList)).thenReturn(page);
+
+        assertEquals(page, kontoService.findAllGlavnaKnjigaResponseWithFilter(specification, pageSort));
+    }
+
+    @Test
+    void testfindAllGlavnaKnjigaResponse(){
+
+        List<Konto> kontoList = new ArrayList<>();
+        kontoList.add(new Konto());
+
+        GlavnaKnjigaResponse gkr = new GlavnaKnjigaResponse(
+                1L, new Date(), 1.0, 1.0,0.0, new String(), new String(), new String());
+
+        Page<GlavnaKnjigaResponse> page = new PageImpl<>(kontoList.stream().map(konto -> gkr)
+                .collect(Collectors.toList()));
+
+        lenient().when(kontoRepository.findAll()).thenReturn(kontoList);
+        lenient().when(kontoConverter.convert(kontoList)).thenReturn(page);
+
+        assertEquals(page, kontoService.findAllGlavnaKnjigaResponse());
+
     }
 }

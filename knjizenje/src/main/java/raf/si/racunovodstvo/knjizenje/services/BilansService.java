@@ -66,7 +66,7 @@ public class BilansService {
             String bk2 = o2.getBrojKonta();
             int len1 = bk1.length();
             int len2 = bk2.length();
-            if (len1 == len2) {
+             if (len1 == len2) {
                 return bk1.compareTo(bk2);
             }
             if (bk1.startsWith(bk2.substring(0, 1))) {

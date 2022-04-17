@@ -59,7 +59,6 @@ public class KnjizenjeController {
         if (optionalDnevnik.isPresent()) {
             return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
         }
-
         throw new EntityNotFoundException();
     }
 
@@ -70,7 +69,6 @@ public class KnjizenjeController {
             knjizenjaService.deleteById(id);
             return ResponseEntity.noContent().build();
         }
-
         throw new EntityNotFoundException();
     }
 
@@ -81,7 +79,6 @@ public class KnjizenjeController {
         if (optionalDnevnik.isPresent()) {
             return ResponseEntity.ok(optionalDnevnik.get());
         }
-
         throw new EntityNotFoundException();
     }
 
@@ -93,11 +90,8 @@ public class KnjizenjeController {
         RacunSpecificationsBuilder<Knjizenje> builder = new RacunSpecificationsBuilder<>();
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
 
-
         Specification<Knjizenje> spec = searchUtil.getSpec(search);
-
         Page<KnjizenjeResponse> result = knjizenjaService.findAll(spec, pageSort);
-
         return ResponseEntity.ok(result);
     }
 

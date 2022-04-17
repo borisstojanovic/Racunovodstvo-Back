@@ -1,8 +1,10 @@
 package raf.si.racunovodstvo.user.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.user.requests.LoginRequest;
 import raf.si.racunovodstvo.user.responses.LoginResponse;
@@ -25,7 +27,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        } catch (Exception e){
+        } catch (AuthenticationException e){
             e.printStackTrace();
             return ResponseEntity.status(401).build();
         }

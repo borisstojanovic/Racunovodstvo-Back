@@ -1,6 +1,5 @@
 package raf.si.racunovodstvo.preduzece.services.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.preduzece.model.Plata;
@@ -8,7 +7,6 @@ import raf.si.racunovodstvo.preduzece.model.Zaposleni;
 import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
 import raf.si.racunovodstvo.preduzece.requests.PlataRequest;
 import raf.si.racunovodstvo.preduzece.services.IService;
-import raf.si.racunovodstvo.preduzece.utils.SearchUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -19,17 +17,16 @@ import javax.persistence.EntityNotFoundException;
 
 @Service
 public class PlataService implements IService<Plata, Long> {
+
     private final PlataRepository plataRepository;
-    @Autowired
-    private IService<Zaposleni, Long> zaposleniService;
+    private ZaposleniService zaposleniService;
     private final KoeficijentService koeficijentService;
 
-    private SearchUtil<Plata> searchUtil;
 
-    public PlataService(PlataRepository plataRepository, KoeficijentService koeficijentService) {
+    public PlataService(PlataRepository plataRepository, KoeficijentService koeficijentService, ZaposleniService zaposleniService) {
         this.plataRepository = plataRepository;
         this.koeficijentService = koeficijentService;
-        this.searchUtil = new SearchUtil<Plata>();
+        this.zaposleniService = zaposleniService;
     }
 
     @Override
@@ -87,7 +84,6 @@ public class PlataService implements IService<Plata, Long> {
         this.plataRepository.deleteById(var1);
     }
 
-    public List<Plata> findByZaposleniZaposleniId(Long zaposleniId) {
-        return this.plataRepository.findByZaposleniZaposleniId(zaposleniId);
-    }
+    public List<Plata> findByZaposleniZaposleniId(Long zaposleniId) { return this.plataRepository.findByZaposleniZaposleniId(zaposleniId); }
+
 }

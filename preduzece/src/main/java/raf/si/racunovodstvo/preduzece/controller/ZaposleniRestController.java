@@ -26,7 +26,6 @@ public class ZaposleniRestController {
 
     public ZaposleniRestController(IZaposleniService iZaposleniService) {
         this.iZaposleniService = iZaposleniService;
-
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -29,6 +29,7 @@ import javax.validation.Valid;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api")
 public class PlataRestController {
+
     private final PlataService plataService;
     private final SearchUtil<Plata> searchUtil;
 

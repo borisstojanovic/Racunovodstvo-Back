@@ -7,13 +7,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
+import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
+import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
+import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
+import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
+import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
+import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
+import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -22,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class KnjizenjeServiceTest {
@@ -33,6 +45,12 @@ class KnjizenjeServiceTest {
 
     @Mock
     private KnjizenjeRepository knjizenjeRepository;
+    @Mock
+    private DokumentRepository dokumentRepository;
+    @Mock
+    private KontoService kontoService;
+    @Mock
+    private KnjizenjeConverter knjizenjeConverter;
 
     private Konto konto1;
 
@@ -44,23 +62,57 @@ class KnjizenjeServiceTest {
 
     private static final Long MOCK_ID = 1L;
 
+    private static final String MOCK_SEARCH_KEY = "MOCK_KEY";
+    private static final String MOCK_SEARCH_VALUE = "MOCK_VALUE";
+    private static final String MOCK_SEARCH_OPERATION = "MOCK_OPERATION";
+
     @BeforeEach
     void setUp() {
         konto1 = new Konto();
+        konto1.setKontoId(1L);
         konto1.setDuguje(1000.0);
         konto1.setPotrazuje(500.0);
 
         konto2 = new Konto();
+        konto1.setKontoId(2L);
         konto2.setDuguje(2000.0);
         konto2.setPotrazuje(1000.0);
 
         konto3 = new Konto();
+        konto1.setKontoId(3L);
         konto3.setDuguje(0.0);
         konto3.setPotrazuje(1000.0);
 
         knjizenje = new Knjizenje();
         knjizenje.setKnjizenjeId(1L);
         knjizenje.setKonto(List.of(konto1, konto2, konto3));
+    }
+
+    @Test
+    void save(){
+        Dokument dokument = new Dokument();
+        String brojDokumenta = new String();
+        dokument.setBrojDokumenta(brojDokumenta);
+        knjizenje.setDokument(dokument);
+
+        given(dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta())).willReturn(Optional.of(dokument));
+        given(knjizenjeRepository.save(any(Knjizenje.class))).willReturn(knjizenje);
+
+        assertEquals(knjizenje, knjizenjeService.save(knjizenje));
+    }
+
+    @Test
+    void saveWithoutDocument(){
+        Dokument dokument = new Dokument();
+        String brojDokumenta = new String();
+        dokument.setBrojDokumenta(brojDokumenta);
+        knjizenje.setDokument(dokument);
+
+        given(dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta())).willReturn(Optional.empty());
+        given(dokumentRepository.save(dokument)).willReturn(dokument);
+        given(knjizenjeRepository.save(any(Knjizenje.class))).willReturn(knjizenje);
+
+        assertEquals(knjizenje, knjizenjeService.save(knjizenje));
     }
 
     @Test
@@ -113,5 +165,44 @@ class KnjizenjeServiceTest {
         given(knjizenjeRepository.findAll()).willReturn(knjizenja);
 
         assertEquals(knjizenja, knjizenjeService.findAll());
+    }
+
+    @Test
+    void findAllKnjizenjeResponse(){
+        List<KnjizenjeResponse> knjizenjeResponseList = new ArrayList<>();
+        List<Knjizenje> knjizenja = new ArrayList<>();
+
+        KnjizenjeResponse knjizenjeResponse = new KnjizenjeResponse();
+        Page<KnjizenjeResponse> page = new PageImpl<>(knjizenja.stream().map(knjizenje -> knjizenjeResponse)
+                .collect(Collectors.toList()));
+        given(knjizenjeRepository.findAll()).willReturn(knjizenja);
+        given(knjizenjeConverter.convert(knjizenja)).willReturn(page);
+        assertEquals(knjizenjeResponseList, knjizenjeService.findAllKnjizenjeResponse());
+
+    }
+
+    @Test
+    void findAll(){
+        List<Knjizenje> knjizenjeList = new ArrayList<>();
+        Knjizenje knjizenje = new Knjizenje();
+        knjizenjeList.add(knjizenje);
+
+        Pageable pageSort = PageRequest.of(0, 5, Sort.by(Sort.Order.asc("knjizenjeId")));
+
+        Specification<Knjizenje> specification =
+                new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
+
+        KnjizenjeResponse knjizenjeResponse = new KnjizenjeResponse();
+
+        Page<KnjizenjeResponse> page = new PageImpl<>(knjizenjeList.stream().map(knjizenje1 -> knjizenjeResponse)
+                .collect(Collectors.toList()));
+
+        Page<Knjizenje> pageKnjizenje = new PageImpl<>(knjizenjeList.stream().map(knjizenje1 -> knjizenje)
+                .collect(Collectors.toList()));
+
+        lenient().when(knjizenjeRepository.findAll(specification, pageSort)).thenReturn(pageKnjizenje);
+        lenient().when(knjizenjeConverter.convert(knjizenjeList)).thenReturn(page);
+
+        assertEquals(page, knjizenjeService.findAll(specification, pageSort));
     }
 }

@@ -20,14 +20,14 @@ import java.util.Optional;
 public class KontoService implements IService<Konto, Long> {
 
     @Lazy
-    @Autowired
     private KontoConverter kontoConverter;
 
     private final KontoRepository kontoRepository;
 
     @Autowired
-    public KontoService(KontoRepository kontoRepository) {
+    public KontoService(KontoRepository kontoRepository, KontoConverter kontoConverter) {
         this.kontoRepository = kontoRepository;
+        this.kontoConverter = kontoConverter;
     }
 
     @Override
