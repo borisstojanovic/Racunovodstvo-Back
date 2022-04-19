@@ -12,6 +12,7 @@ import raf.si.racunovodstvo.preduzece.services.IZaposleniService;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -67,12 +68,17 @@ public class ZaposleniService implements IZaposleniService {
         Optional<Zaposleni> currZaposleni = zaposleniRepository.findById(zaposleni.getZaposleniId());
 
         currZaposleni.get().setStatusZaposlenog(StatusZaposlenog.NEZAPOSLEN);
-        for(Staz staz : currZaposleni.get().getStaz()){
-            if(staz.getKrajRada() == null){
-                staz.setKrajRada(new Date());
-                stazService.save(staz);
-            }
+
+        List<Staz> staz = currZaposleni.get().getStaz()
+                                       .stream()
+                                       .filter(s -> s.getKrajRada() == null).collect(Collectors.toList());
+
+        if (staz.size() != 1) {
+            throw new OperationNotSupportedException("Zaposleni nije u radnom odnosu ili ima vise radnih mesta!");
         }
+
+        staz.get(0).setKrajRada(new Date());
+        stazService.save(staz.get(0));
 
         return zaposleniRepository.save(currZaposleni.get());
     }
