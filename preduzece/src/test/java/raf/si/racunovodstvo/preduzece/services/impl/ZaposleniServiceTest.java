@@ -17,6 +17,7 @@ import raf.si.racunovodstvo.preduzece.specifications.SearchCriteria;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,6 +100,21 @@ class ZaposleniServiceTest {
         given(zaposleniRepository.save(zaposleni)).willReturn(zaposleni);
 
         assertEquals(zaposleni, zaposleniService.otkazZaposleni(zaposleni));
+    }
+
+    @Test
+    void otkazZaposleniStatusNezaposlen() {
+        Zaposleni zaposleni = new Zaposleni();
+        Staz staz = new Staz();
+        staz.setKrajRada(new Date());
+        List<Staz> stazList = new ArrayList<>();
+        stazList.add(staz);
+        zaposleni.setZaposleniId(MOCK_ID);
+
+        zaposleni.setStaz(stazList);
+        given(zaposleniRepository.findById(MOCK_ID)).willReturn(Optional.of(zaposleni));
+
+        assertThrows(OperationNotSupportedException.class, () -> zaposleniService.otkazZaposleni(zaposleni));
     }
 
     @Test

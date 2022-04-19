@@ -1,4 +1,4 @@
-package raf.si.racunovodstvo.knjizenje.filter;
+package raf.si.racunovodstvo.preduzece.filter;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
