@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.nabavka.converters.IConverter;
+import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalConverter;
+import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalReverseConverter;
 import raf.si.racunovodstvo.nabavka.model.Artikal;
 import raf.si.racunovodstvo.nabavka.repositories.ArtikalRepository;
 import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
@@ -23,8 +25,8 @@ public class ArtikalService implements IArtikalService {
     private final IConverter<ArtikalRequest, Artikal> artikalConverter;
 
     public ArtikalService(ArtikalRepository artikalRepository,
-                          IConverter<Artikal, ArtikalResponse> artikalReverseConverter,
-                          IConverter<ArtikalRequest, Artikal> artikalConverter) {
+                          ArtikalReverseConverter artikalReverseConverter,
+                          ArtikalConverter artikalConverter) {
         this.artikalRepository = artikalRepository;
         this.artikalReverseConverter = artikalReverseConverter;
         this.artikalConverter = artikalConverter;
@@ -53,17 +55,17 @@ public class ArtikalService implements IArtikalService {
 
     @Override
     public <S extends Artikal> S save(S var1) {
-        return null;
+        return artikalRepository.save(var1);
     }
 
     @Override
-    public Optional<Artikal> findById(String var1) {
-        return Optional.empty();
+    public Optional<Artikal> findById(Long var1) {
+        return artikalRepository.findById(var1);
     }
 
     @Override
     public List<Artikal> findAll() {
-        return null;
+        return artikalRepository.findAll();
     }
 
     @Override

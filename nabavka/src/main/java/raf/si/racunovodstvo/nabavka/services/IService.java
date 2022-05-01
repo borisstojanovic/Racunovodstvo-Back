@@ -11,6 +11,6 @@ public interface IService<T, id> {
 
     List<T> findAll();
 
-    void deleteById(Long var1);
+    void deleteById(id var1);
 
 }

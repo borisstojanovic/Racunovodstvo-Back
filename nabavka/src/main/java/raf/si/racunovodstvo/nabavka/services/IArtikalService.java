@@ -6,7 +6,7 @@ import raf.si.racunovodstvo.nabavka.model.Artikal;
 import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
 import raf.si.racunovodstvo.nabavka.responses.ArtikalResponse;
 
-public interface IArtikalService extends IService<Artikal, String> {
+public interface IArtikalService extends IService<Artikal, Long> {
 
     Page<ArtikalResponse> findAll(Pageable pageable);
 

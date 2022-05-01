@@ -36,7 +36,7 @@ public class KalkulacijaService implements IKalkulacijaService {
     }
 
     @Override
-    public void deleteById(Long var1) {
+    public void deleteById(Object var1) {
 
     }
 
