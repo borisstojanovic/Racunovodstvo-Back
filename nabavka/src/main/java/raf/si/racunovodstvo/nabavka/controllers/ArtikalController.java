@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,8 @@ import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
 import raf.si.racunovodstvo.nabavka.responses.ArtikalResponse;
 import raf.si.racunovodstvo.nabavka.services.IArtikalService;
 import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
+import raf.si.racunovodstvo.nabavka.validation.groups.OnCreate;
+import raf.si.racunovodstvo.nabavka.validation.groups.OnUpdate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -47,12 +50,12 @@ public class ArtikalController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ArtikalResponse> create(@Valid @RequestBody ArtikalRequest artikalRequest) {
+    public ResponseEntity<ArtikalResponse> create(@Validated(OnCreate.class) @RequestBody ArtikalRequest artikalRequest) {
         return ResponseEntity.ok(iArtikalService.save(artikalRequest));
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ArtikalResponse> update(@Valid @RequestBody ArtikalRequest artikalRequest) {
+    public ResponseEntity<ArtikalResponse> update(@Validated(OnUpdate.class) @RequestBody ArtikalRequest artikalRequest) {
         return ResponseEntity.ok(iArtikalService.update(artikalRequest));
     }
 

@@ -48,7 +48,6 @@ public class ArtikalService implements IArtikalService {
             throw new EntityNotFoundException();
         }
         Artikal converted = artikalConverter.convert(artikalRequest);
-        converted.setArtikalId(artikalRequest.getArtikalId());
         return artikalReverseConverter.convert(artikalRepository.save(converted));
     }
 
