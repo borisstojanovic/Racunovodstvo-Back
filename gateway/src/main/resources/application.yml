@@ -19,6 +19,11 @@ spring:
         uri: lb://user
         predicates:
           - Path=/api/permissions/**, /api/users/**, /auth/**
+
+      - id: nabavka
+        uri: lb://nabavka
+        predicates:
+          - Path=/api/artikli/**, /api/kalkulacije/**
   application:
     name: gateway
   main:
