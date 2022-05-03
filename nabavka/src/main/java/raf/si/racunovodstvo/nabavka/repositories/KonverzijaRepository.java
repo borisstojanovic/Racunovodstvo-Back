@@ -1,17 +1,19 @@
 package raf.si.racunovodstvo.nabavka.repositories;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import raf.si.racunovodstvo.nabavka.model.BaznaKonverzijaKalkulacija;
+import raf.si.racunovodstvo.nabavka.model.Konverzija;
+
 
 
 import java.util.List;
 
 @Repository
-public interface KonverzijaRepository extends JpaRepository<BaznaKonverzijaKalkulacija, Long> {
+public interface KonverzijaRepository extends JpaRepository<Konverzija, Long> {
 
-    public List<BaznaKonverzijaKalkulacija> findAll();
+    public List<Konverzija> findAll();
 
-    List<BaznaKonverzijaKalkulacija> findAll(Specification<BaznaKonverzijaKalkulacija> spec);
+    Page<Konverzija> findAll(Specification<Konverzija> spec);
 }

@@ -2,7 +2,8 @@ package raf.si.racunovodstvo.nabavka.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.context.annotation.Bean;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import raf.si.racunovodstvo.knjizenje.model.Preduzece;
 import raf.si.racunovodstvo.knjizenje.utils.SearchUtil;
-import raf.si.racunovodstvo.nabavka.model.BaznaKonverzijaKalkulacija;
+
+import raf.si.racunovodstvo.nabavka.model.Konverzija;
+import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
 import raf.si.racunovodstvo.nabavka.services.KonverzijaService;
 import raf.si.racunovodstvo.nabavka.services.impl.IKonverzijaService;
 
@@ -32,7 +35,7 @@ public class KonverzijaRestController {
 
     private RestTemplate restTemplate;
 
-    private final SearchUtil<BaznaKonverzijaKalkulacija> searchUtil;
+    private final SearchUtil<Konverzija> searchUtil;
 
     private String URL = "http://preduzece/api/preduzece/%d";
 
@@ -59,22 +62,22 @@ public class KonverzijaRestController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> search(@RequestParam(name = "search") String search, @RequestHeader(name="Authorization") String token) throws IOException {
-        Specification<BaznaKonverzijaKalkulacija> spec = this.searchUtil.getSpec(search);
-        List<BaznaKonverzijaKalkulacija> result = iKonverzijaService.findAll(spec);
+        Specification<Konverzija> spec = this.searchUtil.getSpec(search);
+        Page<KonverzijaResponse> result = iKonverzijaService.findAll(spec);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createFaktura(@Valid @RequestBody BaznaKonverzijaKalkulacija baznaKonverzijaKalkulacija, @RequestHeader(name="Authorization") String token) throws IOException {
-        if(getPreduzeceById(baznaKonverzijaKalkulacija.getDobavljacId(), token)== null){
-            throw new PersistenceException(String.format("Ne postoji preduzece sa id-jem %s",baznaKonverzijaKalkulacija.getDobavljacId()));
+    public ResponseEntity<?> createFaktura(@Valid @RequestBody Konverzija konverzija, @RequestHeader(name="Authorization") String token) throws IOException {
+        if(getPreduzeceById(konverzija.getDobavljacId(), token)== null){
+            throw new PersistenceException(String.format("Ne postoji preduzece sa id-jem %s",konverzija.getDobavljacId()));
         }
-        return ResponseEntity.ok(iKonverzijaService.save(baznaKonverzijaKalkulacija));
+        return ResponseEntity.ok(iKonverzijaService.save(konverzija));
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteFaktura(@PathVariable("id") Long id){
-        Optional<BaznaKonverzijaKalkulacija> optionalKonverzija = iKonverzijaService.findById(id);
+        Optional<Konverzija> optionalKonverzija = iKonverzijaService.findById(id);
         if (optionalKonverzija.isPresent()){
             iKonverzijaService.deleteById(id);
             return ResponseEntity.noContent().build();

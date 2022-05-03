@@ -30,13 +30,13 @@ public class KnjizenjeService implements IKnjizenjeService {
     private final KontoService kontoService;
 
     @Lazy
+    @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService, KnjizenjeConverter knjizenjeConverter) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.kontoService = kontoService;
-        this.knjizenjeConverter = knjizenjeConverter;
     }
 
     @Override

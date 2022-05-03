@@ -33,15 +33,6 @@ public class RacunSpecification<T> implements Specification<T> {
         if (Double.class == keyType) {
             return new DoubleRelations<>(root, builder, key, val);
         }
-        if (Dokument.class == keyType) {
-            return new DokumentRelations<>(root, builder, key, val);
-        }
-        if (TipFakture.class == keyType) {
-            return new TipFaktureRelations<>(root, builder, key, val);
-        }
-        if (KontnaGrupa.class == keyType) {
-            return new KontnaGrupaRelations<>(root, builder, key, val);
-        }
 
         throw new OperationNotSupportedException(String.format("Josuvek nije podrzano filtriranje po tipu %s(%s)", key, keyType));
     }
