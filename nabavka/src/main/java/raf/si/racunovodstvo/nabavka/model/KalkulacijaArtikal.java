@@ -9,21 +9,22 @@ import javax.persistence.Entity;
 @Entity
 @Getter
 @Setter
-public class KalkulacijaArtikal extends KonverzijaArtikal {
+public class KalkulacijaArtikal extends Artikal {
 
+    @Column
     private Double marzaProcenat;
-    @Column(nullable = false)
+    @Column
     private Double marza;
-    @Column(nullable = false)
-    private Double osnovicaZaProdaju;
-    @Column(nullable = false)
+    @Column
+    private Double prodajnaOsnovica;
+    @Column
     private Double porezProcenat;
-    @Column(nullable = false)
+    @Column
     private Double porez;
-    @Column(nullable = false)
+    @Column
     private Double prodajnaCena;
-    @Column(nullable = false)
+    @Column
     private Double osnovica;
-    @Column(nullable = false)
-    private Double ukupnaProdajnaCena;
+    @Column
+    private Double ukupnaProdajnaVrednost;
 }

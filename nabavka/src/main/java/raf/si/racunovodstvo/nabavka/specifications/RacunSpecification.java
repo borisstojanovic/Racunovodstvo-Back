@@ -2,15 +2,22 @@ package raf.si.racunovodstvo.nabavka.specifications;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
-import raf.si.racunovodstvo.knjizenje.model.Dokument;
-import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
-import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
-import raf.si.racunovodstvo.knjizenje.relations.*;
+import raf.si.racunovodstvo.nabavka.exceptions.OperationNotSupportedException;
+import raf.si.racunovodstvo.nabavka.relations.DateRelations;
+import raf.si.racunovodstvo.nabavka.relations.DoubleRelations;
+import raf.si.racunovodstvo.nabavka.relations.LongRelations;
+import raf.si.racunovodstvo.nabavka.relations.RacunRelations;
+import raf.si.racunovodstvo.nabavka.relations.StringRelations;
 
-import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.Objects;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 
 @AllArgsConstructor

@@ -2,8 +2,8 @@ package raf.si.racunovodstvo.nabavka.utils;
 
 
 import org.springframework.data.jpa.domain.Specification;
-import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
-import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecificationsBuilder;
+import raf.si.racunovodstvo.nabavka.exceptions.OperationNotSupportedException;
+import raf.si.racunovodstvo.nabavka.specifications.RacunSpecificationsBuilder;
 
 import java.util.Arrays;
 import java.util.List;

@@ -12,16 +12,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
 @Getter
 @Setter
-public class BaznaKonverzijaKalkulacija {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class BaznaKonverzijaKalkulacija {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     @Column(nullable = false)
     private Date datum;
