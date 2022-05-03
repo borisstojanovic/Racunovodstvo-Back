@@ -3,14 +3,15 @@ package raf.si.racunovodstvo.nabavka.requests;
 import lombok.Data;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnCreate;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnUpdate;
+import raf.si.racunovodstvo.nabavka.validation.validator.ValidArtikal;
 
-import javax.validation.GroupSequence;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
 @Data
+@ValidArtikal
 public class ArtikalRequest {
 
     @Null(groups = OnCreate.class)
