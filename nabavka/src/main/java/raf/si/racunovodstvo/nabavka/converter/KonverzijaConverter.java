@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
-import raf.si.racunovodstvo.nabavka.services.impl.IKonverzijaService;
+import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
 
 import java.util.ArrayList;
 import java.util.List;

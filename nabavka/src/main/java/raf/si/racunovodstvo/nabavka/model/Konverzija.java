@@ -19,5 +19,5 @@ public class Konverzija extends BaznaKonverzijaKalkulacija {
     private String brojKonverzije;
     @OneToMany
     @JoinColumn(name = "konverzija")
-    private List<KonverzijaArtikal> artikli;
+    private List<Artikal> artikli;
 }

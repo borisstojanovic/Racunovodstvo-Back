@@ -13,15 +13,15 @@ import raf.si.racunovodstvo.knjizenje.model.Preduzece;
 import raf.si.racunovodstvo.knjizenje.utils.SearchUtil;
 
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
+import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
-import raf.si.racunovodstvo.nabavka.services.KonverzijaService;
-import raf.si.racunovodstvo.nabavka.services.impl.IKonverzijaService;
+import raf.si.racunovodstvo.nabavka.services.impl.KonverzijaService;
+import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -68,15 +68,15 @@ public class KonverzijaRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createFaktura(@Valid @RequestBody Konverzija konverzija, @RequestHeader(name="Authorization") String token) throws IOException {
+    public ResponseEntity<?> createKonverzija(@Valid @RequestBody KonverzijaRequest konverzija, @RequestHeader(name="Authorization") String token) throws IOException {
         if(getPreduzeceById(konverzija.getDobavljacId(), token)== null){
-            throw new PersistenceException(String.format("Ne postoji preduzece sa id-jem %s",konverzija.getDobavljacId()));
+            throw new PersistenceException(String.format("Ne postoji dobavljac sa id-jem %s",konverzija.getDobavljacId()));
         }
-        return ResponseEntity.ok(iKonverzijaService.save(konverzija));
+        return ResponseEntity.ok(iKonverzijaService.saveKonverzija(konverzija));
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteFaktura(@PathVariable("id") Long id){
+    public ResponseEntity<?> deleteKonverzija(@PathVariable("id") Long id){
         Optional<Konverzija> optionalKonverzija = iKonverzijaService.findById(id);
         if (optionalKonverzija.isPresent()){
             iKonverzijaService.deleteById(id);

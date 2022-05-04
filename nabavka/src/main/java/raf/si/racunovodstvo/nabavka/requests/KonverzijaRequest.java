@@ -1,4 +1,4 @@
-package raf.si.racunovodstvo.nabavka.request;
+package raf.si.racunovodstvo.nabavka.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
