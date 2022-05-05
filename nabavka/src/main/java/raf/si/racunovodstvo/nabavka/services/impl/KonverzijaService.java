@@ -42,7 +42,7 @@ KonverzijaService implements IKonverzijaService {
 
     @Override
     public <S extends Konverzija> S save(S var1) {
-        return null;
+       return konverzijaRepository.save(var1);
     }
 
     @Override
@@ -64,9 +64,9 @@ KonverzijaService implements IKonverzijaService {
 
         currKonverzija.setBrojKonverzije(konverzijaRequest.getBrojKonverzije());
         currKonverzija.setDatum(new Date());
-        currKonverzija.setKomentar(currKonverzija.getKomentar());
+        currKonverzija.setKomentar(konverzijaRequest.getKomentar());
         currKonverzija.setDobavljacId(konverzijaRequest.getDobavljacId());
-        currKonverzija.setLokacija(lokacijaRepository.findById(konverzijaRequest.getLokacijaId()).get());
+        currKonverzija.setLokacija(null);
         currKonverzija.setNabavnaCena(0.0);
         currKonverzija.setFakturnaCena(0.0);
         currKonverzija.setValuta(konverzijaRequest.getValuta());

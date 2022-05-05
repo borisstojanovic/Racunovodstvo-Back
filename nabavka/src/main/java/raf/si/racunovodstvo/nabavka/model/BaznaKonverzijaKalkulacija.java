@@ -30,7 +30,7 @@ public abstract class BaznaKonverzijaKalkulacija {
     private Date datum;
     @Column(nullable = false)
     private Long dobavljacId;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private Lokacija lokacija;
     @OneToMany(mappedBy = "baznaKonverzijaKalkulacija", fetch = FetchType.EAGER)
     private List<TroskoviNabavke> troskoviNabavke;

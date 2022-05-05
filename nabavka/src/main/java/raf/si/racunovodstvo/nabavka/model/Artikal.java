@@ -1,6 +1,6 @@
 package raf.si.racunovodstvo.nabavka.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,7 +33,6 @@ public abstract class Artikal {
     private Double nabavnaCenaPosleRabata;
     @Column(nullable = false)
     private Double ukupnaNabavnaVrednost;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "Konverzija")
-    private Konverzija konverzija;}
+
+
+}

@@ -44,28 +44,11 @@ public class ArtikalService implements IArtikalService {
 
     @Override
     public ArtikalResponse save(ArtikalRequest artikalRequest) {
+
+        System.out.println("TU SAm");
         Artikal converted = artikalConverter.convert(artikalRequest);
 
         ArtikalResponse konvertovan = artikalReverseConverter.convert(artikalRepository.save(converted));
-
-        Konverzija newKonveerzija = new Konverzija();
-
-        if(konverzijaRepository.findById(converted.getKonverzija().getId()).isPresent()){
-            newKonveerzija = converted.getKonverzija();
-            Double ukupnaFakturna =0.0;
-            for(Artikal artikal : newKonveerzija.getArtikli()){
-                ukupnaFakturna+=artikal.getUkupnaNabavnaVrednost();
-            }
-            newKonveerzija.setFakturnaCena(ukupnaFakturna);
-            Double ukupniTroskoviNabavke = 0.0;
-            for(TroskoviNabavke troskoviNabavke : newKonveerzija.getTroskoviNabavke()){
-                ukupniTroskoviNabavke+=troskoviNabavke.getCena();
-            }
-            newKonveerzija.setNabavnaCena(ukupniTroskoviNabavke+ukupnaFakturna);
-
-            konverzijaRepository.save(newKonveerzija);
-        }
-
 
         return konvertovan;
     }

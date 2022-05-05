@@ -36,10 +36,10 @@ public class ArtikalRequest {
     private Double prodajnaCena;
     private boolean aktivanZaProdaju;
     private Double porezProcenat;
-    private Konverzija konverzija;
 
     @AssertTrue(message = "Polja ne mogu biti prazna")
     public boolean isValid() {
         return !aktivanZaProdaju || porezProcenat != null;
     }
+    private  Long konvezijaKalkulacijaId;
 }
