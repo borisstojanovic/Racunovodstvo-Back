@@ -1,55 +1,45 @@
 package raf.si.racunovodstvo.nabavka.converters.impl;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.model.*;
 import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
-import raf.si.racunovodstvo.nabavka.services.impl.KonverzijaService;
+import raf.si.racunovodstvo.nabavka.services.IKalkulacijaService;
+import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
 
 @Component
 public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
 
     private final ModelMapper modelMapper;
+    private final IKonverzijaService iKonverzijaService;
+    private final IKalkulacijaService iKalkulacijaService;
 
-    @Autowired
-    private KonverzijaService konverzijaService;
-
-    public ArtikalConverter(ModelMapper modelMapper) {
+    public ArtikalConverter(ModelMapper modelMapper, IKonverzijaService iKonverzijaService, IKalkulacijaService iKalkulacijaService) {
         this.modelMapper = modelMapper;
+        this.iKonverzijaService = iKonverzijaService;
+        this.iKalkulacijaService = iKalkulacijaService;
     }
 
     @Override
     public Artikal convert(ArtikalRequest source) {
-        Artikal converted;
         if (source.isAktivanZaProdaju()) {
-            KalkulacijaArtikal mapped = modelMapper.map(source, KalkulacijaArtikal.class);
-            calculateCommonFields(mapped);
-            calculateKalkulacijaFields(mapped);
-            converted = mapped;
-            // kalkulacija
-            return null;
+            KalkulacijaArtikal kalkulacijaArtikal = modelMapper.map(source, KalkulacijaArtikal.class);
+            calculateCommonFields(kalkulacijaArtikal);
+            calculateKalkulacijaFields(kalkulacijaArtikal);
+
+            Kalkulacija kalkulacija = iKalkulacijaService.increaseNabavnaAndProdajnaCena(source.getKonverzijaKalkulacijaId(),
+                                                                                         kalkulacijaArtikal.getUkupnaNabavnaVrednost(),
+                                                                                         kalkulacijaArtikal.getUkupnaProdajnaVrednost());
+
+            kalkulacijaArtikal.setKalkulacija(kalkulacija);
+            return kalkulacijaArtikal;
         } else {
+            KonverzijaArtikal konverzijaArtikal = modelMapper.map(source, KonverzijaArtikal.class);
+            calculateCommonFields(konverzijaArtikal);
 
-            converted = modelMapper.map(source, KonverzijaArtikal.class);
-            calculateCommonFields(converted);
-            KonverzijaArtikal konverzijaArtikal = (KonverzijaArtikal) converted;
-            Konverzija konverzija = konverzijaService.findById(source.getKonvezijaKalkulacijaId()).get();
+            Konverzija konverzija = iKonverzijaService.increaseNabavnaCena(source.getKonverzijaKalkulacijaId(), konverzijaArtikal.getUkupnaNabavnaVrednost());
             konverzijaArtikal.setKonverzija(konverzija);
-
-            if(konverzijaService.findById(konverzijaArtikal.getKonverzija().getId()).isPresent()){
-
-                Double ukupnaFakturna = konverzija.getFakturnaCena() + konverzijaArtikal.getUkupnaNabavnaVrednost();
-                konverzija.setFakturnaCena(ukupnaFakturna);
-                Double ukupniTroskoviNabavke = 0.0;
-                for(TroskoviNabavke troskoviNabavke : konverzija.getTroskoviNabavke()){
-                    ukupniTroskoviNabavke+=troskoviNabavke.getCena();
-                }
-                konverzija.setNabavnaCena(ukupniTroskoviNabavke+ukupnaFakturna);
-
-                konverzijaService.save(konverzija);
-            }
 
             return konverzijaArtikal;
         }

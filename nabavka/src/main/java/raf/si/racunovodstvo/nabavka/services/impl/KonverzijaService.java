@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.nabavka.converter.KonverzijaConverter;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
+import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
 import raf.si.racunovodstvo.nabavka.repositories.LokacijaRepository;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
@@ -17,9 +18,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
-public class
-KonverzijaService implements IKonverzijaService {
+public class KonverzijaService implements IKonverzijaService {
 
     private final KonverzijaRepository konverzijaRepository;
     private final LokacijaRepository lokacijaRepository;
@@ -42,7 +44,7 @@ KonverzijaService implements IKonverzijaService {
 
     @Override
     public <S extends Konverzija> S save(S var1) {
-       return konverzijaRepository.save(var1);
+        return konverzijaRepository.save(var1);
     }
 
     @Override
@@ -59,7 +61,7 @@ KonverzijaService implements IKonverzijaService {
         konverzijaRepository.deleteById(id);
     }
 
-    public Konverzija saveKonverzija(KonverzijaRequest konverzijaRequest){
+    public Konverzija saveKonverzija(KonverzijaRequest konverzijaRequest) {
         Konverzija currKonverzija = new Konverzija();
 
         currKonverzija.setBrojKonverzije(konverzijaRequest.getBrojKonverzije());
@@ -72,5 +74,19 @@ KonverzijaService implements IKonverzijaService {
         currKonverzija.setValuta(konverzijaRequest.getValuta());
 
         return konverzijaRepository.save(currKonverzija);
+    }
+
+    @Override
+    public Konverzija increaseNabavnaCena(Long konverzijaId, Double increaseBy) {
+        Optional<Konverzija> optionalKonverzija = findById(konverzijaId);
+        if (optionalKonverzija.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        Konverzija konverzija = optionalKonverzija.get();
+        Double ukupnaFakturnaCena = konverzija.getFakturnaCena() + increaseBy;
+        konverzija.setFakturnaCena(ukupnaFakturnaCena);
+        Double ukupniTroskoviNabavke = konverzija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
+        konverzija.setNabavnaCena(ukupniTroskoviNabavke + ukupnaFakturnaCena);
+        return konverzijaRepository.save(konverzija);
     }
 }
