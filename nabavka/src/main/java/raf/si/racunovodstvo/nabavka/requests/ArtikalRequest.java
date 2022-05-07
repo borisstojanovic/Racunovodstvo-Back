@@ -1,7 +1,6 @@
 package raf.si.racunovodstvo.nabavka.requests;
 
 import lombok.Data;
-import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnCreate;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnUpdate;
 import raf.si.racunovodstvo.nabavka.validation.validator.ValidArtikal;

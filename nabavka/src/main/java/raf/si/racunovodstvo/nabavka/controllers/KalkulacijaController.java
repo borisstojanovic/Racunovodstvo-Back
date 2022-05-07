@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raf.si.racunovodstvo.nabavka.model.Kalkulacija;
 import raf.si.racunovodstvo.nabavka.services.IKalkulacijaService;
-import raf.si.racunovodstvo.nabavka.services.impl.KalkulacijaService;
 import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
 import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
 
@@ -29,7 +28,7 @@ public class KalkulacijaController {
 
     private final SearchUtil<Kalkulacija> searchUtil;
 
-    public KalkulacijaController(KalkulacijaService kalkulacijaService) {
+    public KalkulacijaController(IKalkulacijaService kalkulacijaService) {
         this.kalkulacijaService = kalkulacijaService;
         this.searchUtil = new SearchUtil<>();
     }
