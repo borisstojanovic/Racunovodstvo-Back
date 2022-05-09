@@ -30,7 +30,6 @@ public class KnjizenjeService implements IKnjizenjeService {
     private final KontoService kontoService;
 
     @Lazy
-    @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
     public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService) {
