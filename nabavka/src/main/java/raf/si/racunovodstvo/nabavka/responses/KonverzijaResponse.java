@@ -11,7 +11,7 @@ public class KonverzijaResponse {
     Date datum;
     Long dobavljacId;
     Long lokacijaId;
-    Double troskoviNabavke;
+    Double troskoviNabavkeSum;
     Double fakturnaCena;
     Double nabavnaCena;
     String valuta;

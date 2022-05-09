@@ -69,6 +69,6 @@ class ArtikalConverterTest {
         Artikal result = artikalConverter.convert(source);
 
         assertEquals(kalkulacijaArtikal, result);
-        assertEquals(kalkulacija, ((KalkulacijaArtikal) result).getKalkulacija());
+        assertEquals(kalkulacija, result.getBaznaKonverzijaKalkulacija());
     }
 }

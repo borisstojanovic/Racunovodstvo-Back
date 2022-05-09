@@ -25,6 +25,7 @@ import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -65,12 +66,16 @@ public class KonverzijaRestController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search") String search,
+    public ResponseEntity<?> search(@RequestParam(name = "search", required = false, defaultValue = "") String search,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
-                                    @RequestParam(defaultValue = "-konverzijaId") String[] sort, @RequestHeader(name="Authorization") String token) throws IOException {
+                                    @RequestParam(defaultValue = "-id") String[] sort,
+                                    @RequestHeader(name = "Authorization") String token) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
-        Specification<Konverzija> spec = searchUtil.getSpec(search);
+        Specification<Konverzija> spec = null;
+        if (!search.isBlank()) {
+            spec = searchUtil.getSpec(search);
+        }
         Page<KonverzijaResponse> result = iKonverzijaService.findAll(spec, pageSort);
         return ResponseEntity.ok(result);
     }

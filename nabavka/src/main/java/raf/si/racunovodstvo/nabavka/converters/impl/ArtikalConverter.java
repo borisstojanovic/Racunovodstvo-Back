@@ -36,14 +36,14 @@ public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
                                                                                          kalkulacijaArtikal.getUkupnaNabavnaVrednost(),
                                                                                          kalkulacijaArtikal.getUkupnaProdajnaVrednost());
 
-            kalkulacijaArtikal.setKalkulacija(kalkulacija);
+            kalkulacijaArtikal.setBaznaKonverzijaKalkulacija(kalkulacija);
             return kalkulacijaArtikal;
         } else {
             KonverzijaArtikal konverzijaArtikal = modelMapper.map(source, KonverzijaArtikal.class);
             calculateCommonFields(konverzijaArtikal);
 
             Konverzija konverzija = iKonverzijaService.increaseNabavnaCena(source.getKonverzijaKalkulacijaId(), konverzijaArtikal.getUkupnaNabavnaVrednost());
-            konverzijaArtikal.setKonverzija(konverzija);
+            konverzijaArtikal.setBaznaKonverzijaKalkulacija(konverzija);
 
             return konverzijaArtikal;
         }

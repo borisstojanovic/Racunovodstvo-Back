@@ -1,5 +1,6 @@
 package raf.si.racunovodstvo.nabavka.converters.impl;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
@@ -14,25 +15,23 @@ import java.util.List;
 @Component
 public class KonverzijaConverter implements IConverter<List<Konverzija>, Page<KonverzijaResponse>> {
 
+    private final ModelMapper modelMapper;
+
+    public KonverzijaConverter(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
+
     public Page<KonverzijaResponse> convert(List<Konverzija> konverzija) {
         List<KonverzijaResponse> responses = new ArrayList<>();
         for (Konverzija currKonverzija : konverzija) {
-            KonverzijaResponse response = new KonverzijaResponse();
+            KonverzijaResponse response = modelMapper.map(currKonverzija, KonverzijaResponse.class);
 
             response.setKonverzijaId(currKonverzija.getId());
-            response.setBrojKonverzije(currKonverzija.getBrojKonverzije());
-            response.setDatum(currKonverzija.getDatum());
-            response.setKomentar(currKonverzija.getKomentar());
-            response.setDobavljacId(currKonverzija.getDobavljacId());
-            response.setLokacijaId(currKonverzija.getLokacija().getLokacijaId());
-            Double troskoviNabavke = 0.0;
-            for(TroskoviNabavke tNabavke : currKonverzija.getTroskoviNabavke()){
-                troskoviNabavke+=tNabavke.getCena();
+            if (currKonverzija.getLokacija() != null) {
+                response.setLokacijaId(currKonverzija.getLokacija().getLokacijaId());
             }
-            response.setTroskoviNabavke(troskoviNabavke);
-            response.setNabavnaCena(currKonverzija.getNabavnaCena());
-            response.setFakturnaCena(currKonverzija.getFakturnaCena());
-            response.setValuta(currKonverzija.getValuta());
+            Double troskoviNabavke = currKonverzija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
+            response.setTroskoviNabavkeSum(troskoviNabavke);
 
             responses.add(response);
         }

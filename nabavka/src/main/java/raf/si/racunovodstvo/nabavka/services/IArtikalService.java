@@ -10,6 +10,8 @@ public interface IArtikalService extends IService<Artikal, Long> {
 
     Page<ArtikalResponse> findAll(Pageable pageable);
 
+    Page<ArtikalResponse> findAllByIdKalkulacijaKonverzija(Pageable pageable, Long idKalkulacijaKonverzija);
+
     ArtikalResponse save(ArtikalRequest artikalRequest);
 
     ArtikalResponse update(ArtikalRequest artikalRequest);

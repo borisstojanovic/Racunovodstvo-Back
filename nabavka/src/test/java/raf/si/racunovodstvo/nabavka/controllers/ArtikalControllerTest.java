@@ -77,4 +77,14 @@ class ArtikalControllerTest {
 
         assertEquals(expectedResponse, actualResponse);
     }
+
+    @Test
+    void findAllForKonverzijaOrKalkulacijaTest() {
+        Page<ArtikalResponse> artikalResponsePage = new PageImpl<>(new ArrayList<>());
+        given(iArtikalService.findAllByIdKalkulacijaKonverzija(any(), any())).willReturn(artikalResponsePage);
+
+        ResponseEntity<Page<ArtikalResponse>> response = artikalController.findAllForKonverzijaOrKalkulacija(0, 1, new String[]{}, 1L);
+
+        assertEquals(artikalResponsePage, response.getBody());
+    }
 }

@@ -112,6 +112,20 @@ class ArtikalServiceTest {
     }
 
     @Test
+    void findAllByIdKalkulacijaKonverzija() {
+        Artikal artikal = Mockito.mock(Artikal.class);
+        ArtikalResponse artikalResponse = new ArtikalResponse();
+        Page<Artikal> artikalPage = new PageImpl<>(List.of(artikal));
+        Pageable pageable = Mockito.mock(Pageable.class);
+        given(artikalRepository.findAllByBaznaKonverzijaKalkulacijaId(pageable, 1L)).willReturn(artikalPage);
+        given(artikalReverseConverter.convert(artikal)).willReturn(artikalResponse);
+
+        Page<ArtikalResponse> result = artikalService.findAllByIdKalkulacijaKonverzija(pageable, 1L);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(artikalResponse, result.getContent().get(0));
+    }
+
+    @Test
     void findAllTest() {
         List<Artikal> artikalList = new ArrayList<>();
         given(artikalRepository.findAll()).willReturn(artikalList);

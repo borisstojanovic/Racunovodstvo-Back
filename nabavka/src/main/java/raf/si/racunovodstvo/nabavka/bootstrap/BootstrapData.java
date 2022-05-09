@@ -4,11 +4,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import raf.si.racunovodstvo.nabavka.model.Kalkulacija;
 import raf.si.racunovodstvo.nabavka.model.KalkulacijaArtikal;
+import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.model.KonverzijaArtikal;
 import raf.si.racunovodstvo.nabavka.model.Lokacija;
 import raf.si.racunovodstvo.nabavka.model.enums.TipKalkulacije;
 import raf.si.racunovodstvo.nabavka.repositories.ArtikalRepository;
 import raf.si.racunovodstvo.nabavka.repositories.KalkulacijaRepository;
+import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
 import raf.si.racunovodstvo.nabavka.repositories.LokacijaRepository;
 
 import java.util.ArrayList;
@@ -20,13 +22,16 @@ public class BootstrapData implements CommandLineRunner {
     private KalkulacijaRepository kalkulacijaRepository;
     private LokacijaRepository lokacijaRepository;
     private ArtikalRepository artikalRepository;
+    private KonverzijaRepository konverzijaRepository;
 
     public BootstrapData(KalkulacijaRepository kalkulacijaRepository,
                          LokacijaRepository lokacijaRepository,
-                         ArtikalRepository artikalRepository) {
+                         ArtikalRepository artikalRepository,
+                         KonverzijaRepository konverzijaRepository) {
         this.kalkulacijaRepository = kalkulacijaRepository;
         this.lokacijaRepository = lokacijaRepository;
         this.artikalRepository = artikalRepository;
+        this.konverzijaRepository = konverzijaRepository;
     }
 
 
@@ -41,6 +46,22 @@ public class BootstrapData implements CommandLineRunner {
         Kalkulacija k3 = napraviDefaultKalkulaciju("CCC");
         kalkulacijaRepository.save(k3);
 
+        Konverzija konverzija = new Konverzija();
+        konverzija.setBrojKonverzije("ABC");
+        konverzija.setTroskoviNabavke(new ArrayList<>());
+        Lokacija l1 = new Lokacija();
+        l1.setAdresa("adresa");
+        l1.setNaziv("naziv");
+        l1 = lokacijaRepository.save(l1);
+        konverzija.setLokacija(l1);
+        konverzija.setDatum(new Date());
+        konverzija.setDobavljacId(1L);
+        konverzija.setArtikli(new ArrayList<>());
+        konverzija.setFakturnaCena(100D);
+        konverzija.setNabavnaCena(200D);
+        konverzija.setValuta("RSD");
+        konverzijaRepository.save(konverzija);
+
         KonverzijaArtikal konverzijaArtikal = new KonverzijaArtikal();
         konverzijaArtikal.setSifraArtikla("SIFRA");
         konverzijaArtikal.setKolicina(1);
@@ -51,6 +72,7 @@ public class BootstrapData implements CommandLineRunner {
         konverzijaArtikal.setRabatProcenat(10.0);
         konverzijaArtikal.setUkupnaNabavnaVrednost(2.0);
         konverzijaArtikal.setNabavnaCenaPosleRabata(1.0);
+        konverzijaArtikal.setBaznaKonverzijaKalkulacija(konverzija);
         artikalRepository.save(konverzijaArtikal);
 
         KalkulacijaArtikal kalkulacijaArtikal = new KalkulacijaArtikal();
@@ -71,6 +93,7 @@ public class BootstrapData implements CommandLineRunner {
         kalkulacijaArtikal.setProdajnaCena(30.0);
         kalkulacijaArtikal.setUkupnaProdajnaVrednost(45.0);
         kalkulacijaArtikal.setProdajnaOsnovica(40.0);
+        kalkulacijaArtikal.setBaznaKonverzijaKalkulacija(k1);
         artikalRepository.save(kalkulacijaArtikal);
     }
 
