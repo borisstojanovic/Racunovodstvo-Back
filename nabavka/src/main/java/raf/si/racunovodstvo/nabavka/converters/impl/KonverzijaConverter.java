@@ -1,24 +1,18 @@
-package raf.si.racunovodstvo.nabavka.converter;
+package raf.si.racunovodstvo.nabavka.converters.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
+import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
-import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class KonverzijaConverter {
-
-    @Autowired
-    private IKonverzijaService iKonverzijaService;
-
-
+public class KonverzijaConverter implements IConverter<List<Konverzija>, Page<KonverzijaResponse>> {
 
     public Page<KonverzijaResponse> convert(List<Konverzija> konverzija) {
         List<KonverzijaResponse> responses = new ArrayList<>();

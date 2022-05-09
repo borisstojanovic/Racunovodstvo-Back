@@ -9,11 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
-import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
-import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
-import raf.si.racunovodstvo.nabavka.converter.KonverzijaConverter;
+import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaConverter;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.model.Lokacija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
@@ -21,6 +17,8 @@ import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
 import raf.si.racunovodstvo.nabavka.repositories.LokacijaRepository;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
+import raf.si.racunovodstvo.nabavka.specifications.RacunSpecification;
+import raf.si.racunovodstvo.nabavka.specifications.SearchCriteria;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 
 
@@ -140,11 +137,11 @@ class KonverzijaServiceTest {
         Page<KonverzijaResponse> page = new PageImpl<>(konverzijaList.stream().map(konverzija1 -> konverzijaResponse)
                 .collect(Collectors.toList()));
 
-        Page<Konverzija> pageKnjizenje = new PageImpl<>(konverzijaList.stream().map(konerzija1 -> konverzija)
-                .collect(Collectors.toList()));
+        List<Konverzija> konverzijaList1 = konverzijaList.stream().map(konerzija1 -> konverzija).collect(Collectors.toList());
+        Page<Konverzija> pageKnjizenje = new PageImpl<>(konverzijaList1);
 
-        lenient().when(konverzijaRepository.findAll(specification, pageSort)).thenReturn(pageKnjizenje);
-        lenient().when(konverzijaConverter.convert(konverzijaList)).thenReturn(page);
+        given(konverzijaRepository.findAll(specification, pageSort)).willReturn(pageKnjizenje);
+        given(konverzijaConverter.convert(konverzijaList1)).willReturn(page);
 
         assertEquals(page, konverzijaService.findAll(specification, pageSort));
 

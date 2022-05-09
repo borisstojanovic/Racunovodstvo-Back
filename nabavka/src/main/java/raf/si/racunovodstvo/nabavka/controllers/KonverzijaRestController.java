@@ -10,12 +10,10 @@ import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.model.Preduzece;
-import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
-import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecificationsBuilder;
-import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
-import raf.si.racunovodstvo.knjizenje.utils.SearchUtil;
+
+import raf.si.racunovodstvo.nabavka.responses.PreduzeceResponse;
+import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
+import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
 
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
@@ -52,7 +50,7 @@ public class KonverzijaRestController {
         this.searchUtil = new SearchUtil<>();
     }
 
-    private Preduzece getPreduzeceById(Long id, String token) throws IOException {
+    private PreduzeceResponse getPreduzeceById(Long id, String token) throws IOException {
         if(id == null){
             return null;
         }
@@ -64,7 +62,7 @@ public class KonverzijaRestController {
         ResponseEntity<String> response = restTemplate.exchange(String.format(URL, id), HttpMethod.GET, request, String.class);
         String result = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(result, Preduzece.class);
+        return objectMapper.readValue(result, PreduzeceResponse.class);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,7 +70,7 @@ public class KonverzijaRestController {
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
                                     @RequestParam(defaultValue = "-konverzijaId") String[] sort, @RequestHeader(name="Authorization") String token) throws IOException {
-        RacunSpecificationsBuilder<Knjizenje> builder = new RacunSpecificationsBuilder<>();
+
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
 
         Specification<Konverzija> spec = searchUtil.getSpec(search);

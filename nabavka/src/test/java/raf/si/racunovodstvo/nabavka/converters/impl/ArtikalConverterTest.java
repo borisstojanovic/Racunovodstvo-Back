@@ -23,6 +23,7 @@ class ArtikalConverterTest {
     @Mock
     private ModelMapper modelMapper;
 
+    /*
     @Test
     void convertKonverzijaArtikalTest() {
         KonverzijaArtikal konverzijaArtikal = new KonverzijaArtikal();
@@ -55,4 +56,5 @@ class ArtikalConverterTest {
 
         assertEquals(kalkulacijaArtikal, result);
     }
+     */
 }
