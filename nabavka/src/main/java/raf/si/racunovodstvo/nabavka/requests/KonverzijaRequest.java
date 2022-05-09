@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @Getter
 @Setter
 public class KonverzijaRequest {

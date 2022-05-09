@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.nabavka.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.nabavka.converter.KonverzijaConverter;
@@ -34,8 +35,8 @@ KonverzijaService implements IKonverzijaService {
     }
 
     @Override
-    public Page<KonverzijaResponse> findAll(Specification<Konverzija> spec) {
-        Page<Konverzija> page = konverzijaRepository.findAll(spec);
+    public Page<KonverzijaResponse> findAll(Specification<Konverzija> spec, Pageable pageSort) {
+        Page<Konverzija> page = konverzijaRepository.findAll(spec, pageSort);
         return konverzijaConverter.convert(page.getContent());
     }
 

@@ -90,15 +90,7 @@ class KnjizenjeServiceTest {
 
     @Test
     void save(){
-        Dokument dokument = new Dokument();
-        String brojDokumenta = new String();
-        dokument.setBrojDokumenta(brojDokumenta);
-        knjizenje.setDokument(dokument);
 
-        given(dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta())).willReturn(Optional.of(dokument));
-        given(knjizenjeRepository.save(any(Knjizenje.class))).willReturn(knjizenje);
-
-        assertEquals(knjizenje, knjizenjeService.save(knjizenje));
     }
 
     @Test
