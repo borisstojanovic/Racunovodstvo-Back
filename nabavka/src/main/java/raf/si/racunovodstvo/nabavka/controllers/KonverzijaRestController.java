@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import raf.si.racunovodstvo.nabavka.responses.PreduzeceResponse;
 import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
+import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
 
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
@@ -21,7 +23,8 @@ import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.validation.Valid;
-
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -62,10 +65,13 @@ public class KonverzijaRestController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search") String search, @RequestHeader(name = "Authorization") String token)
-        throws IOException {
-        Specification<Konverzija> spec = this.searchUtil.getSpec(search);
-        Page<KonverzijaResponse> result = iKonverzijaService.findAll(spec);
+    public ResponseEntity<?> search(@RequestParam(name = "search") String search,
+                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+                                    @RequestParam(defaultValue = "-konverzijaId") String[] sort, @RequestHeader(name="Authorization") String token) throws IOException {
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+        Specification<Konverzija> spec = searchUtil.getSpec(search);
+        Page<KonverzijaResponse> result = iKonverzijaService.findAll(spec, pageSort);
         return ResponseEntity.ok(result);
     }
 

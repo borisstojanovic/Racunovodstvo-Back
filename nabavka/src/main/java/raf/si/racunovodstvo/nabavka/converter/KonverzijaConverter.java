@@ -25,8 +25,6 @@ public class KonverzijaConverter {
         for (Konverzija currKonverzija : konverzija) {
             KonverzijaResponse response = new KonverzijaResponse();
 
-
-
             response.setKonverzijaId(currKonverzija.getId());
             response.setBrojKonverzije(currKonverzija.getBrojKonverzije());
             response.setDatum(currKonverzija.getDatum());
