@@ -1,12 +1,12 @@
 package raf.si.racunovodstvo.nabavka.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.nabavka.converter.KonverzijaConverter;
+import raf.si.racunovodstvo.nabavka.converters.IConverter;
+import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaConverter;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
@@ -26,14 +26,13 @@ public class KonverzijaService implements IKonverzijaService {
 
     private final KonverzijaRepository konverzijaRepository;
     private final LokacijaRepository lokacijaRepository;
-
-    @Lazy
-    private KonverzijaConverter konverzijaConverter;
+    private final IConverter<List<Konverzija>, Page<KonverzijaResponse>> konverzijaConverter;
 
     @Autowired
-    public KonverzijaService(KonverzijaRepository konverzijaRepository, LokacijaRepository lokacijaRepository) {
+    public KonverzijaService(KonverzijaRepository konverzijaRepository, LokacijaRepository lokacijaRepository, KonverzijaConverter konverzijaConverter) {
         this.konverzijaRepository = konverzijaRepository;
         this.lokacijaRepository = lokacijaRepository;
+        this.konverzijaConverter = konverzijaConverter;
     }
 
     @Override

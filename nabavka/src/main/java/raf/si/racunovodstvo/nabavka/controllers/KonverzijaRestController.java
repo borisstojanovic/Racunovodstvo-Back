@@ -10,12 +10,12 @@ import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.PreduzeceResponse;
 import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
 import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
 
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
-import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
 import raf.si.racunovodstvo.nabavka.services.impl.KonverzijaService;
 import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
