@@ -1,18 +1,18 @@
 package raf.si.racunovodstvo.preduzece.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
+import javax.persistence.OneToMany;
 
 @Entity
 @Getter
@@ -24,28 +24,11 @@ public class Obracun {
     private Long obracunId;
     @Column(nullable = false)
     private String naziv;
-    @Column(nullable = false)
-    private Double ucinak;
     @Column
     private String sifraTransakcije;
-    @Column
-    private Double porez;
-    @Column
-    private Double doprinos1;
-    @Column
-    private Double doprinos2;
-    @Column
-    @NotNull(message = "netoPlata je obavezna")
-    private Double netoPlata;
-    @Column
-    private Double brutoPlata;
-    @Column
-    private Double ukupanTrosakZarade;
     @Column(nullable = false)
     private Date datumObracuna;
-    @Column
-    private String komentar;
-    @ManyToOne
-    @JoinColumn(name = "zaposleniId")
-    private Zaposleni zaposleni;
+    @JsonIgnore
+    @OneToMany(mappedBy = "obracun")
+    private List<ObracunZaposleni> obracunZaposleniList;
 }
