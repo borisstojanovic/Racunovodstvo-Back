@@ -13,7 +13,6 @@ import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontnaGrupaRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 
-
 import java.util.*;
 
 @Component

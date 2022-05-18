@@ -32,7 +32,10 @@ public class KnjizenjeService implements IKnjizenjeService {
     @Lazy
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService, KnjizenjeConverter knjizenjeConverter) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository,
+                            DokumentRepository dokumentRepository,
+                            KontoService kontoService,
+                            KnjizenjeConverter knjizenjeConverter) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.kontoService = kontoService;
@@ -47,7 +50,8 @@ public class KnjizenjeService implements IKnjizenjeService {
         Knjizenje newKnjizenje = new Knjizenje();
 
         Dokument dokument;
-        if(knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
+        if (knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta())
+                                                                 .isPresent()) {
             dokument = dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).get();
         } else {
             dokument = dokumentRepository.save(knjizenje.getDokument());
@@ -60,8 +64,8 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         newKnjizenje = knjizenjeRepository.save(newKnjizenje);
 
-        for(Konto konto : kontoList){
-            if(konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()){
+        for (Konto konto : kontoList) {
+            if (konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()) {
                 konto.setKnjizenje(newKnjizenje);
                 kontoService.save(konto);
             }
@@ -69,7 +73,7 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         newKnjizenje.setKonto(kontoList);
 
-        return  knjizenjeRepository.save(newKnjizenje);
+        return knjizenjeRepository.save(newKnjizenje);
     }
 
     @Override
