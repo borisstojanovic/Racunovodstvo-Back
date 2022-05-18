@@ -27,6 +27,8 @@ public class Obracun {
     @Column(nullable = false)
     private Double ucinak;
     @Column
+    private String sifraTransakcije;
+    @Column
     private Double porez;
     @Column
     private Double doprinos1;
@@ -46,22 +48,4 @@ public class Obracun {
     @ManyToOne
     @JoinColumn(name = "zaposleniId")
     private Zaposleni zaposleni;
-
-    public void izracunajDoprinose(Koeficijent koeficijent) {
-        double b;
-        if (this.netoPlata < koeficijent.getNajnizaOsnovica()) {
-            b = (this.netoPlata - 1.93 + (koeficijent.getNajnizaOsnovica() * 19.9)) / 0.9;
-        }
-        else if (this.netoPlata < koeficijent.getNajvisaOsnovica()) {
-            b = (this.netoPlata - 1.93) / 0.701;
-        }
-        else {
-            b = (this.netoPlata - 1.93 + (koeficijent.getNajvisaOsnovica() * 19.9)) / 0.9;
-        }
-        this.doprinos1 = b * (koeficijent.getPenzionoOsiguranje1() + koeficijent.getZdravstvenoOsiguranje1() + koeficijent.getNezaposlenost1());
-        this.doprinos2 = b * (koeficijent.getPenzionoOsiguranje2() + koeficijent.getZdravstvenoOsiguranje2() + koeficijent.getNezaposlenost2());
-        this.porez = (b - koeficijent.getPoreskoOslobadjanje()) * koeficijent.getKoeficijentPoreza();
-        this.brutoPlata = this.netoPlata + this.porez;
-        this.ukupanTrosakZarade = this.brutoPlata + this.doprinos2;
-    }
 }
