@@ -2,7 +2,6 @@ version: "3.8"
 services:
   eureka:
     image: ghcr.io/raf-si-2021/racunovodstvo-eureka:latest
-    build: ./eureka
     restart: always
     container_name: eureka
     hostname: eureka
@@ -13,7 +12,6 @@ services:
 
   gateway:
     image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
-    build: ./gateway
     hostname: gateway
     restart: always
     ports:
@@ -33,7 +31,7 @@ services:
     container_name: mysql_db
     env_file: .env
     ports:
-      - '3306'
+      - "3306"
     volumes:
       - db:/bitnami/mysql/data
     environment:
@@ -51,7 +49,7 @@ services:
     container_name: mysql_slave
     env_file: .env
     ports:
-      - '3306'
+      - "3306"
     depends_on:
       - mysql_db
     environment:
@@ -67,15 +65,16 @@ services:
 
   user_service:
     image: ghcr.io/raf-si-2021/racunovodstvo-user:latest
-    build: ./user
     hostname: user
     container_name: user
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_HOST: mysql_db
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
+      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REGISTRY_HOST: eureka
     ports:
       - "8082:8080"
@@ -83,19 +82,21 @@ services:
       - racunovodstvo
     depends_on:
       - mysql_db
+      - mysql_slave
       - eureka
       - gateway
 
   knjizenje_service:
     image: ghcr.io/raf-si-2021/racunovodstvo-knjizenje:latest
-    build: ./knjizenje
     hostname: knjizenje
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_HOST: mysql_db
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
+      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REGISTRY_HOST: eureka
     ports:
       - "8081:8080"
@@ -108,14 +109,15 @@ services:
 
   preduzece_service:
     image: ghcr.io/raf-si-2021/racunovodstvo-preduzece:latest
-    build: ./preduzece
     hostname: preduzece
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_HOST: mysql_db
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
+      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REGISTRY_HOST: eureka
     ports:
       - "8083:8080"
