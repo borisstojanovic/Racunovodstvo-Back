@@ -1,6 +1,5 @@
 package raf.si.racunovodstvo.nabavka.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.springframework.data.domain.Page;
@@ -9,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import raf.si.racunovodstvo.nabavka.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.PreduzeceResponse;
 import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
@@ -19,14 +18,13 @@ import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
 import raf.si.racunovodstvo.nabavka.services.impl.KonverzijaService;
 import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
+import raf.si.racunovodstvo.nabavka.validation.groups.OnCreate;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @CrossOrigin
@@ -38,35 +36,25 @@ public class KonverzijaRestController {
 
     private final IKonverzijaService iKonverzijaService;
 
-    private final RestTemplate restTemplate;
+    private final PreduzeceFeignClient preduzeceFeignClient;
 
     private final SearchUtil<Konverzija> searchUtil;
 
-    private static final String URL = "http://preduzece/api/preduzece/%d";
-
-    public KonverzijaRestController(KonverzijaService iKonverzijaService, RestTemplate restTemplate) {
+    public KonverzijaRestController(KonverzijaService iKonverzijaService, PreduzeceFeignClient preduzeceFeignClient) {
         this.iKonverzijaService = iKonverzijaService;
-        this.restTemplate = restTemplate;
+        this.preduzeceFeignClient = preduzeceFeignClient;
         this.searchUtil = new SearchUtil<>();
     }
 
-    private PreduzeceResponse getPreduzeceById(Long id, String token) throws IOException {
+    private PreduzeceResponse getPreduzeceById(Long id, String token) {
         if (id == null) {
             return null;
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", token);
-        HttpEntity request = new HttpEntity(headers);
-
-        // baca izuzetak ako nije ispravak token
-        ResponseEntity<String> response = restTemplate.exchange(String.format(URL, id), HttpMethod.GET, request, String.class);
-        String result = response.getBody();
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(result, PreduzeceResponse.class);
+        return preduzeceFeignClient.getPreduzeceById(id, token).getBody();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search", required = false, defaultValue = "") String search,
+    public ResponseEntity<Page<KonverzijaResponse>> search(@RequestParam(name = "search", required = false, defaultValue = "") String search,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
                                     @RequestParam(defaultValue = "-id") String[] sort,
@@ -81,8 +69,8 @@ public class KonverzijaRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createKonverzija(@Valid @RequestBody KonverzijaRequest konverzija,
-                                              @RequestHeader(name = "Authorization") String token) throws IOException {
+    public ResponseEntity<KonverzijaResponse> createKonverzija(@Validated(OnCreate.class) @RequestBody KonverzijaRequest konverzija,
+                                              @RequestHeader(name = "Authorization") String token) {
         if (getPreduzeceById(konverzija.getDobavljacId(), token) == null) {
             throw new PersistenceException(String.format("Ne postoji dobavljac sa id-jem %s", konverzija.getDobavljacId()));
         }

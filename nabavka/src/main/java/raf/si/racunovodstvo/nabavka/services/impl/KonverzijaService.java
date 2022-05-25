@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaConverter;
+import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaRequestConverter;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
@@ -26,19 +27,24 @@ public class KonverzijaService implements IKonverzijaService {
 
     private final KonverzijaRepository konverzijaRepository;
     private final LokacijaRepository lokacijaRepository;
-    private final IConverter<List<Konverzija>, Page<KonverzijaResponse>> konverzijaConverter;
+    private final IConverter<Konverzija, KonverzijaResponse> konverzijaConverter;
+    private final IConverter<KonverzijaRequest, Konverzija> konverzijaRequestConverter;
 
     @Autowired
-    public KonverzijaService(KonverzijaRepository konverzijaRepository, LokacijaRepository lokacijaRepository, KonverzijaConverter konverzijaConverter) {
+    public KonverzijaService(KonverzijaRepository konverzijaRepository,
+                             LokacijaRepository lokacijaRepository,
+                             KonverzijaConverter konverzijaConverter,
+                             KonverzijaRequestConverter konverzijaRequestConverter) {
         this.konverzijaRepository = konverzijaRepository;
         this.lokacijaRepository = lokacijaRepository;
         this.konverzijaConverter = konverzijaConverter;
+        this.konverzijaRequestConverter = konverzijaRequestConverter;
     }
 
     @Override
     public Page<KonverzijaResponse> findAll(Specification<Konverzija> spec, Pageable pageSort) {
         Page<Konverzija> page = konverzijaRepository.findAll(spec, pageSort);
-        return konverzijaConverter.convert(page.getContent());
+        return page.map(konverzijaConverter::convert);
     }
 
 
@@ -61,19 +67,9 @@ public class KonverzijaService implements IKonverzijaService {
         konverzijaRepository.deleteById(id);
     }
 
-    public Konverzija saveKonverzija(KonverzijaRequest konverzijaRequest) {
-        Konverzija currKonverzija = new Konverzija();
-
-        currKonverzija.setBrojKonverzije(konverzijaRequest.getBrojKonverzije());
-        currKonverzija.setDatum(new Date());
-        currKonverzija.setKomentar(konverzijaRequest.getKomentar());
-        currKonverzija.setDobavljacId(konverzijaRequest.getDobavljacId());
-        currKonverzija.setLokacija(null);
-        currKonverzija.setNabavnaCena(0.0);
-        currKonverzija.setFakturnaCena(0.0);
-        currKonverzija.setValuta(konverzijaRequest.getValuta());
-
-        return konverzijaRepository.save(currKonverzija);
+    public KonverzijaResponse saveKonverzija(KonverzijaRequest konverzijaRequest) {
+        Konverzija saved = konverzijaRepository.save(konverzijaRequestConverter.convert(konverzijaRequest));
+        return konverzijaConverter.convert(saved);
     }
 
     @Override

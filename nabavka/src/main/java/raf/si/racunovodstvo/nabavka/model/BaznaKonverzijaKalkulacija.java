@@ -24,6 +24,7 @@ public class BaznaKonverzijaKalkulacija {
     @Column(nullable = false)
     private Long dobavljacId;
     @ManyToOne
+    @JoinColumn(name = "lokacija")
     private Lokacija lokacija;
     @OneToMany(mappedBy = "baznaKonverzijaKalkulacija", cascade = CascadeType.ALL)
     private List<TroskoviNabavke> troskoviNabavke;

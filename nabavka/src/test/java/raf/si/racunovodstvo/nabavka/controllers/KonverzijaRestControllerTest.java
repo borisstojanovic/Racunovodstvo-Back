@@ -1,6 +1,5 @@
 package raf.si.racunovodstvo.nabavka.controllers;
 
-import org.hibernate.boot.jaxb.hbm.spi.JaxbHbmCompositeKeyManyToOneType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import raf.si.racunovodstvo.nabavka.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.PreduzeceResponse;
@@ -30,7 +29,7 @@ class KonverzijaRestControllerTest {
     @Mock
     private KonverzijaService konverzijaService;
     @Mock
-    private RestTemplate restTemplate;
+    private PreduzeceFeignClient preduzeceFeignClient;
 
     private static final Long MOCK_ID = 1L;
 
@@ -47,11 +46,11 @@ class KonverzijaRestControllerTest {
     }
 
     @Test
-    void createKonverzija() throws IOException {
+    void createKonverzija() {
         KonverzijaRequest konverzija = new KonverzijaRequest();
-        konverzija.setDobavljacId(1L);
-        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok("{\"preduzeceId\":1}"));
-        ResponseEntity<?> responseEntity = konverzijaRestController.createKonverzija(konverzija, new String());
+        konverzija.setDobavljacId(MOCK_ID);
+        given(preduzeceFeignClient.getPreduzeceById(MOCK_ID, "")).willReturn(ResponseEntity.ok(new PreduzeceResponse()));
+        ResponseEntity<?> responseEntity = konverzijaRestController.createKonverzija(konverzija, "");
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 

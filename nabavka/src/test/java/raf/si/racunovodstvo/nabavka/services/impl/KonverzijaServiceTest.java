@@ -10,12 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaConverter;
+import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaRequestConverter;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
 import raf.si.racunovodstvo.nabavka.model.Lokacija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
 import raf.si.racunovodstvo.nabavka.repositories.LokacijaRepository;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
+import raf.si.racunovodstvo.nabavka.requests.LokacijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
 import raf.si.racunovodstvo.nabavka.specifications.RacunSpecification;
 import raf.si.racunovodstvo.nabavka.specifications.SearchCriteria;
@@ -47,6 +49,9 @@ class KonverzijaServiceTest {
 
     @Mock
     KonverzijaConverter konverzijaConverter;
+
+    @Mock
+    KonverzijaRequestConverter konverzijaRequestConverter;
 
     private Lokacija lokacija;
 
@@ -91,7 +96,7 @@ class KonverzijaServiceTest {
         konverzijaRequest.setBrojKonverzije("1234/22");
         konverzijaRequest.setValuta("EUR");
         konverzijaRequest.setKomentar("Brzo uneti");
-        konverzijaRequest.setLokacijaId(lokacija.getLokacijaId());
+        konverzijaRequest.setLokacija(new LokacijaRequest());
         konverzijaRequest.setDatum(new Date());
 
         konverzija = new Konverzija();
@@ -107,43 +112,37 @@ class KonverzijaServiceTest {
 
     @Test
     void deleteById() {
-
         konverzijaService.deleteById(MOCK_ID);
 
         then(konverzijaRepository).should(times(1)).deleteById(MOCK_ID);
-
     }
 
     @Test
     void saveKonverzija() {
-        given(konverzijaRepository.save(any(Konverzija.class))).willReturn(konverzija);
+        KonverzijaResponse konverzijaResponse = new KonverzijaResponse();
+        given(konverzijaRepository.save(konverzija)).willReturn(konverzija);
+        given(konverzijaConverter.convert(konverzija)).willReturn(konverzijaResponse);
+        given(konverzijaRequestConverter.convert(konverzijaRequest)).willReturn(konverzija);
 
-        assertEquals(konverzija, konverzijaService.saveKonverzija(konverzijaRequest));
+        assertEquals(konverzijaResponse, konverzijaService.saveKonverzija(konverzijaRequest));
     }
 
     @Test
     void findAll() {
-
         List<Konverzija> konverzijaList = new ArrayList<>();
         konverzijaList.add(konverzija);
-
         Pageable pageSort = PageRequest.of(0, 5, Sort.by(Sort.Order.asc("konverzijaId")));
-
         Specification<Konverzija> specification =
             new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
-
         KonverzijaResponse konverzijaResponse = new KonverzijaResponse();
-
-        Page<KonverzijaResponse> page = new PageImpl<>(konverzijaList.stream().map(konverzija1 -> konverzijaResponse)
-                                                                     .collect(Collectors.toList()));
-
         List<Konverzija> konverzijaList1 = konverzijaList.stream().map(konerzija1 -> konverzija).collect(Collectors.toList());
-        Page<Konverzija> pageKnjizenje = new PageImpl<>(konverzijaList1);
+        Page<Konverzija> pageKonverzija = new PageImpl<>(konverzijaList1);
+        given(konverzijaRepository.findAll(specification, pageSort)).willReturn(pageKonverzija);
+        given(konverzijaConverter.convert(konverzija)).willReturn(konverzijaResponse);
 
-        given(konverzijaRepository.findAll(specification, pageSort)).willReturn(pageKnjizenje);
-        given(konverzijaConverter.convert(konverzijaList1)).willReturn(page);
+        Page<KonverzijaResponse> result = konverzijaService.findAll(specification, pageSort);
 
-        assertEquals(page, konverzijaService.findAll(specification, pageSort));
-
+        assertEquals(1, result.getTotalElements());
+        assertEquals(konverzijaResponse, result.getContent().get(0));
     }
 }

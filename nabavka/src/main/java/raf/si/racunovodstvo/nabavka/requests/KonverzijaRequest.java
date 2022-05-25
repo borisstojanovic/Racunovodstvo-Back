@@ -7,10 +7,12 @@ import lombok.Setter;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnCreate;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnUpdate;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Getter
@@ -27,10 +29,14 @@ public class KonverzijaRequest {
     private Date datum;
     @NotNull(message = "dobavljacId je obavezna")
     private Long dobavljacId;
-    @NotNull(message = "lokacijaId je obavezna")
-    private Long lokacijaId;
     @NotNull(message = "valuta je obavezna")
     private String valuta;
+    @Valid
+    private LokacijaRequest lokacija;
+    @Valid
+    private List<TroskoviNabavkeRequest> troskoviNabavke;
+    private Double nabavnaCena;
+    private Double fakturnaCena;
     private String komentar;
 
 }
