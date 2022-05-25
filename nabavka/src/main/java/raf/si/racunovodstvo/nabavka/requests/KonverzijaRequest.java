@@ -32,11 +32,12 @@ public class KonverzijaRequest {
     @NotNull(message = "valuta je obavezna")
     private String valuta;
     @Valid
+    @NotNull
     private LokacijaRequest lokacija;
     @Valid
+    @NotNull
     private List<TroskoviNabavkeRequest> troskoviNabavke;
     private Double nabavnaCena;
     private Double fakturnaCena;
     private String komentar;
-
 }

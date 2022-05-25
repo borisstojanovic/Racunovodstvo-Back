@@ -3,18 +3,20 @@ package raf.si.racunovodstvo.nabavka.responses;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class KonverzijaResponse {
 
-    Long konverzijaId;
-    String brojKonverzije;
-    Date datum;
-    Long dobavljacId;
-    Long lokacijaId;
-    Double troskoviNabavkeSum;
-    Double fakturnaCena;
-    Double nabavnaCena;
-    String valuta;
-    String komentar;
+    private Long konverzijaId;
+    private String brojKonverzije;
+    private Date datum;
+    private Long dobavljacId;
+    private LokacijaResponse lokacija;
+    private List<TroskoviNabavkeResponse> troskoviNabavke;
+    private Double troskoviNabavkeSum;
+    private Double fakturnaCena;
+    private Double nabavnaCena;
+    private String valuta;
+    private String komentar;
 }

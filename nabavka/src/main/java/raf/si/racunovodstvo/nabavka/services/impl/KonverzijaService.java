@@ -9,6 +9,7 @@ import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.KonverzijaRequestConverter;
 import raf.si.racunovodstvo.nabavka.model.Konverzija;
+import raf.si.racunovodstvo.nabavka.model.Lokacija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.repositories.KonverzijaRepository;
 import raf.si.racunovodstvo.nabavka.repositories.LokacijaRepository;
@@ -16,7 +17,6 @@ import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
 import raf.si.racunovodstvo.nabavka.services.IKonverzijaService;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,8 +68,9 @@ public class KonverzijaService implements IKonverzijaService {
     }
 
     public KonverzijaResponse saveKonverzija(KonverzijaRequest konverzijaRequest) {
-        Konverzija saved = konverzijaRepository.save(konverzijaRequestConverter.convert(konverzijaRequest));
-        return konverzijaConverter.convert(saved);
+        Konverzija converted = konverzijaRequestConverter.convert(konverzijaRequest);
+        converted.setLokacija(getLokacijaForKonverzija(converted.getLokacija()));
+        return konverzijaConverter.convert(konverzijaRepository.save(converted));
     }
 
     @Override
@@ -84,5 +85,16 @@ public class KonverzijaService implements IKonverzijaService {
         Double ukupniTroskoviNabavke = konverzija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
         konverzija.setNabavnaCena(ukupniTroskoviNabavke + ukupnaFakturnaCena);
         return konverzijaRepository.save(konverzija);
+    }
+
+    private Lokacija getLokacijaForKonverzija(Lokacija lokacija) {
+        if (lokacija.getLokacijaId() == null) {
+            return lokacijaRepository.save(lokacija);
+        }
+        Optional<Lokacija> optionalLokacija = lokacijaRepository.findById(lokacija.getLokacijaId());
+        if (optionalLokacija.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        return optionalLokacija.get();
     }
 }

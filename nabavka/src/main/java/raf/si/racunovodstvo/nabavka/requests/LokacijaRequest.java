@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang.StringUtils;
 
 import javax.validation.constraints.AssertTrue;
 
@@ -20,7 +20,7 @@ public class LokacijaRequest {
 
     @AssertTrue(message = "Polja ne mogu biti prazna")
     public boolean isValid() {
-        return (lokacijaId != null && (Strings.isBlank(naziv) && Strings.isBlank(adresa))) ||
-            (lokacijaId == null && (Strings.isNotBlank(naziv) && Strings.isNotBlank(adresa)));
+        return (lokacijaId != null && StringUtils.isBlank(naziv) && StringUtils.isBlank(adresa)) ||
+            (lokacijaId == null && StringUtils.isNotBlank(naziv) && StringUtils.isNotBlank(adresa));
     }
 }

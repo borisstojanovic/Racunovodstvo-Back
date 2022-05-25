@@ -19,9 +19,6 @@ public class KonverzijaConverter implements IConverter<Konverzija, KonverzijaRes
     public KonverzijaResponse convert(Konverzija konverzija) {
         KonverzijaResponse response = modelMapper.map(konverzija, KonverzijaResponse.class);
         response.setKonverzijaId(konverzija.getId());
-        if (konverzija.getLokacija() != null) {
-            response.setLokacijaId(konverzija.getLokacija().getLokacijaId());
-        }
         Double troskoviNabavke = konverzija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
         response.setTroskoviNabavkeSum(troskoviNabavke);
         return response;
