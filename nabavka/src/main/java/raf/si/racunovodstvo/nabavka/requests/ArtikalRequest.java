@@ -28,17 +28,10 @@ public class ArtikalRequest {
     @NotNull
     private Double nabavnaCena;
     @NotNull
-    private Double nabavnaCenaPosleRabata;
-    @NotNull
-    private Double ukupnaNabavnaVrednost;
-    @NotNull
     private Double rabatProcenat;
-    @NotNull
-    private Double rabat;
     @NotNull
     private Long konverzijaKalkulacijaId;
     private Double marzaProcenat;
-    private Double marza;
     private Double prodajnaCena;
     private boolean aktivanZaProdaju;
     private Double porezProcenat;
