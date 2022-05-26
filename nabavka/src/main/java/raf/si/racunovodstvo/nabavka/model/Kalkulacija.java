@@ -42,8 +42,8 @@ public class Kalkulacija extends BaznaKonverzijaKalkulacija {
         this.setFakturnaCena(fakturnaCena);
         this.setProdajnaCena(prodajnaCena);
         if (this.getTroskoviNabavke() != null)
-            this.setNabavnaCena(fakturnaCena + this.getTroskoviNabavke().stream().map(TroskoviNabavke::getCena).reduce(Double::sum).orElse(0.0));
+            this.setNabavnaVrednost(fakturnaCena + this.getTroskoviNabavke().stream().map(TroskoviNabavke::getCena).reduce(Double::sum).orElse(0.0));
         else
-            this.setNabavnaCena(fakturnaCena);
+            this.setNabavnaVrednost(fakturnaCena);
     }
 }

@@ -83,7 +83,7 @@ public class KonverzijaService implements IKonverzijaService {
         Double ukupnaFakturnaCena = konverzija.getFakturnaCena() + increaseBy;
         konverzija.setFakturnaCena(ukupnaFakturnaCena);
         Double ukupniTroskoviNabavke = konverzija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
-        konverzija.setNabavnaCena(ukupniTroskoviNabavke + ukupnaFakturnaCena);
+        konverzija.setNabavnaVrednost(ukupniTroskoviNabavke + ukupnaFakturnaCena);
         return konverzijaRepository.save(konverzija);
     }
 

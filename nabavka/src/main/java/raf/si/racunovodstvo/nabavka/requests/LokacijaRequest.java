@@ -20,7 +20,6 @@ public class LokacijaRequest {
 
     @AssertTrue(message = "Polja ne mogu biti prazna")
     public boolean isValid() {
-        return (lokacijaId != null && StringUtils.isBlank(naziv) && StringUtils.isBlank(adresa)) ||
-            (lokacijaId == null && StringUtils.isNotBlank(naziv) && StringUtils.isNotBlank(adresa));
+        return lokacijaId != null || (StringUtils.isNotBlank(naziv) && StringUtils.isNotBlank(adresa));
     }
 }

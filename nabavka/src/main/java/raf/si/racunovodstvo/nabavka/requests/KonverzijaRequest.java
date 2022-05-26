@@ -37,7 +37,7 @@ public class KonverzijaRequest {
     @Valid
     @NotNull
     private List<TroskoviNabavkeRequest> troskoviNabavke;
-    private Double nabavnaCena;
+    private Double nabavnaVrednost;
     private Double fakturnaCena;
     private String komentar;
 }

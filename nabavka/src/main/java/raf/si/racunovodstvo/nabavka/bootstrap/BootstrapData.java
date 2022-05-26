@@ -64,7 +64,7 @@ public class BootstrapData implements CommandLineRunner {
         konverzija.setDobavljacId(1L);
         konverzija.setArtikli(new ArrayList<>());
         konverzija.setFakturnaCena(100D);
-        konverzija.setNabavnaCena(200D);
+        konverzija.setNabavnaVrednost(200D);
         konverzija.setValuta("RSD");
         konverzijaRepository.save(konverzija);
 
@@ -118,7 +118,7 @@ public class BootstrapData implements CommandLineRunner {
         kalkulacija.setDobavljacId(1L);
         kalkulacija.setArtikli(new ArrayList<>());
         kalkulacija.setFakturnaCena(100D);
-        kalkulacija.setNabavnaCena(200D);
+        kalkulacija.setNabavnaVrednost(200D);
         kalkulacija.setProdajnaCena(300D);
         kalkulacija.setValuta("RSD");
         return kalkulacija;

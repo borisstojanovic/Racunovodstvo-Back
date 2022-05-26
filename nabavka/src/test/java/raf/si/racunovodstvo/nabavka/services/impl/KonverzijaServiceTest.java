@@ -107,7 +107,7 @@ class KonverzijaServiceTest {
         konverzija.setLokacija(lokacija);
         konverzija.setDatum(new Date());
         konverzija.setFakturnaCena(0.0);
-        konverzija.setNabavnaCena(0.0);
+        konverzija.setNabavnaVrednost(0.0);
     }
 
     @Test

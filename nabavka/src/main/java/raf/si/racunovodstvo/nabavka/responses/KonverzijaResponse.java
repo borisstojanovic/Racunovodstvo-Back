@@ -16,7 +16,7 @@ public class KonverzijaResponse {
     private List<TroskoviNabavkeResponse> troskoviNabavke;
     private Double troskoviNabavkeSum;
     private Double fakturnaCena;
-    private Double nabavnaCena;
+    private Double nabavnaVrednost;
     private String valuta;
     private String komentar;
 }

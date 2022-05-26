@@ -31,7 +31,7 @@ public class BaznaKonverzijaKalkulacija {
     @Column(nullable = false)
     private Double fakturnaCena;
     @Column(nullable = false)
-    private Double nabavnaCena;
+    private Double nabavnaVrednost;
     @Column(nullable = false)
     private String valuta;
     @Column

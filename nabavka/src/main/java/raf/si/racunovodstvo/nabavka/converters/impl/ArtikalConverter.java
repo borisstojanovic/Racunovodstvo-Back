@@ -29,7 +29,6 @@ public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
     public Artikal convert(ArtikalRequest source) {
         if (source.isAktivanZaProdaju()) {
             KalkulacijaArtikal kalkulacijaArtikal = modelMapper.map(source, KalkulacijaArtikal.class);
-            calculateCommonFields(kalkulacijaArtikal);
             calculateKalkulacijaFields(kalkulacijaArtikal);
 
             Kalkulacija kalkulacija = iKalkulacijaService.increaseNabavnaAndProdajnaCena(source.getKonverzijaKalkulacijaId(),
@@ -40,7 +39,6 @@ public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
             return kalkulacijaArtikal;
         } else {
             KonverzijaArtikal konverzijaArtikal = modelMapper.map(source, KonverzijaArtikal.class);
-            calculateCommonFields(konverzijaArtikal);
 
             Konverzija konverzija = iKonverzijaService.increaseNabavnaCena(source.getKonverzijaKalkulacijaId(), konverzijaArtikal.getUkupnaNabavnaVrednost());
             konverzijaArtikal.setBaznaKonverzijaKalkulacija(konverzija);
@@ -55,11 +53,5 @@ public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
         artikal.setPorez(artikal.getProdajnaOsnovica() * artikal.getPorezProcenat() / 100);
         artikal.setOsnovica(artikal.getProdajnaOsnovica() * artikal.getKolicina());
         artikal.setUkupnaProdajnaVrednost(artikal.getProdajnaCena() * artikal.getKolicina());
-    }
-
-    private void calculateCommonFields(Artikal artikal) {
-        artikal.setRabat(artikal.getNabavnaCena() * artikal.getRabatProcenat());
-        artikal.setNabavnaCenaPosleRabata(artikal.getNabavnaCena() - artikal.getRabat());
-        artikal.setUkupnaNabavnaVrednost(artikal.getNabavnaCenaPosleRabata() * artikal.getKolicina());
     }
 }

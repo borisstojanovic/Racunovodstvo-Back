@@ -12,7 +12,6 @@ import raf.si.racunovodstvo.nabavka.model.Kalkulacija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.model.KalkulacijaArtikal;
 import raf.si.racunovodstvo.nabavka.repositories.KalkulacijaRepository;
-import raf.si.racunovodstvo.nabavka.repositories.LokacijaRepository;
 import raf.si.racunovodstvo.nabavka.requests.KalkulacijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KalkulacijaResponse;
 import raf.si.racunovodstvo.nabavka.services.IKalkulacijaService;
@@ -62,7 +61,7 @@ public class KalkulacijaService implements IKalkulacijaService {
         Double ukupnaFakturnaCena = kalkulacija.getFakturnaCena() + nabavnaCena;
         kalkulacija.setFakturnaCena(ukupnaFakturnaCena);
         Double ukupniTroskoviNabavke = kalkulacija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
-        kalkulacija.setNabavnaCena(ukupniTroskoviNabavke + ukupnaFakturnaCena);
+        kalkulacija.setNabavnaVrednost(ukupniTroskoviNabavke + ukupnaFakturnaCena);
         return kalkulacijaRepository.save(kalkulacija);
     }
 
