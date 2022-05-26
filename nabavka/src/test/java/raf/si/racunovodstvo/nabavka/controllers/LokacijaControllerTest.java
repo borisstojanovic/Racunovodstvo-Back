@@ -42,19 +42,9 @@ class LokacijaControllerTest {
 
     @Test
     void updateLokacija() {
-        given(lokacijaService.findById(MOCK_ID)).willReturn(Optional.of(getLokacija()));
-
         ResponseEntity<?> responseEntity = lokacijaController.updateLokacija(getLokacija());
 
         assertEquals(200, responseEntity.getStatusCodeValue());
-    }
-
-    @Test
-    void updateLokacijaException() {
-
-        given(lokacijaService.findById(MOCK_ID)).willReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> lokacijaController.updateLokacija(getLokacija()));
     }
 
     @Test
@@ -65,15 +55,7 @@ class LokacijaControllerTest {
 
     @Test
     void deleteLokacija() {
-        given(lokacijaService.findById(MOCK_ID)).willReturn(Optional.of(getLokacija()));
         ResponseEntity<?> responseEntity = lokacijaController.deleteLokacija(MOCK_ID);
         assertEquals(204, responseEntity.getStatusCodeValue());
     }
-
-    @Test
-    void deleteLokacijaException() {
-        assertThrows(EntityNotFoundException.class, () -> lokacijaController.deleteLokacija(MOCK_ID));
-    }
-
-
 }

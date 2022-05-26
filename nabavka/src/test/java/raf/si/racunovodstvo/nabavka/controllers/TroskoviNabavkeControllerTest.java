@@ -9,11 +9,7 @@ import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.services.impl.TroskoviNabavkeService;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class TroskoviNabavkeControllerTest {
@@ -42,19 +38,9 @@ class TroskoviNabavkeControllerTest {
 
     @Test
     void updateTroskoviNabavke() {
-        given(troskoviNabavkeService.findById(MOCK_ID)).willReturn(Optional.of(getTrosakNabavke()));
-
         ResponseEntity<?> responseEntity = troskoviNabavkeController.updateTroskoviNabavke(getTrosakNabavke());
 
         assertEquals(200, responseEntity.getStatusCodeValue());
-    }
-
-    @Test
-    void updateTroskoviNabavkeException() {
-
-        given(troskoviNabavkeService.findById(MOCK_ID)).willReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> troskoviNabavkeController.updateTroskoviNabavke(getTrosakNabavke()));
     }
 
     @Test
@@ -65,15 +51,7 @@ class TroskoviNabavkeControllerTest {
 
     @Test
     void deleteTroskoviNabavke() {
-        given(troskoviNabavkeService.findById(MOCK_ID)).willReturn(Optional.of(getTrosakNabavke()));
         ResponseEntity<?> responseEntity = troskoviNabavkeController.deleteTroskoviNabavke(MOCK_ID);
         assertEquals(204, responseEntity.getStatusCodeValue());
     }
-
-    @Test
-    void deleteTroskoviNabavkeException() {
-        assertThrows(EntityNotFoundException.class, () -> troskoviNabavkeController.deleteTroskoviNabavke(MOCK_ID));
-    }
-
-
 }

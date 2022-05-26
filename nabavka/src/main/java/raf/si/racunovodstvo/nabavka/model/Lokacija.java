@@ -1,5 +1,6 @@
 package raf.si.racunovodstvo.nabavka.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,7 @@ public class Lokacija {
     private String naziv;
     @Column(nullable = false)
     private String adresa;
+    @JsonIgnore
     @OneToMany(mappedBy = "lokacija")
     private List<BaznaKonverzijaKalkulacija> baznaKonverzijaKalkulacijaList;
 }

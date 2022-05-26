@@ -7,6 +7,7 @@ import raf.si.racunovodstvo.nabavka.repositories.TroskoviNabavkeRepository;
 import raf.si.racunovodstvo.nabavka.services.ITroskoviNabavkeService;
 
 import javax.persistence.EntityNotFoundException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public class TroskoviNabavkeService implements ITroskoviNabavkeService {
     private final TroskoviNabavkeRepository troskoviNabavkeRepository;
 
     @Autowired
-    public TroskoviNabavkeService(TroskoviNabavkeRepository troskoviNabavkeRepository){
+    public TroskoviNabavkeService(TroskoviNabavkeRepository troskoviNabavkeRepository) {
         this.troskoviNabavkeRepository = troskoviNabavkeRepository;
     }
 
@@ -27,14 +28,15 @@ public class TroskoviNabavkeService implements ITroskoviNabavkeService {
 
     @Override
     public TroskoviNabavke update(TroskoviNabavke troskoviNabavke) {
-        if (troskoviNabavkeRepository.findByTroskoviNabavkeId(troskoviNabavke.getTroskoviNabavkeId()).isPresent())
+        if (troskoviNabavkeRepository.findById(troskoviNabavke.getTroskoviNabavkeId()).isPresent()) {
             return troskoviNabavkeRepository.save(troskoviNabavke);
+        }
         throw new EntityNotFoundException();
     }
 
     @Override
     public Optional<TroskoviNabavke> findById(Long id) {
-        return troskoviNabavkeRepository.findByTroskoviNabavkeId(id);
+        return troskoviNabavkeRepository.findById(id);
     }
 
     @Override
@@ -44,12 +46,10 @@ public class TroskoviNabavkeService implements ITroskoviNabavkeService {
 
     @Override
     public void deleteById(Long id) {
-        Optional<TroskoviNabavke> optionalTroskoviNabavke = troskoviNabavkeRepository.findByTroskoviNabavkeId(id);
-        if (optionalTroskoviNabavke.isPresent()) {
-            troskoviNabavkeRepository.deleteById(id);
+        Optional<TroskoviNabavke> optionalTroskoviNabavke = troskoviNabavkeRepository.findById(id);
+        if (optionalTroskoviNabavke.isEmpty()) {
+            throw new EntityNotFoundException();
         }
-        throw new EntityNotFoundException();
+        troskoviNabavkeRepository.deleteById(id);
     }
-
-
 }

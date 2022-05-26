@@ -46,11 +46,9 @@ public class LokacijaService implements ILokacijaService {
     @Override
     public void deleteById(Long id) {
         Optional<Lokacija> optionalLokacija = lokacijaRepository.findByLokacijaId(id);
-        if (optionalLokacija.isPresent()) {
-            lokacijaRepository.deleteById(id);
+        if (optionalLokacija.isEmpty()) {
+            throw new EntityNotFoundException();
         }
-        throw new EntityNotFoundException();
+        lokacijaRepository.deleteById(id);
     }
-
-
 }
