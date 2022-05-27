@@ -1,7 +1,11 @@
 package raf.si.racunovodstvo.preduzece.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.preduzece.constants.RedisConstants;
 import raf.si.racunovodstvo.preduzece.model.Plata;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
 import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
@@ -19,7 +23,7 @@ import javax.persistence.EntityNotFoundException;
 public class PlataService implements IService<Plata, Long> {
 
     private final PlataRepository plataRepository;
-    private ZaposleniService zaposleniService;
+    private final ZaposleniService zaposleniService;
     private final KoeficijentService koeficijentService;
 
 
@@ -30,10 +34,12 @@ public class PlataService implements IService<Plata, Long> {
     }
 
     @Override
+    @CachePut(value = RedisConstants.PLATA_CACHE, key = "#var1.plataId")
     public <S extends Plata> S save(S var1) {
         return this.plataRepository.save(var1);
     }
 
+    @CachePut(value = RedisConstants.PLATA_CACHE, key = "#plataRequest.plataId")
     public Plata save(PlataRequest plataRequest) {
         Optional<Zaposleni> optionalZaposleni = zaposleniService.findById(plataRequest.getZaposleniId());
 
@@ -66,11 +72,13 @@ public class PlataService implements IService<Plata, Long> {
     }
 
     @Override
+    @Cacheable(value = RedisConstants.PLATA_CACHE, key = "#var1")
     public Optional<Plata> findById(Long var1) {
         return this.plataRepository.findByPlataId(var1);
     }
 
     @Override
+    @Cacheable(value = RedisConstants.PLATA_CACHE)
     public List<Plata> findAll() {
         return this.plataRepository.findAll();
     }
@@ -80,6 +88,7 @@ public class PlataService implements IService<Plata, Long> {
     }
 
     @Override
+    @CacheEvict(value = RedisConstants.PLATA_CACHE, key = "#var1")
     public void deleteById(Long var1) {
         this.plataRepository.deleteById(var1);
     }

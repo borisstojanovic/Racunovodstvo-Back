@@ -25,6 +25,18 @@ services:
     depends_on:
       - eureka
 
+  redis_db:
+    image: redis:6.2.5-alpine
+    container_name: redis_db
+    hostname: redis_db
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-dbdata:/data
+    networks:
+      - racunovodstvo
+
   mysql_db:
     image: docker.io/bitnami/mysql:8.0
     hostname: mysql_db
@@ -75,6 +87,8 @@ services:
       MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
+      REDIS_HOST: redis_db
+      REDIS_PORT: 6379
       REGISTRY_HOST: eureka
     ports:
       - "8082:8080"
@@ -83,6 +97,7 @@ services:
     depends_on:
       - mysql_db
       - mysql_slave
+      - redis_db
       - eureka
       - gateway
 
@@ -97,6 +112,8 @@ services:
       MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
+      REDIS_HOST: redis_db
+      REDIS_PORT: 6379
       REGISTRY_HOST: eureka
     ports:
       - "8081:8080"
@@ -104,6 +121,8 @@ services:
       - racunovodstvo
     depends_on:
       - mysql_db
+      - mysql_slave
+      - redis_db
       - eureka
       - gateway
 
@@ -118,6 +137,8 @@ services:
       MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
+      REDIS_HOST: redis_db
+      REDIS_PORT: 6379
       REGISTRY_HOST: eureka
     ports:
       - "8083:8080"
@@ -125,6 +146,8 @@ services:
       - racunovodstvo
     depends_on:
       - mysql_db
+      - mysql_slave
+      - redis_db
       - eureka
       - gateway
 
@@ -139,7 +162,9 @@ services:
 volumes:
   db:
     driver: local
+  redis-dbdata:
+    driver: local
 
 networks:
   racunovodstvo:
-    name: racunovodstvo
+    driver: bridge

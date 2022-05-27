@@ -1,7 +1,11 @@
 package raf.si.racunovodstvo.preduzece.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.preduzece.constants.RedisConstants;
 import raf.si.racunovodstvo.preduzece.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.preduzece.model.Staz;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
@@ -19,7 +23,6 @@ import javax.persistence.EntityNotFoundException;
 @Service
 public class ZaposleniService implements IZaposleniService {
 
-
     private final ZaposleniRepository zaposleniRepository;
     private final StazService stazService;
 
@@ -30,6 +33,7 @@ public class ZaposleniService implements IZaposleniService {
     }
 
     @Override
+    @CachePut(value = RedisConstants.ZAPOSLENI_CACHE, key = "#zaposleni.zaposleniId")
     public <S extends Zaposleni> S save(S zaposleni) {
         Staz newStaz = new Staz();
         newStaz.setPocetakRada(new Date());
@@ -43,6 +47,7 @@ public class ZaposleniService implements IZaposleniService {
     }
 
     @Override
+    @Cacheable(value = RedisConstants.ZAPOSLENI_CACHE, key = "#id")
     public Optional<Zaposleni> findById(Long id) {
         return zaposleniRepository.findById(id);
     }
@@ -53,6 +58,7 @@ public class ZaposleniService implements IZaposleniService {
     }
 
     @Override
+    @CacheEvict(value = RedisConstants.ZAPOSLENI_CACHE, key = "#id")
     public void deleteById(Long id) {
         zaposleniRepository.deleteById(id);
     }
@@ -63,6 +69,7 @@ public class ZaposleniService implements IZaposleniService {
     }
 
     @Override
+    @CachePut(value = RedisConstants.ZAPOSLENI_CACHE, key = "#zaposleni.zaposleniId")
     public Zaposleni otkazZaposleni(Zaposleni zaposleni) {
 
         Optional<Zaposleni> currZaposleni = zaposleniRepository.findById(zaposleni.getZaposleniId());
@@ -84,6 +91,7 @@ public class ZaposleniService implements IZaposleniService {
     }
 
     @Override
+    @CachePut(value = RedisConstants.ZAPOSLENI_CACHE, key = "#zaposleni.zaposleniId")
     public Zaposleni updateZaposleni(Zaposleni zaposleni) {
 
         Optional<Zaposleni> currZaposleni = zaposleniRepository.findById(zaposleni.getZaposleniId());

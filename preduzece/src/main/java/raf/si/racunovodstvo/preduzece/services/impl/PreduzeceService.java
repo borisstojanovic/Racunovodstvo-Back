@@ -1,8 +1,12 @@
 package raf.si.racunovodstvo.preduzece.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.preduzece.constants.RedisConstants;
 import raf.si.racunovodstvo.preduzece.model.Preduzece;
 import raf.si.racunovodstvo.preduzece.repositories.PreduzeceRepository;
 import raf.si.racunovodstvo.preduzece.services.IService;
@@ -25,12 +29,14 @@ public class PreduzeceService implements IService<Preduzece, Long> {
     }
 
     @Override
+    @CachePut(value = RedisConstants.PREDUZECE_CACHE, key = "#preduzece.preduzeceId")
     public Preduzece save(Preduzece preduzece) {
         preduzece.setIsActive(true);
         return preduzeceRepository.save(preduzece);
     }
 
     @Override
+    @Cacheable(value = RedisConstants.PREDUZECE_CACHE, key = "#id")
     public Optional<Preduzece> findById(Long id) {
         return preduzeceRepository.findByPreduzeceId(id);
     }
@@ -42,6 +48,7 @@ public class PreduzeceService implements IService<Preduzece, Long> {
     }
 
     @Override
+    @CacheEvict(value = RedisConstants.PREDUZECE_CACHE, key = "#id")
     public void deleteById(Long id) {
         Optional<Preduzece> optionalPreduzece = preduzeceRepository.findByPreduzeceId(id);
         if (optionalPreduzece.isPresent()) {
