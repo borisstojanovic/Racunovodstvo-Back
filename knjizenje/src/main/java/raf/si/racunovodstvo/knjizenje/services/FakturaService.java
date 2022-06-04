@@ -1,10 +1,14 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.constants.RedisConstants;
 import raf.si.racunovodstvo.knjizenje.model.Faktura;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipDokumenta;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
@@ -77,10 +81,12 @@ public class FakturaService implements IFakturaService {
         return Utils.sum(fakture);
     }
 
+    @Cacheable(value = RedisConstants.FAKTURA_CACHE, key = "#id")
     public Optional<Faktura> findById(Long id){
         return fakturaRepository.findByDokumentId(id);
     }
 
+    @CachePut(value = RedisConstants.FAKTURA_CACHE, key = "#faktura.dokumentId")
     public Faktura save(Faktura faktura){
         Double prodajnaVrednost = faktura.getProdajnaVrednost();
         Double rabatProcenat = faktura.getRabatProcenat();
@@ -110,6 +116,7 @@ public class FakturaService implements IFakturaService {
         return fakturaRepository.save(faktura);
     }
 
+    @CacheEvict(value = RedisConstants.FAKTURA_CACHE, key = "#id")
     public void deleteById(Long id) {
         fakturaRepository.deleteById(id);
     }

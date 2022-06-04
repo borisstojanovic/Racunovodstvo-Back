@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.util.ReflectionTestUtils;
 import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
@@ -86,6 +87,8 @@ class KnjizenjeServiceTest {
         knjizenje = new Knjizenje();
         knjizenje.setKnjizenjeId(1L);
         knjizenje.setKonto(List.of(konto1, konto2, konto3));
+
+        ReflectionTestUtils.setField(knjizenjeService, "knjizenjeConverter", knjizenjeConverter);
     }
 
     @Test
