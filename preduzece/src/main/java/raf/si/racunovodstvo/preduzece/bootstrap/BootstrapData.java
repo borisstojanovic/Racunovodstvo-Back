@@ -87,6 +87,7 @@ public class BootstrapData implements CommandLineRunner {
         Zaposleni zaposleni = new Zaposleni();
         zaposleni.setIme("Marko");
         zaposleni.setPrezime("Markovic");
+        zaposleni.setPreduzece(p1);
         zaposleni.setPocetakRadnogOdnosa(new Date());
         zaposleni.setJmbg("1234567890123");
         zaposleni.setGrad("Beograd");

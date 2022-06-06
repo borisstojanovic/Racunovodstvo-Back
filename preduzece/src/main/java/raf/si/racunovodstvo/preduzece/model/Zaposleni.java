@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name = "zaposleni")
 @Getter
 @Setter
 public class Zaposleni {
@@ -63,7 +63,7 @@ public class Zaposleni {
     private String stepenObrazovanja;
     @Column
     private Long brojRadneKnjizice;
-    @OneToMany
+    @OneToMany(mappedBy = "zaposleni")
     private List<Staz> staz;
     @Column
     @Enumerated(EnumType.STRING)

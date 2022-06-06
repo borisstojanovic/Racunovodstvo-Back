@@ -1,19 +1,23 @@
 package raf.si.racunovodstvo.preduzece.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.NumberFormat;
+
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name = "preduzece")
 @Getter
 @Setter
 public class Preduzece {
@@ -50,4 +54,7 @@ public class Preduzece {
     private String komentar;
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive;
+    @OneToMany(mappedBy = "preduzece")
+    @JsonIgnore
+    private List<Zaposleni> zaposleni;
 }
