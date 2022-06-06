@@ -25,7 +25,7 @@ public class PermissionService implements IService<Permission, Long> {
 
     @Override
     @CachePut(value = RedisConstants.PERMISSION_CACHE, key = "#permission.id")
-    public  Permission  save(Permission permission) {
+    public Permission save(Permission permission) {
         return permissionRepository.save(permission);
     }
 
