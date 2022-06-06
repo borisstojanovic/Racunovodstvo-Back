@@ -54,7 +54,7 @@ public class Preduzece {
     private String komentar;
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive;
-    @OneToMany(mappedBy = "preduzece")
     @JsonIgnore
+    @OneToMany(mappedBy = "preduzece")
     private List<Zaposleni> zaposleni;
 }

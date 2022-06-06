@@ -10,20 +10,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
-import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
+import raf.si.racunovodstvo.knjizenje.converter.impl.KnjizenjeConverter;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
-import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
+
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
 import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
 
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -92,7 +92,7 @@ class KnjizenjeServiceTest {
     }
 
     @Test
-    void save(){
+    void save() {
         Dokument dokument = new Dokument();
         String brojDokumenta = new String();
         dokument.setBrojDokumenta(brojDokumenta);
@@ -105,7 +105,7 @@ class KnjizenjeServiceTest {
     }
 
     @Test
-    void saveWithoutDocument(){
+    void saveWithoutDocument() {
         Dokument dokument = new Dokument();
         String brojDokumenta = new String();
         dokument.setBrojDokumenta(brojDokumenta);
@@ -171,13 +171,13 @@ class KnjizenjeServiceTest {
     }
 
     @Test
-    void findAllKnjizenjeResponse(){
+    void findAllKnjizenjeResponse() {
         List<KnjizenjeResponse> knjizenjeResponseList = new ArrayList<>();
         List<Knjizenje> knjizenja = new ArrayList<>();
 
         KnjizenjeResponse knjizenjeResponse = new KnjizenjeResponse();
         Page<KnjizenjeResponse> page = new PageImpl<>(knjizenja.stream().map(knjizenje -> knjizenjeResponse)
-                .collect(Collectors.toList()));
+                                                               .collect(Collectors.toList()));
         given(knjizenjeRepository.findAll()).willReturn(knjizenja);
         given(knjizenjeConverter.convert(knjizenja)).willReturn(page);
         assertEquals(knjizenjeResponseList, knjizenjeService.findAllKnjizenjeResponse());
@@ -185,7 +185,7 @@ class KnjizenjeServiceTest {
     }
 
     @Test
-    void findAll(){
+    void findAll() {
         List<Knjizenje> knjizenjeList = new ArrayList<>();
         Knjizenje knjizenje = new Knjizenje();
         knjizenjeList.add(knjizenje);
@@ -193,15 +193,15 @@ class KnjizenjeServiceTest {
         Pageable pageSort = PageRequest.of(0, 5, Sort.by(Sort.Order.asc("knjizenjeId")));
 
         Specification<Knjizenje> specification =
-                new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
+            new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
 
         KnjizenjeResponse knjizenjeResponse = new KnjizenjeResponse();
 
         Page<KnjizenjeResponse> page = new PageImpl<>(knjizenjeList.stream().map(knjizenje1 -> knjizenjeResponse)
-                .collect(Collectors.toList()));
+                                                                   .collect(Collectors.toList()));
 
         Page<Knjizenje> pageKnjizenje = new PageImpl<>(knjizenjeList.stream().map(knjizenje1 -> knjizenje)
-                .collect(Collectors.toList()));
+                                                                    .collect(Collectors.toList()));
 
         lenient().when(knjizenjeRepository.findAll(specification, pageSort)).thenReturn(pageKnjizenje);
         lenient().when(knjizenjeConverter.convert(knjizenjeList)).thenReturn(page);

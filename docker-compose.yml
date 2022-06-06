@@ -129,6 +129,7 @@ services:
   preduzece_service:
     image: ghcr.io/raf-si-2021/racunovodstvo-preduzece:latest
     hostname: preduzece
+    container_name: preduzece
     restart: unless-stopped
     env_file: .env
     environment:
@@ -148,6 +149,25 @@ services:
       - mysql_db
       - mysql_slave
       - redis_db
+      - eureka
+      - gateway
+
+  nabavka_service:
+    image: racunovodstvo/repo:nabavka
+    hostname: nabavka
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_HOST: mysql_db
+      REGISTRY_HOST: eureka
+    ports:
+      - "8084:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
       - eureka
       - gateway
 
