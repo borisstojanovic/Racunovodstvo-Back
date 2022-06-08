@@ -130,14 +130,15 @@ services:
       - gateway
 
   knjizenje_service:
-    image: ghcr.io/raf-si-2021/racunovodstvo-knjizenje:latest
+    image: knjizenje-service-test
     hostname: knjizenje
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
-      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER0_HOST: jdbc:mysql://mysql_db:3306/knjizenje?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/knjizenje?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/knjizenje?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REDIS_HOST: redis_db

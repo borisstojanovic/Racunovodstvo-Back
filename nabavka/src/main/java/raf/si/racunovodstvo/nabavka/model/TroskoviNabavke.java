@@ -3,6 +3,8 @@ package raf.si.racunovodstvo.nabavka.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Entity(name = "troskovi_nabavke")
 @Getter
 @Setter
-public class TroskoviNabavke {
+public class TroskoviNabavke implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
