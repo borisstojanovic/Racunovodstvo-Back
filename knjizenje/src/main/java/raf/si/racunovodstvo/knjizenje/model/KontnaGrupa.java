@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 
-@Entity
+@Entity(name = "kontna_grupa")
 @Getter
 @Setter
 public class KontnaGrupa {

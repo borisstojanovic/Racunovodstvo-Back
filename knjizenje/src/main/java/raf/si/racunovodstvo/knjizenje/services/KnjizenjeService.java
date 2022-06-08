@@ -56,10 +56,10 @@ public class KnjizenjeService implements IKnjizenjeService {
 
     @Override
     @Caching(
-        put = @CachePut(value = RedisConstants.KNJIZENJE_CACHE, key = "#knjizenje.knjizenjeId"),
+        put = @CachePut(value = RedisConstants.KNJIZENJE_CACHE, key = "#result.knjizenjeId"),
         evict = {
-            @CacheEvict(value = RedisConstants.SUMA_POTRAZUJE_CACHE, key = "#knjizenje.knjizenjeId"),
-            @CacheEvict(value = RedisConstants.SUMA_DUGUJE_CACHE, key = "#knjizenje.knjizenjeId")
+            @CacheEvict(value = RedisConstants.SUMA_POTRAZUJE_CACHE, key = "#result.knjizenjeId"),
+            @CacheEvict(value = RedisConstants.SUMA_DUGUJE_CACHE, key = "#result.knjizenjeId")
         })
     public Knjizenje save(Knjizenje knjizenje) {
 
@@ -83,7 +83,7 @@ public class KnjizenjeService implements IKnjizenjeService {
         newKnjizenje = knjizenjeRepository.save(newKnjizenje);
 
         for (Konto konto : kontoList) {
-            if (konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()) {
+            if (konto.getKontoId() == null || kontoService.findById(konto.getKontoId()).isEmpty()) {
                 konto.setKnjizenje(newKnjizenje);
                 kontoService.save(konto);
             }

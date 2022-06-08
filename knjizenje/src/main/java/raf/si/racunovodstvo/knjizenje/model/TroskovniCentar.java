@@ -11,13 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-@Entity
+@Entity(name = "troskovni_centar")
 @Getter
 @Setter
 public class TroskovniCentar extends BazniCentar {
 
     @ManyToOne
-    @JoinColumn(name = "parentId", nullable = false)
+    @JoinColumn(name = "parentId")
     private TroskovniCentar parentTroskovniCentar;
     @JsonIgnore
     @OneToMany(mappedBy = "parentTroskovniCentar")

@@ -34,7 +34,7 @@ public class KontoService implements IService<Konto, Long> {
     }
 
     @Override
-    @CachePut(value = RedisConstants.KONTO_CACHE, key = "#konto.kontoId")
+    @CachePut(value = RedisConstants.KONTO_CACHE, key = "#result.kontoId")
     public Konto save(Konto konto) {
         return kontoRepository.save(konto);
     }

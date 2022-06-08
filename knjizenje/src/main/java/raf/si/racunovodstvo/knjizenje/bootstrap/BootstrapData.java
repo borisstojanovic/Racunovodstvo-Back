@@ -177,10 +177,10 @@ public class BootstrapData implements CommandLineRunner {
         knj4.setDokument(f2);
         knj3.setBrojNaloga("N13S3");
         knj4.setBrojNaloga("N23FF3");
-        this.knjizenjeRepository.save(knj1);
-        this.knjizenjeRepository.save(knj2);
-        this.knjizenjeRepository.save(knj3);
-        this.knjizenjeRepository.save(knj4);
+        knj1 = this.knjizenjeRepository.save(knj1);
+        knj2 = this.knjizenjeRepository.save(knj2);
+        knj3 = this.knjizenjeRepository.save(knj3);
+        knj4 = this.knjizenjeRepository.save(knj4);
 
         Konto k1 = createKonto(kg1, knj1, 1299.0, 900.0);
         Konto k2 = createKonto(kg2, knj2, 1300.0, 848.0);
@@ -229,7 +229,7 @@ public class BootstrapData implements CommandLineRunner {
         Knjizenje knjizenje = new Knjizenje();
 
         kontoRepository.save(konto1);
-        knjizenje.setKnjizenjeId(1L);
+        knjizenje.setKnjizenjeId(knj1.getKnjizenjeId());
         knjizenje.setKonto(List.of(konto1, konto2, konto3));
         knjizenje.setDatumKnjizenja(new Date());
         knjizenje.setBrojNaloga("N 1234");

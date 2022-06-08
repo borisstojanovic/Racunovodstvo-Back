@@ -12,7 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-@Entity
+@Entity(name = "faktura")
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "fakturaId")

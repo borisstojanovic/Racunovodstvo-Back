@@ -16,7 +16,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Entity
+@Entity(name = "bazni_centar")
 @Getter
 @Setter
 public abstract class BazniCentar {

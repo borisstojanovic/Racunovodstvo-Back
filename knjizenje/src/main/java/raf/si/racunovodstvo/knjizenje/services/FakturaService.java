@@ -86,7 +86,7 @@ public class FakturaService implements IFakturaService {
         return fakturaRepository.findByDokumentId(id);
     }
 
-    @CachePut(value = RedisConstants.FAKTURA_CACHE, key = "#faktura.dokumentId")
+    @CachePut(value = RedisConstants.FAKTURA_CACHE, key = "#result.dokumentId")
     public Faktura save(Faktura faktura){
         Double prodajnaVrednost = faktura.getProdajnaVrednost();
         Double rabatProcenat = faktura.getRabatProcenat();

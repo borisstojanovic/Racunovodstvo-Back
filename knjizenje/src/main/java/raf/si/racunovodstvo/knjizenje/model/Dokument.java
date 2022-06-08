@@ -18,7 +18,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
-@Entity
+@Entity(name = "dokument")
 @Getter
 @Setter
 @Inheritance(strategy = InheritanceType.JOINED)
