@@ -1,11 +1,13 @@
 package raf.si.racunovodstvo.preduzece.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import raf.si.racunovodstvo.preduzece.model.enums.PolZaposlenog;
 import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +29,7 @@ import javax.validation.constraints.Size;
 @Entity(name = "zaposleni")
 @Getter
 @Setter
-public class Zaposleni {
+public class Zaposleni implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +67,9 @@ public class Zaposleni {
     private Long brojRadneKnjizice;
     @OneToMany(mappedBy = "zaposleni")
     private List<Staz> staz;
+    @JsonIgnore
+    @OneToMany(mappedBy = "zaposleni")
+    private List<Plata> plata;
     @Column
     @Enumerated(EnumType.STRING)
     private StatusZaposlenog statusZaposlenog;

@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.preduzece.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @Entity(name = "plata")
 @Getter
 @Setter
-public class Plata {
+public class Plata implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,7 +11,8 @@ services:
       - racunovodstvo
 
   gateway:
-    image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
+    #image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
+    image: gateway-test
     hostname: gateway
     restart: always
     ports:
@@ -38,7 +39,7 @@ services:
       - racunovodstvo
 
   mysql_db:
-    image: docker.io/bitnami/mysql:8.0
+    image: docker.io/bitnami/mysql:latest
     hostname: mysql_db
     container_name: mysql_db
     env_file: .env
@@ -46,6 +47,7 @@ services:
       - "3306"
     volumes:
       - db:/bitnami/mysql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     environment:
       MYSQL_REPLICATION_MODE: master
       MYSQL_REPLICATION_USER: repl_user
@@ -56,7 +58,7 @@ services:
       - racunovodstvo
 
   mysql_slave:
-    image: docker.io/bitnami/mysql:8.0
+    image: docker.io/bitnami/mysql:latest
     hostname: mysql_slave
     container_name: mysql_slave
     env_file: .env
@@ -64,6 +66,8 @@ services:
       - "3306"
     depends_on:
       - mysql_db
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     environment:
       MYSQL_REPLICATION_MODE: slave
       MYSQL_REPLICATION_USER: repl_user
@@ -75,16 +79,40 @@ services:
     networks:
       - racunovodstvo
 
+  mysql_slave_1:
+    image: docker.io/bitnami/mysql:latest
+    hostname: mysql_slave_1
+    container_name: mysql_slave_1
+    env_file: .env
+    ports:
+      - "3306"
+    depends_on:
+      - mysql_db
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    environment:
+      MYSQL_REPLICATION_MODE: slave
+      MYSQL_REPLICATION_USER: repl_user
+      MYSQL_REPLICATION_PASSWORD: $MYSQL_REPLICATION_PASSWORD
+      MYSQL_DATABASE: $MYSQL_NAME
+      MYSQL_MASTER_HOST: mysql_db
+      MYSQL_MASTER_PORT_NUMBER: 3306
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+    networks:
+      - racunovodstvo
+
+
   user_service:
-    image: ghcr.io/raf-si-2021/racunovodstvo-user:latest
+    image: user-service-test
     hostname: user
     container_name: user
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
-      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER0_HOST: jdbc:mysql://mysql_db:3306/user?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/user?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/user?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REDIS_HOST: redis_db
@@ -127,15 +155,16 @@ services:
       - gateway
 
   preduzece_service:
-    image: ghcr.io/raf-si-2021/racunovodstvo-preduzece:latest
+    image: preduzece-service-test
     hostname: preduzece
     container_name: preduzece
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
-      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER0_HOST: jdbc:mysql://mysql_db:3306/preduzece?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/preduzece?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/preduzece?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REDIS_HOST: redis_db

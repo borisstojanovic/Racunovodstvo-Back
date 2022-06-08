@@ -11,9 +11,7 @@ import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 import raf.si.racunovodstvo.preduzece.repositories.*;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class BootstrapData implements CommandLineRunner {
@@ -64,18 +62,6 @@ public class BootstrapData implements CommandLineRunner {
         this.preduzeceRepository.save(p2);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Staz staz = new Staz();
-        staz.setPocetakRada(simpleDateFormat.parse("08-08-2010"));
-        staz.setKrajRada(null);
-        stazRepository.save(staz);
-
-        Staz staz2 = new Staz();
-        staz2.setPocetakRada(new Date());
-        staz2.setKrajRada(null);
-        stazRepository.save(staz2);
-
-        List<Staz> stazevi = new ArrayList<>();
-        stazevi.add(staz);
 
         Zaposleni zaposleni = new Zaposleni();
         zaposleni.setIme("Marko");
@@ -89,10 +75,10 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         zaposleni.setDatumRodjenja(new Date());
         zaposleni.setRadnaPozicija(RadnaPozicija.DIREKTOR);
-        zaposleni.setStaz(stazevi);
         zaposleniRepository.save(zaposleni);
 
         Zaposleni zaposleni2 = new Zaposleni();
+        zaposleni2.setPreduzece(p1);
         zaposleni2.setIme("Petar");
         zaposleni2.setPrezime("Peric");
         zaposleni2.setPocetakRadnogOdnosa(new Date());
@@ -103,8 +89,19 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni2.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         zaposleni2.setDatumRodjenja(new Date());
         zaposleni2.setRadnaPozicija(RadnaPozicija.MENADZER);
-        zaposleni2.setStaz(List.of(staz2));
         zaposleniRepository.save(zaposleni2);
+
+        Staz staz = new Staz();
+        staz.setPocetakRada(simpleDateFormat.parse("08-08-2010"));
+        staz.setKrajRada(null);
+        staz.setZaposleni(zaposleni);
+        stazRepository.save(staz);
+
+        Staz staz2 = new Staz();
+        staz2.setPocetakRada(new Date());
+        staz2.setKrajRada(null);
+        staz2.setZaposleni(zaposleni2);
+        stazRepository.save(staz2);
 
         Plata plata = new Plata();
         plata.setNetoPlata(100000.0);

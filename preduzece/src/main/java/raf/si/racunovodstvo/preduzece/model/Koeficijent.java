@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.preduzece.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,7 +15,7 @@ import javax.persistence.Id;
 @Entity(name = "koeficijent")
 @Getter
 @Setter
-public class Koeficijent {
+public class Koeficijent implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

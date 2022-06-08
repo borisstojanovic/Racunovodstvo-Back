@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.NumberFormat;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -20,7 +21,7 @@ import javax.validation.constraints.Size;
 @Entity(name = "preduzece")
 @Getter
 @Setter
-public class Preduzece {
+public class Preduzece implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

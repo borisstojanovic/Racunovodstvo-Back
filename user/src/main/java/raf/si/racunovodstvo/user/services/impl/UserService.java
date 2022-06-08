@@ -27,7 +27,7 @@ public class UserService implements UserDetailsService, IService<User, Long> {
     }
 
     @Override
-    @CachePut(value = RedisConstants.USER_CACHE, key = "#user.userId")
+    @CachePut(value = RedisConstants.USER_CACHE, key = "#result.userId")
     public User save(User user) {
         return userRepository.save(user);
     }

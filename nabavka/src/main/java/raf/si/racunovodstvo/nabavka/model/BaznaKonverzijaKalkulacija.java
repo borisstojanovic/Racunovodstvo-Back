@@ -10,14 +10,14 @@ import java.util.List;
 import javax.persistence.*;
 
 @EntityListeners(BaznaKonverzijaKalkulacijaAuditor.class)
-@Entity
+@Entity(name = "bazna_konverzija_kalkulacija")
 @Getter
 @Setter
 @Inheritance(strategy = InheritanceType.JOINED)
 public class BaznaKonverzijaKalkulacija {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private Date datum;

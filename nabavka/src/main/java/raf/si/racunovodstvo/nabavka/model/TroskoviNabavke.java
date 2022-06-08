@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "troskovi_nabavke")
 @Getter
 @Setter
 public class TroskoviNabavke {

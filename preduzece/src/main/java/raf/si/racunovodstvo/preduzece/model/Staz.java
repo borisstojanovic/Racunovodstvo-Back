@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +18,7 @@ import javax.persistence.ManyToOne;
 @Entity(name = "staz")
 @Getter
 @Setter
-public class Staz {
+public class Staz implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

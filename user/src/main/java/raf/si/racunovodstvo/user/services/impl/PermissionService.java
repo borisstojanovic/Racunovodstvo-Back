@@ -24,7 +24,7 @@ public class PermissionService implements IService<Permission, Long> {
     }
 
     @Override
-    @CachePut(value = RedisConstants.PERMISSION_CACHE, key = "#permission.id")
+    @CachePut(value = RedisConstants.PERMISSION_CACHE, key = "#result.id")
     public Permission save(Permission permission) {
         return permissionRepository.save(permission);
     }
@@ -36,7 +36,6 @@ public class PermissionService implements IService<Permission, Long> {
     }
 
     @Override
-    @Cacheable(value = RedisConstants.PERMISSION_CACHE)
     public List<Permission> findAll() {
         return permissionRepository.findAll();
     }
