@@ -9,6 +9,7 @@ import raf.si.racunovodstvo.nabavka.responses.KalkulacijaResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface IKalkulacijaService extends IService<Kalkulacija, Long> {
 
@@ -25,4 +26,6 @@ public interface IKalkulacijaService extends IService<Kalkulacija, Long> {
     KalkulacijaResponse save(KalkulacijaRequest kalkulacija);
 
     KalkulacijaResponse update(KalkulacijaRequest kalkulacija);
+
+    Optional<KalkulacijaResponse> findKalkulacijaById(Long id);
 }

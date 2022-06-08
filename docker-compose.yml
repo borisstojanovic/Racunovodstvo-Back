@@ -182,14 +182,19 @@ services:
       - gateway
 
   nabavka_service:
-    image: racunovodstvo/repo:nabavka
+    image: nabavka-service-test
     hostname: nabavka
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_HOST: mysql_db
+      MYSQL_MASTER0_HOST: jdbc:mysql://mysql_db:3306/nabavka?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/nabavka?serverTimezone=UTC
+      MYSQL_MASTER0_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/nabavka?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
+      REDIS_HOST: redis_db
+      REDIS_PORT: 6379
       REGISTRY_HOST: eureka
     ports:
       - "8084:8080"

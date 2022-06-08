@@ -7,6 +7,8 @@ import raf.si.racunovodstvo.nabavka.model.Artikal;
 import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
 import raf.si.racunovodstvo.nabavka.responses.ArtikalResponse;
 
+import java.util.Optional;
+
 public interface IArtikalService extends IService<Artikal, Long> {
 
     Page<ArtikalResponse> findAll(Pageable pageable);
@@ -18,4 +20,6 @@ public interface IArtikalService extends IService<Artikal, Long> {
     ArtikalResponse update(ArtikalRequest artikalRequest);
 
     Page<ArtikalResponse> findAll(Specification<Artikal> spec, Pageable pageSort);
+
+    Optional<ArtikalResponse> findArtikalById(Long id);
 }
