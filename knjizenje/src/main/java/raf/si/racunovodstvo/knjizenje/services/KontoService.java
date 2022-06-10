@@ -17,6 +17,7 @@ import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service

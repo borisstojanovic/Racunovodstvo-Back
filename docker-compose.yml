@@ -11,8 +11,7 @@ services:
       - racunovodstvo
 
   gateway:
-    #image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
-    image: gateway-test
+    image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
     hostname: gateway
     restart: always
     ports:
@@ -103,7 +102,7 @@ services:
 
 
   user_service:
-    image: user-service-test
+    image: ghcr.io/raf-si-2021/racunovodstvo-user:latest
     hostname: user
     container_name: user
     restart: unless-stopped
@@ -130,7 +129,7 @@ services:
       - gateway
 
   knjizenje_service:
-    image: knjizenje-service-test
+    image: ghcr.io/raf-si-2021/racunovodstvo-knjizenje:latest
     hostname: knjizenje
     restart: unless-stopped
     env_file: .env
@@ -156,7 +155,7 @@ services:
       - gateway
 
   preduzece_service:
-    image: preduzece-service-test
+    image: ghcr.io/raf-si-2021/racunovodstvo-preduzece:latest
     hostname: preduzece
     container_name: preduzece
     restart: unless-stopped
@@ -183,7 +182,7 @@ services:
       - gateway
 
   nabavka_service:
-    image: nabavka-service-test
+    image: ghcr.io/raf-si-2021/racunovodstvo-nabavka:latest
     hostname: nabavka
     restart: unless-stopped
     env_file: .env

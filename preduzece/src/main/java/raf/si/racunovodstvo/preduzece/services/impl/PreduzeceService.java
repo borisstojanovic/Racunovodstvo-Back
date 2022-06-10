@@ -12,7 +12,6 @@ import raf.si.racunovodstvo.preduzece.model.Preduzece;
 import raf.si.racunovodstvo.preduzece.repositories.PreduzeceRepository;
 import raf.si.racunovodstvo.preduzece.responses.PreduzeceResponse;
 import raf.si.racunovodstvo.preduzece.services.IPreduzeceService;
-import raf.si.racunovodstvo.preduzece.services.IService;
 import raf.si.racunovodstvo.preduzece.utils.SearchUtil;
 
 import java.util.List;

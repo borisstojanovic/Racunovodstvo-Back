@@ -36,6 +36,7 @@ public class PermissionService implements IService<Permission, Long> {
     }
 
     @Override
+    @Cacheable(value = RedisConstants.PERMISSION_CACHE)
     public List<Permission> findAll() {
         return permissionRepository.findAll();
     }
