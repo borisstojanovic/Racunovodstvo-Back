@@ -26,7 +26,6 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         List<String> details = new ArrayList<>();
-        ex.printStackTrace();
         details.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("Server Error", details);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -50,7 +49,6 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler({EntityNotFoundException.class, EmptyResultDataAccessException.class})
     public final ResponseEntity<Object> handleEntityNotFound(Exception ex, WebRequest request) {
-        ex.printStackTrace();
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("404 Not found!", details);
