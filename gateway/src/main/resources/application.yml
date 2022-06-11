@@ -23,7 +23,7 @@ spring:
       - id: nabavka
         uri: lb://nabavka
         predicates:
-          - Path=/api/artikli/**, /api/kalkulacije/**, /api/konverzije/**
+          - Path=/api/artikli/**, /api/kalkulacije/**, /api/konverzije/**, /api/lokacije/**, /api/troskovi/**
   application:
     name: gateway
   main:

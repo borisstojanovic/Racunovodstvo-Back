@@ -1,5 +1,6 @@
 package raf.si.racunovodstvo.nabavka.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
