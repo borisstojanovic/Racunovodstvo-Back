@@ -104,32 +104,6 @@ class UserIntegrationTest {
         userRepository.save(user);
         jwtToken = jwtUtil.generateToken(user.getUsername());
     }
-/*
-    @Test
-    @Order(1)
-    void saveUserTest() throws Exception {
-        User user = new User();
-        user.setUsername(MOCK_UID_2);
-        user.setEmail(MOCK_EMAIL_2);
-        user.setPassword(MOCK_PASSWORD);
-        user.setPreduzeceId(MOCK_PREDUZECE_ID);
-
-        String body = "{\"preduzeceId\":1}";
-
-        mockServer.expect(ExpectedCount.once(), requestTo(anyString()))
-                  .andExpect(method(HttpMethod.GET))
-                  .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(body));
-
-        ObjectMapper mapper = new ObjectMapper();
-        String requestJson = mapper.writeValueAsString(user);
-
-        mockMvc.perform(post(URI).header("Authorization", "Bearer " + jwtToken).contentType(APPLICATION_JSON).content(requestJson))
-               .andExpect(status().isOk());
-
-        mockServer.verify();
-    }
-
- */
 
     @Test
     @Order(1)
