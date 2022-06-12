@@ -23,5 +23,8 @@ public class KalkulacijaResponse {
     private Long dobavljacId;
     private LokacijaResponse lokacija;
     private String komentar;
+    private Double fakturnaCena;
+    private Double nabavnaVrednost;
+    private Double prodajnaVrednost;
     private List<TroskoviNabavkeResponse> troskoviNabavke;
 }
