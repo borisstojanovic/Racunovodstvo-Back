@@ -13,6 +13,8 @@ public interface IArtikalService extends IService<Artikal, Long> {
 
     Page<ArtikalResponse> findAll(Pageable pageable);
 
+    Page<ArtikalResponse> findAllKalkulacijaArtikli(Pageable pageable);
+
     Page<ArtikalResponse> findAllByIdKalkulacijaKonverzija(Pageable pageable, Long idKalkulacijaKonverzija);
 
     ArtikalResponse save(ArtikalRequest artikalRequest);
@@ -22,4 +24,6 @@ public interface IArtikalService extends IService<Artikal, Long> {
     Page<ArtikalResponse> findAll(Specification<Artikal> spec, Pageable pageSort);
 
     Optional<ArtikalResponse> findArtikalById(Long id);
+
+    Page<ArtikalResponse> findAllKalkulacijaArtikli(Specification<Artikal> spec, Pageable pageSort);
 }

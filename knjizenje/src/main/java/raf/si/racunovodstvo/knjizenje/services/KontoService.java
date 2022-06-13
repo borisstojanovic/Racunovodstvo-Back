@@ -4,39 +4,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.constants.RedisConstants;
-import raf.si.racunovodstvo.knjizenje.converter.impl.KontoConverter;
+import raf.si.racunovodstvo.knjizenje.converters.impl.KontoConverter;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class KontoService implements IService<Konto, Long> {
 
-    @Lazy
-    @Autowired
-    private KontoConverter kontoConverter;
-
+    private final KontoConverter kontoConverter;
     private final KontoRepository kontoRepository;
 
     @Autowired
-    public KontoService(KontoRepository kontoRepository) {
+    public KontoService(KontoRepository kontoRepository, KontoConverter kontoConverter) {
         this.kontoRepository = kontoRepository;
+        this.kontoConverter = kontoConverter;
     }
 
     @Override
     @CachePut(value = RedisConstants.KONTO_CACHE, key = "#result.kontoId")
     public Konto save(Konto konto) {
+        if(konto.getKontnaGrupa().getBrojKonta().length() < 3){
+            throw new RuntimeException("nije moguce kreirati konto na Kontne grupe duzine manje od 3");
+        }
         return kontoRepository.save(konto);
     }
 

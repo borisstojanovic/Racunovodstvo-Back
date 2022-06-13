@@ -13,6 +13,8 @@ public interface IKonverzijaService extends IService<Konverzija, Long> {
 
     Page<KonverzijaResponse> findAll(Specification<Konverzija> spec, Pageable pageSort );
 
+    Page<KonverzijaResponse> findAll(Pageable pageSort );
+
     KonverzijaResponse saveKonverzija(KonverzijaRequest konverzijaRequest);
 
     Konverzija increaseNabavnaCena(Long konverzijaId, Double increaseBy);

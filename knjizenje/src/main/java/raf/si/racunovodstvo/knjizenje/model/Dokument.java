@@ -27,7 +27,7 @@ public class Dokument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dokumentId;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String brojDokumenta;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

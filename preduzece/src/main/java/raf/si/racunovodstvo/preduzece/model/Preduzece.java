@@ -24,7 +24,7 @@ import javax.validation.constraints.Size;
 public class Preduzece implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long preduzeceId;
     @Column(nullable = false)
     @NotBlank(message = "Naziv je obavezan")

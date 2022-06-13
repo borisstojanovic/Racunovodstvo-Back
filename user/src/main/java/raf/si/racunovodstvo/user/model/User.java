@@ -21,11 +21,15 @@ public class User implements Serializable {
     private String firstName;
     @Column
     private String lastName;
-    @Column(unique = true)
+    @Column(unique=true)
     private String username;
+    @Column(unique=true)
+    private String email;
     @Column
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @Column
+    private Long preduzeceId;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

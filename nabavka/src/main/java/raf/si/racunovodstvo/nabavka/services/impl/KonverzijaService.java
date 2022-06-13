@@ -50,6 +50,12 @@ public class KonverzijaService implements IKonverzijaService {
         return page.map(konverzijaConverter::convert);
     }
 
+    @Override
+    public Page<KonverzijaResponse> findAll(Pageable pageSort) {
+        Page<Konverzija> page = konverzijaRepository.findAll(pageSort);
+        return page.map(konverzijaConverter::convert);
+    }
+
 
     @Override
     public <S extends Konverzija> S save(S var1) {

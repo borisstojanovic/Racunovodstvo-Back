@@ -47,7 +47,7 @@ public class Zaposleni implements Serializable {
     @Column(nullable = false)
     @NotBlank(message = "JMBG je obavezan")
     @Size(min = 13, max = 13)
-    @Pattern(regexp="^(0|[1-9][0-9]*)$")
+    @Pattern(regexp = "^(0|[1-9][0-9]*)$")
     private String jmbg;
     @Column(nullable = false)
     @NotNull(message = "Pol je obavezan")
