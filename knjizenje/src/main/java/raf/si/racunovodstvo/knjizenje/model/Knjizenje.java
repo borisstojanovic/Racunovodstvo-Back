@@ -18,7 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "knjizenje")
 @Getter
 @Setter
 public class Knjizenje {

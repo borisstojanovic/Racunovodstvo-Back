@@ -50,6 +50,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleEntityNotFound(Exception ex, WebRequest request) {
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
+        ex.printStackTrace();
         ErrorResponse error = new ErrorResponse("404 Not found!", details);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }

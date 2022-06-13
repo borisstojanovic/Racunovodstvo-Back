@@ -21,7 +21,7 @@ import java.time.DateTimeException;
 @RequestMapping("/api/obracun_zarade_config")
 public class ObracunZaradeRestController {
     private final ObracunZaradeJob obracunZaradeJob;
-    private final  TransakcijeFeignClient transakcijeFeignClient;
+    private final TransakcijeFeignClient transakcijeFeignClient;
 
     public ObracunZaradeRestController(ObracunZaradeJob obracunZaradeJob, TransakcijeFeignClient transakcijeFeignClient) {
         this.obracunZaradeJob = obracunZaradeJob;

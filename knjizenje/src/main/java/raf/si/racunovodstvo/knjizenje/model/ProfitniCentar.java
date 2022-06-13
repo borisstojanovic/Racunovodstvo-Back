@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "profitni_centar")
 @Getter
 @Setter
 public class ProfitniCentar extends BazniCentar {

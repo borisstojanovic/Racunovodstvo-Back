@@ -1,9 +1,13 @@
 package raf.si.racunovodstvo.nabavka.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.nabavka.constants.RedisConstants;
 import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalReverseConverter;
@@ -63,6 +67,7 @@ public class ArtikalService implements IArtikalService {
     }
 
     @Override
+    @CachePut(value = RedisConstants.ARTIKAL_CACHE, key = "#result.artikalId")
     public ArtikalResponse save(ArtikalRequest artikalRequest) {
         Artikal converted = artikalConverter.convert(artikalRequest);
         Artikal saved = artikalRepository.save(converted);
@@ -70,8 +75,10 @@ public class ArtikalService implements IArtikalService {
     }
 
     @Override
+    @CachePut(value = RedisConstants.ARTIKAL_CACHE, key = "#result.artikalId")
     public ArtikalResponse update(ArtikalRequest artikalRequest) {
-        Optional<Artikal> optionalArtikal = artikalRepository.findById(artikalRequest.getArtikalId());
+        System.out.println(artikalRequest.getArtikalId());
+        Optional<ArtikalResponse> optionalArtikal = findArtikalById(artikalRequest.getArtikalId());
         if (optionalArtikal.isEmpty()) {
             throw new EntityNotFoundException();
         }
@@ -85,6 +92,12 @@ public class ArtikalService implements IArtikalService {
     @Override
     public Page<ArtikalResponse> findAll(Specification<Artikal> spec, Pageable pageSort) {
         return artikalRepository.findAll(spec, pageSort).map(artikalReverseConverter::convert);
+    }
+
+    @Override
+    @Cacheable(value = RedisConstants.ARTIKAL_CACHE, key = "#id")
+    public Optional<ArtikalResponse> findArtikalById(Long id) {
+        return findById(id).map(artikalReverseConverter::convert);
     }
 
     @Override
@@ -110,18 +123,19 @@ public class ArtikalService implements IArtikalService {
     }
 
     private boolean isProdajnaCenaUpdated(KalkulacijaArtikal artikal) {
-        Artikal savedArtikal = findById(artikal.getArtikalId()).get();
-        KalkulacijaArtikal savedKalkulacijaArtikal = (KalkulacijaArtikal) savedArtikal;
-        return !Objects.equals(savedKalkulacijaArtikal.getProdajnaCena(), artikal.getProdajnaCena());
+        ArtikalResponse savedArtikal = findArtikalById(artikal.getArtikalId()).get();
+        return !Objects.equals(savedArtikal.getProdajnaCena(), artikal.getProdajnaCena());
     }
 
     private boolean isKalkulacijaArtikalSaved(KalkulacijaArtikal artikal) {
-        if (artikal.getArtikalId() == null || !findById(artikal.getArtikalId()).isPresent()) {
+        if (artikal.getArtikalId() == null) {
             return false;
         }
-
-        Artikal savedArtikal = findById(artikal.getArtikalId()).get();
-        return savedArtikal instanceof KalkulacijaArtikal;
+        Optional<Artikal> optionalArtikal = findById(artikal.getArtikalId());
+        if (optionalArtikal.isEmpty()) {
+            return false;
+        }
+        return optionalArtikal.get() instanceof KalkulacijaArtikal;
     }
 
     @Override
@@ -140,6 +154,7 @@ public class ArtikalService implements IArtikalService {
     }
 
     @Override
+    @CacheEvict(value = RedisConstants.ARTIKAL_CACHE, key = "#var1")
     public void deleteById(Long var1) {
         Optional<Artikal> optionalArtikal = artikalRepository.findById(var1);
         if (optionalArtikal.isEmpty()) {

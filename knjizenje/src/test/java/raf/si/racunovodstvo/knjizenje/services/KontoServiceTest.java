@@ -1,6 +1,7 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,10 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.util.ReflectionTestUtils;
 import raf.si.racunovodstvo.knjizenje.converters.impl.KontoConverter;
-import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
-import raf.si.racunovodstvo.knjizenje.repositories.KontnaGrupaRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
@@ -45,6 +45,11 @@ class KontoServiceTest {
     private static final String MOCK_SEARCH_KEY = "MOCK_KEY";
     private static final String MOCK_SEARCH_VALUE = "MOCK_VALUE";
     private static final String MOCK_SEARCH_OPERATION = "MOCK_OPERATION";
+
+    @BeforeEach
+    void setup() {
+        ReflectionTestUtils.setField(kontoService, "kontoConverter", kontoConverter);
+    }
 
     @Test
     void testFindAll() {

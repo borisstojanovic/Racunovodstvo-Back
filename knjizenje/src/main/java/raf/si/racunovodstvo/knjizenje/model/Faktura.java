@@ -12,7 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-@Entity
+@Entity(name = "faktura")
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "fakturaId")
@@ -49,5 +49,4 @@ public class Faktura extends Dokument {
     @Column
     @Enumerated(EnumType.STRING)
     private TipFakture tipFakture;
-
 }

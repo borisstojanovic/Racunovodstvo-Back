@@ -9,7 +9,7 @@ import java.util.List;
 import javax.persistence.*;
 
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Entity
+@Entity(name = "bazni_centar")
 @Getter
 @Setter
 public abstract class BazniCentar {

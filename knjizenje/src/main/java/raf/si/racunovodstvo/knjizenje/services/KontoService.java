@@ -1,11 +1,14 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.constants.RedisConstants;
 import raf.si.racunovodstvo.knjizenje.converters.impl.KontoConverter;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
@@ -18,8 +21,7 @@ import java.util.Optional;
 @Service
 public class KontoService implements IService<Konto, Long> {
 
-    private KontoConverter kontoConverter;
-
+    private final KontoConverter kontoConverter;
     private final KontoRepository kontoRepository;
 
     @Autowired
@@ -29,6 +31,7 @@ public class KontoService implements IService<Konto, Long> {
     }
 
     @Override
+    @CachePut(value = RedisConstants.KONTO_CACHE, key = "#result.kontoId")
     public Konto save(Konto konto) {
         if(konto.getKontnaGrupa().getBrojKonta().length() < 3){
             throw new RuntimeException("nije moguce kreirati konto na Kontne grupe duzine manje od 3");
@@ -37,6 +40,7 @@ public class KontoService implements IService<Konto, Long> {
     }
 
     @Override
+    @Cacheable(value = RedisConstants.KONTO_CACHE, key = "#id")
     public Optional<Konto> findById(Long id) {
         return kontoRepository.findById(id);
     }
@@ -47,6 +51,7 @@ public class KontoService implements IService<Konto, Long> {
     }
 
     @Override
+    @CacheEvict(value = RedisConstants.KONTO_CACHE, key = "#id")
     public void deleteById(Long id) {
         kontoRepository.deleteById(id);
     }

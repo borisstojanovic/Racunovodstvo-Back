@@ -6,13 +6,15 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-@Entity
+@Entity(name = "obracun")
 @Getter
 @Setter
-public class Obracun {
+public class Obracun implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

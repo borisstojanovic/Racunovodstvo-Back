@@ -9,7 +9,6 @@ spring:
           uri: lb://preduzece
           predicates:
             - Path=/api/preduzece/**, /api/koeficijenti/**, /api/zaposleni/**, /api/plata/**, /api/obracun_zarade/**, /api/obracun/**, /api/obracun_zarade_config/**, /api/obracun_zaposleni/**
-
         - id: knjizenje
           uri: lb://knjizenje
           predicates:
@@ -18,7 +17,6 @@ spring:
           uri: lb://user
           predicates:
             - Path=/api/permissions/**, /api/users/**, /auth/**
-
         - id: nabavka
           uri: lb://nabavka
           predicates:

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -19,7 +20,7 @@ import javax.persistence.Id;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class IstorijaProdajneCene {
+public class IstorijaProdajneCene implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

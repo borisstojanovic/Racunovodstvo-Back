@@ -86,6 +86,7 @@ class KalkulacijaServiceTest {
     @Test
     void deleteByIdTest() {
         given(kalkulacijaRepository.findById(KALKULACIJA_ID_MOCK)).willReturn(Optional.of(Mockito.mock(Kalkulacija.class)));
+        given(kalkulacijaReverseConverter.convert(any())).willReturn(new KalkulacijaResponse());
 
         kalkulacijaService.deleteById(KALKULACIJA_ID_MOCK);
 

@@ -1,11 +1,16 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.constants.RedisConstants;
 import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
@@ -56,6 +61,12 @@ public class KnjizenjeService implements IKnjizenjeService {
         this.analitickaKarticaConverter = analitickaKarticaConverter;
     }
 
+    @Caching(
+        put = @CachePut(value = RedisConstants.KNJIZENJE_CACHE, key = "#result.knjizenjeId"),
+        evict = {
+            @CacheEvict(value = RedisConstants.SUMA_POTRAZUJE_CACHE, key = "#result.knjizenjeId"),
+            @CacheEvict(value = RedisConstants.SUMA_DUGUJE_CACHE, key = "#result.knjizenjeId")
+        })
     public Knjizenje save(KnjizenjeRequest knjizenje){
         List<Konto> kontoList = knjizenje.getKonto();
 
@@ -97,6 +108,12 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
+    @Caching(
+        put = @CachePut(value = RedisConstants.KNJIZENJE_CACHE, key = "#result.knjizenjeId"),
+        evict = {
+            @CacheEvict(value = RedisConstants.SUMA_POTRAZUJE_CACHE, key = "#result.knjizenjeId"),
+            @CacheEvict(value = RedisConstants.SUMA_DUGUJE_CACHE, key = "#result.knjizenjeId")
+        })
     public Knjizenje save(Knjizenje knjizenje) {
 
         List<Konto> kontoList = knjizenje.getKonto();
@@ -119,7 +136,7 @@ public class KnjizenjeService implements IKnjizenjeService {
         newKnjizenje = knjizenjeRepository.save(newKnjizenje);
 
         for (Konto konto : kontoList) {
-            if (konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()) {
+            if (konto.getKontoId() == null || kontoService.findById(konto.getKontoId()).isEmpty()) {
                 konto.setKnjizenje(newKnjizenje);
                 kontoService.save(konto);
             }
@@ -131,6 +148,7 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
+    @Cacheable(value = RedisConstants.KNJIZENJE_CACHE, key = "#id")
     public Optional<Knjizenje> findById(Long id) {
         return knjizenjeRepository.findById(id);
     }
@@ -170,6 +188,11 @@ public class KnjizenjeService implements IKnjizenjeService {
 
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = RedisConstants.KNJIZENJE_CACHE, key = "#id"),
+        @CacheEvict(value = RedisConstants.SUMA_POTRAZUJE_CACHE, key = "#id"),
+        @CacheEvict(value = RedisConstants.SUMA_DUGUJE_CACHE, key = "#id")
+    })
     public void deleteById(Long id) {
         knjizenjeRepository.deleteById(id);
     }
@@ -181,6 +204,7 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
+    @Cacheable(value = RedisConstants.SUMA_POTRAZUJE_CACHE, key = "#id")
     public Double getSumaPotrazujeZaKnjizenje(Long id) {
         Optional<Knjizenje> optionalKnjizenje = findById(id);
         if (optionalKnjizenje.isPresent()) {
@@ -196,6 +220,7 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
+    @Cacheable(value = RedisConstants.SUMA_DUGUJE_CACHE, key = "#id")
     public Double getSumaDugujeZaKnjizenje(Long id) {
         Optional<Knjizenje> optionalKnjizenje = findById(id);
         if (optionalKnjizenje.isPresent()) {
