@@ -8,7 +8,8 @@ public enum PermissionType {
     PRODAJA("prodaja"),
     FINANSIJSKA_OPERATIVA("finop"),
     FINANSIJSKO_KNJIGOVODSTVO("finknj"),
-    OBRACUN_ZARADE("obrza");
+    OBRACUN_ZARADE("obrza"),
+    ADMIN("admin");
 
     public final String label;
 

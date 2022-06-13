@@ -18,8 +18,10 @@ import raf.si.racunovodstvo.knjizenje.responses.ProfitniCentarResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
 
 import javax.persistence.EntityNotFoundException;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfitniCentarService implements IProfitniCentarService {
@@ -31,7 +33,11 @@ public class ProfitniCentarService implements IProfitniCentarService {
     @Lazy
     private ProfitniCentarConverter profitniCentarConverter;
 
-    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository, KnjizenjeRepository knjizenjeRepository, BazniKontoRepository bazniKontoRepository, ProfitniCentarConverter profitniCentarConverter, BazniKontoConverter bazniKontoConverter) {
+    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository,
+                                 KnjizenjeRepository knjizenjeRepository,
+                                 BazniKontoRepository bazniKontoRepository,
+                                 ProfitniCentarConverter profitniCentarConverter,
+                                 BazniKontoConverter bazniKontoConverter) {
         this.profitniCentarRepository = profitniCentarRepository;
         this.knjizenjeRepository = knjizenjeRepository;
         this.bazniKontoRepository = bazniKontoRepository;
@@ -69,31 +75,47 @@ public class ProfitniCentarService implements IProfitniCentarService {
     @Override
     public ProfitniCentar updateProfitniCentar(ProfitniCentarRequest profitniCentar) {
         Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarRepository.findById(profitniCentar.getId());
-        if(optionalProfitniCentar.isPresent()) {
+        if (optionalProfitniCentar.isPresent()) {
+            ProfitniCentar profitniCentarToSave = optionalProfitniCentar.get();
             double ukupanProfit = 0.0;
-            if (profitniCentar.getKontoList() != null)
+            if (profitniCentar.getKontoList() != null) {
                 for (BazniKonto k : profitniCentar.getKontoList()) {
-                    k.setBazniCentar(optionalProfitniCentar.get());
+                    k.setBazniCentar(profitniCentarToSave);
                     bazniKontoRepository.save(k);
                     ukupanProfit += k.getDuguje() - k.getPotrazuje();
                 }
-            if (profitniCentar.getProfitniCentarList() != null)
+            }
+            if (profitniCentar.getProfitniCentarList() != null) {
                 for (ProfitniCentar pc : profitniCentar.getProfitniCentarList()) {
                     ukupanProfit += pc.getUkupniTrosak();
                 }
-            optionalProfitniCentar.get().setUkupniTrosak(ukupanProfit);
-            updateProfit(optionalProfitniCentar.get());
-            return profitniCentarRepository.save(optionalProfitniCentar.get());
+            }
+            profitniCentarToSave.setUkupniTrosak(ukupanProfit);
+            updateProfit(profitniCentarToSave);
+            profitniCentarToSave.setNaziv(profitniCentar.getNaziv());
+            profitniCentarToSave.setLokacijaId(profitniCentar.getLokacijaId());
+            profitniCentarToSave.setOdgovornoLiceId(profitniCentar.getOdgovornoLiceId());
+            List<Long> bazniKontoIdList = profitniCentar.getKontoList()
+                                                        .stream()
+                                                        .map(BazniKonto::getBazniKontoId)
+                                                        .collect(Collectors.toList());
+            bazniKontoRepository.deleteAll(profitniCentarToSave.getKontoList()
+                                                               .stream()
+                                                               .filter(bazniKonto -> !bazniKontoIdList.contains(bazniKonto.getBazniKontoId()))
+                                                               .collect(Collectors.toList()));
+            profitniCentarToSave.setKontoList(profitniCentar.getKontoList());
+            return profitniCentarRepository.save(profitniCentarToSave);
+        } else {
+            throw new EntityNotFoundException();
         }
-        else throw new EntityNotFoundException();
     }
 
     @Override
     public ProfitniCentar addKontosFromKnjizenje(Knjizenje knjizenje, ProfitniCentar profitniCentar) {
         Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
-        if(optionalKnjizenje.isPresent()) {
+        if (optionalKnjizenje.isPresent()) {
             double ukupanProfit = profitniCentar.getUkupniTrosak();
-            if (optionalKnjizenje.get().getKonto() != null)
+            if (optionalKnjizenje.get().getKonto() != null) {
                 for (Konto k : optionalKnjizenje.get().getKonto()) {
                     BazniKonto bazniKonto = bazniKontoConverter.convert(k);
                     bazniKonto.setBazniCentar(profitniCentar);
@@ -101,11 +123,14 @@ public class ProfitniCentarService implements IProfitniCentarService {
                     ukupanProfit += k.getDuguje() - k.getPotrazuje();
                     profitniCentar.getKontoList().add(bazniKonto);
                 }
+            }
             profitniCentar.setUkupniTrosak(ukupanProfit);
             updateProfit(profitniCentar);
             return profitniCentarRepository.save(profitniCentar);
 
-        }else throw new EntityNotFoundException();
+        } else {
+            throw new EntityNotFoundException();
+        }
     }
 
     @Override
@@ -124,17 +149,17 @@ public class ProfitniCentarService implements IProfitniCentarService {
     }
 
 
-    private void updateProfit(ProfitniCentar pc){
+    private void updateProfit(ProfitniCentar pc) {
         ProfitniCentar parent = pc.getParentProfitniCentar();
-        while(parent != null){
-                double ukupanProfit = 0.0;
-                for(BazniKonto k : parent.getKontoList()){
-                    ukupanProfit += k.getDuguje() - k.getPotrazuje();
-                }
-                parent.setUkupniTrosak(ukupanProfit+pc.getUkupniTrosak());
-                profitniCentarRepository.save(parent);
-                pc = parent;
-                parent = pc.getParentProfitniCentar();
+        while (parent != null) {
+            double ukupanProfit = 0.0;
+            for (BazniKonto k : parent.getKontoList()) {
+                ukupanProfit += k.getDuguje() - k.getPotrazuje();
+            }
+            parent.setUkupniTrosak(ukupanProfit + pc.getUkupniTrosak());
+            profitniCentarRepository.save(parent);
+            pc = parent;
+            parent = pc.getParentProfitniCentar();
         }
     }
 }

@@ -79,7 +79,7 @@ public class IzvestajiController {
 
     @GetMapping(path = "/sifra_transakcije", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<?> getSifraTransakcije(@RequestParam String title,
-                                                 @RequestParam(defaultValue = "sifraTransakcijeId")  String[] sort,
+                                                 @RequestParam(defaultValue = "+saldo")  String sort,
                                                  @RequestHeader("Authorization") String token) throws DocumentException {
 
         byte[] pdf =

@@ -20,5 +20,5 @@ public interface IIzvestajService {
 
     Reports makeStatickiIzvestajOTransakcijamaTableReport(long preduzeceId, String naslov, Date pocetniDatum, Date krajniDatum, String token);
 
-    Reports makeSifraTransakcijaTableReport(String title, String[] sort, String token);
+    Reports makeSifraTransakcijaTableReport(String title, String sort, String token);
 }

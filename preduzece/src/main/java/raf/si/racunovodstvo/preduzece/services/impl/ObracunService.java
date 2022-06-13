@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import raf.si.racunovodstvo.preduzece.feign.TransakcijeFeignClient;
-import raf.si.racunovodstvo.preduzece.jobs.ObracunZaradeJob;
 import raf.si.racunovodstvo.preduzece.model.Obracun;
 import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
 import raf.si.racunovodstvo.preduzece.model.Transakcija;
@@ -61,7 +60,7 @@ public class ObracunService implements IObracunService {
 
     }
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void obradiObracun(Long obracunId, String token) {
+    public Obracun obradiObracun(Long obracunId, String token) {
 
         Optional<Obracun> optionalObracun = obracunRepository.findById(obracunId);
 
@@ -116,7 +115,7 @@ public class ObracunService implements IObracunService {
             }
         }
         obracun.setObradjen(true);
-        save(obracun);
+        return save(obracun);
     }
 
 

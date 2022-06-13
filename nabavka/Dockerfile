@@ -24,6 +24,8 @@ RUN java -Djarmode=layertools -jar application.jar extract
 
 FROM adoptopenjdk:11-jre-hotspot
 
+LABEL org.opencontainers.image.source https://github.com/RAF-SI-2021/Racunovodstvo-Back
+
 COPY --from=extractor dependencies/ ./
 COPY --from=extractor snapshot-dependencies/ ./
 COPY --from=extractor spring-boot-loader/ ./

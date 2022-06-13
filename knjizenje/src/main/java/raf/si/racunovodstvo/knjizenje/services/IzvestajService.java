@@ -95,24 +95,20 @@ public class IzvestajService implements IIzvestajService {
             throw new EntityNotFoundException();
         }
 
-        String filter = createTransakcijeFilter(preduzeceId, pocetniDatum, krajniDatum);
-        Page<TransakcijaResponse> transakcijaResponses = transakcijaService.search(searchUtil.getSpec(filter), Pageable.unpaged(), token);
-        return new StatickiIzvestajOTransakcijamaHelper(naslov, preduzece, transakcijaResponses.getContent()).makeTableReport();
+        List<TransakcijaResponse> transakcijaResponses;
+        if (pocetniDatum == null || krajniDatum == null) {
+            transakcijaResponses = transakcijaService.findByPreduzeceId(preduzeceId);
+        } else {
+            transakcijaResponses = transakcijaService.findByPreduzeceIdAndDate(preduzeceId, pocetniDatum, krajniDatum);
+        }
+
+        return new StatickiIzvestajOTransakcijamaHelper(naslov, preduzece, transakcijaResponses).makeTableReport();
     }
 
     @Override
-    public Reports makeSifraTransakcijaTableReport(String title, String[] sort, String token) {
-        Pageable pageSort = ApiUtil.resolveSortingAndPagination(0, Integer.MAX_VALUE, sort);
-        Page<SifraTransakcijeResponse> sifraTransakcijeResponses = sifraTransakcijeService.search(searchUtil.getSpec("sifraTransakcijeId>0"), pageSort, token);
-        return new SifraTransakcijaHelper(title, sifraTransakcijeResponses.getContent()).makeReport();
-    }
-
-    private String createTransakcijeFilter(long preduzeceId, Date pocetniDatum, Date krajniDatum) {
-        String filter = "preduzeceId:" + preduzeceId;
-        if (pocetniDatum == null || krajniDatum == null) {
-            return filter;
-        }
-        return filter + ",datumTransakcije>" + pocetniDatum + ",datumTransakcije<" + krajniDatum;
+    public Reports makeSifraTransakcijaTableReport(String title, String sort, String token) {
+        Page<SifraTransakcijeResponse> sifraTransakcijeResponses = sifraTransakcijeService.search(searchUtil.getSpec("sifraTransakcijeId>0"), Pageable.unpaged(), token);
+        return new SifraTransakcijaHelper(title, sifraTransakcijeResponses.getContent(), sort).makeReport();
     }
 
     private String generateSumsString(List<BilansResponse> bilansResponseList) {

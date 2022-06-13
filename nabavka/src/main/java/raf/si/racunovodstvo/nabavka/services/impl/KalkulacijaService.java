@@ -15,6 +15,7 @@ import raf.si.racunovodstvo.nabavka.model.Artikal;
 import raf.si.racunovodstvo.nabavka.model.Kalkulacija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.model.KalkulacijaArtikal;
+import raf.si.racunovodstvo.nabavka.repositories.ArtikalRepository;
 import raf.si.racunovodstvo.nabavka.repositories.KalkulacijaRepository;
 import raf.si.racunovodstvo.nabavka.requests.KalkulacijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KalkulacijaResponse;
@@ -34,13 +35,16 @@ public class KalkulacijaService implements IKalkulacijaService {
     private final KalkulacijaRepository kalkulacijaRepository;
     private final IConverter<KalkulacijaRequest, Kalkulacija> kalkulacijaConverter;
     private final IConverter<Kalkulacija, KalkulacijaResponse> kalkulacijaReverseConverter;
+    private final ArtikalRepository artikalRepository;
 
     public KalkulacijaService(KalkulacijaRepository kalkulacijaRepository,
                               KalkulacijaConverter kalkulacijaConverter,
-                              KalkulacijaReverseConverter kalkulacijaReverseConverter) {
+                              KalkulacijaReverseConverter kalkulacijaReverseConverter,
+                              ArtikalRepository artikalRepository) {
         this.kalkulacijaRepository = kalkulacijaRepository;
         this.kalkulacijaConverter = kalkulacijaConverter;
         this.kalkulacijaReverseConverter = kalkulacijaReverseConverter;
+        this.artikalRepository = artikalRepository;
     }
 
     @Override
@@ -54,15 +58,23 @@ public class KalkulacijaService implements IKalkulacijaService {
     }
 
     @Override
-    public Kalkulacija increaseNabavnaAndProdajnaCena(Long kalkulacijaId, Double nabavnaCena, Double prodajnaCena) {
+    public Kalkulacija increaseNabavnaAndProdajnaCena(Long kalkulacijaId, KalkulacijaArtikal artikal) {
         Optional<Kalkulacija> optionalKalkulacija = findById(kalkulacijaId);
         if (optionalKalkulacija.isEmpty()) {
             throw new EntityNotFoundException();
         }
         Kalkulacija kalkulacija = optionalKalkulacija.get();
-
-        kalkulacija.setProdajnaCena(kalkulacija.getProdajnaCena() + prodajnaCena);
-        Double ukupnaFakturnaCena = kalkulacija.getFakturnaCena() + nabavnaCena;
+        Optional<Artikal> optionalArtikal =
+            artikal.getArtikalId() != null ? artikalRepository.findById(artikal.getArtikalId()) : Optional.empty();
+        double oldFakturnaCena = 0.0;
+        double oldProdajnaCena = 0.0;
+        if (optionalArtikal.isPresent()) {
+            KalkulacijaArtikal kalkulacijaArtikal = (KalkulacijaArtikal) optionalArtikal.get();
+            oldFakturnaCena = kalkulacijaArtikal.getUkupnaNabavnaVrednost();
+            oldProdajnaCena = kalkulacijaArtikal.getProdajnaCena();
+        }
+        kalkulacija.setProdajnaCena(kalkulacija.getProdajnaCena() - oldProdajnaCena + artikal.getProdajnaCena());
+        Double ukupnaFakturnaCena = kalkulacija.getFakturnaCena() - oldFakturnaCena + artikal.getUkupnaProdajnaVrednost();
         kalkulacija.setFakturnaCena(ukupnaFakturnaCena);
         Double ukupniTroskoviNabavke = kalkulacija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
         kalkulacija.setNabavnaVrednost(ukupniTroskoviNabavke + ukupnaFakturnaCena);

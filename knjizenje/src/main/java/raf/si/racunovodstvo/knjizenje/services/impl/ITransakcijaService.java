@@ -8,6 +8,7 @@ import raf.si.racunovodstvo.knjizenje.requests.ObracunTransakcijeRequest;
 import raf.si.racunovodstvo.knjizenje.requests.TransakcijaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TransakcijaResponse;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ITransakcijaService extends IService<Transakcija, Long> {
@@ -21,4 +22,8 @@ public interface ITransakcijaService extends IService<Transakcija, Long> {
     TransakcijaResponse update(TransakcijaRequest transakcijaRequest);
 
     List<Transakcija> obracunZaradeTransakcije(List<ObracunTransakcijeRequest> obracunTransakcijeRequests);
+
+    List<TransakcijaResponse> findByPreduzeceId(long preduzeceId);
+
+    List<TransakcijaResponse> findByPreduzeceIdAndDate(long preduzeceId, Date dateFrom, Date dateTo);
 }

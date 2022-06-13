@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
 import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
@@ -56,12 +55,11 @@ public class KnjizenjeController {
     public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja) {
 
         boolean invalidKonto =
-            dnevnikKnjizenja.getKonto() != null && dnevnikKnjizenja
-                .getKonto().
-                stream().
-                anyMatch(konto -> konto.getKontnaGrupa().getBrojKonta().length() < 3);
+            dnevnikKnjizenja.getKonto() != null && dnevnikKnjizenja.getKonto()
+                                                                   .stream()
+                                                                   .anyMatch(konto -> konto.getKontnaGrupa().getBrojKonta().length() < 3);
 
-        if(invalidKonto){
+        if (invalidKonto) {
             throw new PersistenceException("Moguće je vršiti knjiženje samo na konta sa 3 ili više cifre.");
         }
         return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));

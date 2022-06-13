@@ -21,8 +21,10 @@ import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaConverter;
 import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaReverseConverter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -97,6 +99,24 @@ public class TransakcijaService implements ITransakcijaService {
             transakcijeList.add(t);
         }
         return transakcijaRepository.saveAll(transakcijeList);
+    }
+
+    @Override
+    public List<TransakcijaResponse> findByPreduzeceId(long preduzeceId) {
+        return transakcijaRepository.findAllByPreduzeceId(preduzeceId)
+                                    .stream()
+                                    .map(transakcijaReverseConverter::convert)
+                                    .collect(
+                                        Collectors.toList());
+    }
+
+    @Override
+    public List<TransakcijaResponse> findByPreduzeceIdAndDate(long preduzeceId, Date dateFrom, Date dateTo) {
+        return transakcijaRepository.findAllByPreduzeceIdAndDatumTransakcijeBetween(preduzeceId, dateFrom, dateTo)
+                                    .stream()
+                                    .map(transakcijaReverseConverter::convert)
+                                    .collect(
+                                        Collectors.toList());
     }
 
     @Override

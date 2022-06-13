@@ -4,5 +4,5 @@ import raf.si.racunovodstvo.preduzece.model.Obracun;
 
 public interface IObracunService extends IService<Obracun, Long> {
     void updateObracunZaradeNaziv(Long obracunZaradeId, String naziv);
-    void obradiObracun(Long obracunId, String token);
+    Obracun obradiObracun(Long obracunId, String token);
 }
