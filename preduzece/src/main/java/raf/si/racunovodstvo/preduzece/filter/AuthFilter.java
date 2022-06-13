@@ -1,6 +1,7 @@
 package raf.si.racunovodstvo.preduzece.filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,7 +25,10 @@ public class AuthFilter extends OncePerRequestFilter {
     @Autowired
     RestTemplate restTemplate;
 
-    private static final String URL = "http://user/auth/access";
+    @Value("${service.user.url}")
+    private String userUrl;
+
+    private static final String AUTH_URL = "/auth/access";
 
     private static final String[] EXCLUDED_URLS = {"/v3/api-docs", "/swagger-ui.html", "/swagger-ui/"};
 
@@ -40,7 +44,7 @@ public class AuthFilter extends OncePerRequestFilter {
                 HttpEntity request = new HttpEntity(headers);
 
                 // baca izuzetak ako nije ispravak token
-                ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.GET, request, String.class);
+                ResponseEntity<String> response = restTemplate.exchange(userUrl + AUTH_URL, HttpMethod.GET, request, String.class);
             }
             filterChain.doFilter(httpServletRequest, httpServletResponse);
 
