@@ -1,15 +1,20 @@
 package raf.si.racunovodstvo.knjizenje.bootstrap;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import raf.si.racunovodstvo.knjizenje.feign.KursnaListaFeignClient;
 import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipDokumenta;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
 import raf.si.racunovodstvo.knjizenje.repositories.*;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipTransakcije;
+import raf.si.racunovodstvo.knjizenje.responses.KursResponse;
+import raf.si.racunovodstvo.knjizenje.responses.KursnaListaResponse;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -29,6 +34,7 @@ public class BootstrapData implements CommandLineRunner {
     private final PovracajRepository povracajRepository;
     private final TransakcijaRepository transakcijaRepository;
     private final SifraTransakcijeRepository sifraTransakcijeRepository;
+    private final KursnaListaFeignClient kursnaListaFeignClient;
 
 
     @Autowired
@@ -40,7 +46,8 @@ public class BootstrapData implements CommandLineRunner {
                          ProfitniCentarRepository profitniCentarRepository,
                          TroskovniCentarRepository troskovniCentarRepository,
                          BazniKontoRepository bazniKontoRepository,
-                         PovracajRepository povracajRepository
+                         PovracajRepository povracajRepository,
+                         KursnaListaFeignClient kursnaListaFeignClient
     ) {
         this.fakturaRepository = fakturaRepository;
         this.kontoRepository = kontoRepository;
@@ -52,6 +59,7 @@ public class BootstrapData implements CommandLineRunner {
         this.troskovniCentarRepository = troskovniCentarRepository;
         this.bazniKontoRepository = bazniKontoRepository;
         this.povracajRepository = povracajRepository;
+        this.kursnaListaFeignClient = kursnaListaFeignClient;
     }
 
     private Faktura getDefaultFaktura() {
@@ -124,10 +132,48 @@ public class BootstrapData implements CommandLineRunner {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
+    private KursResponse getDefaultForValuta(String valuta) {
+        KursResponse toReturn;
+        switch (valuta) {
+            case "eur":
+                toReturn = new KursResponse(117.05, 117.40, 117.80);
+                break;
+            case "usd":
+                toReturn = new KursResponse(111.80, 112.20, 112.60);
+                break;
+            case "gbp":
+                toReturn = new KursResponse(135.81, 136.20, 136.60);
+                break;
+            case "rsd":
+            default:
+                toReturn = new KursResponse(1.00, 1.00, 1.00);
+        }
+        return toReturn;
+    }
+
     @Override
     public void run(String... args) throws Exception {
 
         log.info("Loading Data...");
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        KursnaListaResponse response21522 = kursnaListaFeignClient.getKursnaListaForDate("22.05.2021");
+        KursnaListaResponse response21518 = kursnaListaFeignClient.getKursnaListaForDate("18.05.2021");
+        KursnaListaResponse response21516 = kursnaListaFeignClient.getKursnaListaForDate("16.05.2021");
+        KursnaListaResponse response21512 = kursnaListaFeignClient.getKursnaListaForDate("12.05.2021");
+        KursResponse kursResponseGbp21522 =
+            mapper.convertValue(response21522.getResult().getOrDefault("gbp", getDefaultForValuta("gbp")), new TypeReference<>() {
+            });
+        KursResponse kursResponseUsd21518 =
+            mapper.convertValue(response21518.getResult().getOrDefault("usd", getDefaultForValuta("usd")), new TypeReference<>() {
+            });
+        KursResponse kursResponseRsd21516 =
+            mapper.convertValue(response21516.getResult().getOrDefault("rsd", getDefaultForValuta("rsd")), new TypeReference<>() {
+            });
+        KursResponse kursResponseGbp21512 =
+            mapper.convertValue(response21512.getResult().getOrDefault("gbp", getDefaultForValuta("gbp")), new TypeReference<>() {
+            });
 
         Faktura fu1 = new Faktura();
         fu1.setBrojFakture("F23/11");
@@ -138,11 +184,11 @@ public class BootstrapData implements CommandLineRunner {
         fu1.setProdajnaVrednost(11300.00);
         fu1.setRabatProcenat(5.00);
         fu1.setPorezProcenat(20.00);
-        fu1.setValuta("DIN");
+        fu1.setValuta("RSD");
         fu1.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu1.setTipDokumenta(TipDokumenta.FAKTURA);
         fu1.setPreduzeceId(1L);
-        fu1.setKurs(117.00);
+        fu1.setKurs(kursResponseRsd21516.getSre());
         fu1.setNaplata(0.00);
 
         Faktura fu2 = new Faktura();
@@ -154,11 +200,11 @@ public class BootstrapData implements CommandLineRunner {
         fu2.setProdajnaVrednost(12400.00);
         fu2.setRabatProcenat(0.00);
         fu2.setPorezProcenat(20.00);
-        fu2.setValuta("DIN");
+        fu2.setValuta("RSD");
         fu2.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu2.setTipDokumenta(TipDokumenta.FAKTURA);
         fu2.setPreduzeceId(1L);
-        fu2.setKurs(117.00);
+        fu2.setKurs(kursResponseRsd21516.getSre());
         fu2.setNaplata(0.00);
 
         Faktura fu3 = new Faktura();
@@ -170,11 +216,11 @@ public class BootstrapData implements CommandLineRunner {
         fu3.setProdajnaVrednost(11000.00);
         fu3.setRabatProcenat(0.00);
         fu3.setPorezProcenat(20.00);
-        fu3.setValuta("DIN");
+        fu3.setValuta("RSD");
         fu3.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu3.setTipDokumenta(TipDokumenta.FAKTURA);
         fu3.setPreduzeceId(1L);
-        fu3.setKurs(117.00);
+        fu3.setKurs(kursResponseRsd21516.getSre());
         fu3.setNaplata(0.00);
 
         Faktura fu4 = new Faktura();
@@ -186,11 +232,11 @@ public class BootstrapData implements CommandLineRunner {
         fu4.setProdajnaVrednost(22000.00);
         fu4.setRabatProcenat(0.00);
         fu4.setPorezProcenat(20.00);
-        fu4.setValuta("DIN");
+        fu4.setValuta("RSD");
         fu4.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu4.setTipDokumenta(TipDokumenta.FAKTURA);
         fu4.setPreduzeceId(1L);
-        fu4.setKurs(117.00);
+        fu4.setKurs(kursResponseRsd21516.getSre());
         fu4.setNaplata(0.00);
 
         Faktura fu5 = new Faktura();
@@ -207,7 +253,7 @@ public class BootstrapData implements CommandLineRunner {
         fu5.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu5.setTipDokumenta(TipDokumenta.FAKTURA);
         fu5.setPreduzeceId(2L);
-        fu5.setKurs(117.00);
+        fu5.setKurs(kursResponseGbp21512.getSre());
         fu5.setNaplata(0.00);
 
         Faktura fu6 = new Faktura();
@@ -224,7 +270,7 @@ public class BootstrapData implements CommandLineRunner {
         fu6.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu6.setTipDokumenta(TipDokumenta.FAKTURA);
         fu6.setPreduzeceId(2L);
-        fu6.setKurs(117.00);
+        fu6.setKurs(kursResponseGbp21512.getSre());
         fu6.setNaplata(0.00);
 
         Faktura fu7 = new Faktura();
@@ -242,7 +288,7 @@ public class BootstrapData implements CommandLineRunner {
         fu7.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu7.setTipDokumenta(TipDokumenta.FAKTURA);
         fu7.setPreduzeceId(2L);
-        fu7.setKurs(117.00);
+        fu7.setKurs(kursResponseGbp21512.getSre());
         fu7.setNaplata(0.00);
 
         Faktura fu8 = new Faktura();
@@ -259,7 +305,7 @@ public class BootstrapData implements CommandLineRunner {
         fu8.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu8.setTipDokumenta(TipDokumenta.FAKTURA);
         fu8.setPreduzeceId(2L);
-        fu8.setKurs(117.00);
+        fu8.setKurs(kursResponseGbp21512.getSre());
         fu8.setNaplata(0.00);
 
         Faktura fu9 = new Faktura();
@@ -276,7 +322,7 @@ public class BootstrapData implements CommandLineRunner {
         fu9.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         fu9.setTipDokumenta(TipDokumenta.FAKTURA);
         fu9.setPreduzeceId(2L);
-        fu9.setKurs(117.00);
+        fu9.setKurs(kursResponseGbp21512.getSre());
         fu9.setNaplata(0.00);
 
         Faktura fi1 = new Faktura();
@@ -288,11 +334,11 @@ public class BootstrapData implements CommandLineRunner {
         fi1.setProdajnaVrednost(23400.00);
         fi1.setRabatProcenat(5.00);
         fi1.setPorezProcenat(20.00);
-        fi1.setValuta("DIN");
+        fi1.setValuta("RSD");
         fi1.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         fi1.setTipDokumenta(TipDokumenta.FAKTURA);
         fi1.setPreduzeceId(3L);
-        fi1.setKurs(117.00);
+        fi1.setKurs(1.00);
         fi1.setNaplata(0.00);
 
         Faktura fi2 = new Faktura();
@@ -300,15 +346,15 @@ public class BootstrapData implements CommandLineRunner {
         fi2.setBrojDokumenta(fi2.getBrojFakture());
         fi2.setDatumIzdavanja(getDate(2021, 5, 13));
         fi2.setRokZaPlacanje(getDate(2021, 7, 31));
-        fi2.setDatumPlacanja(getDate(2021, 5, 20));
+        fi2.setDatumPlacanja(getDate(2021, 5, 22));
         fi2.setProdajnaVrednost(23400.00);
         fi2.setRabatProcenat(10.00);
         fi2.setPorezProcenat(20.00);
-        fi2.setValuta("DIN");
+        fi2.setValuta("RSD");
         fi2.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         fi2.setTipDokumenta(TipDokumenta.FAKTURA);
         fi2.setPreduzeceId(3L);
-        fi2.setKurs(117.00);
+        fi2.setKurs(1.00);
         fi2.setNaplata(0.00);
 
         Faktura fi3 = new Faktura();
@@ -325,7 +371,7 @@ public class BootstrapData implements CommandLineRunner {
         fi3.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         fi3.setTipDokumenta(TipDokumenta.FAKTURA);
         fi3.setPreduzeceId(2L);
-        fi3.setKurs(117.00);
+        fi3.setKurs(kursResponseGbp21522.getSre());
         fi3.setNaplata(0.00);
 
         Faktura fi4 = new Faktura();
@@ -333,15 +379,15 @@ public class BootstrapData implements CommandLineRunner {
         fi4.setBrojDokumenta(fi4.getBrojFakture());
         fi4.setDatumIzdavanja(getDate(2021, 5, 16));
         fi4.setRokZaPlacanje(getDate(2021, 5, 22));
-        fi4.setDatumPlacanja(getDate(2021, 5, 21));
+        fi4.setDatumPlacanja(getDate(2021, 5, 22));
         fi4.setProdajnaVrednost(11000.00);
         fi4.setRabatProcenat(10.00);
         fi4.setPorezProcenat(20.00);
-        fi4.setValuta("DIN");
+        fi4.setValuta("RSD");
         fi4.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         fi4.setTipDokumenta(TipDokumenta.FAKTURA);
         fi4.setPreduzeceId(1L);
-        fi4.setKurs(117.00);
+        fi4.setKurs(1.00);
         fi4.setNaplata(0.00);
 
         Faktura fi5 = new Faktura();
@@ -353,11 +399,11 @@ public class BootstrapData implements CommandLineRunner {
         fi5.setProdajnaVrednost(23400.00);
         fi5.setRabatProcenat(5.00);
         fi5.setPorezProcenat(20.00);
-        fi5.setValuta("DIN");
+        fi5.setValuta("RSD");
         fi5.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         fi5.setTipDokumenta(TipDokumenta.FAKTURA);
         fi5.setPreduzeceId(3L);
-        fi5.setKurs(117.00);
+        fi5.setKurs(1.00);
         fi5.setNaplata(0.00);
 
         Faktura fi6 = new Faktura();
@@ -374,7 +420,7 @@ public class BootstrapData implements CommandLineRunner {
         fi6.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         fi6.setTipDokumenta(TipDokumenta.FAKTURA);
         fi6.setPreduzeceId(4L);
-        fi6.setKurs(117.00);
+        fi6.setKurs(kursResponseUsd21518.getSre());
         fi6.setNaplata(0.00);
 
         this.fakturaRepository.save(fu1);
@@ -479,10 +525,10 @@ public class BootstrapData implements CommandLineRunner {
         mpf1.setRabatProcenat(0.00);
         mpf1.setPorezProcenat(20.00);
         mpf1.setPreduzeceId(1L);
-        mpf1.setValuta("DIN");
+        mpf1.setValuta("RSD");
         mpf1.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
         mpf1.setTipDokumenta(TipDokumenta.FAKTURA);
-        mpf1.setKurs(117.00);
+        mpf1.setKurs(1.00);
         mpf1.setNaplata(0.00);
 
         Faktura mpf2 = new Faktura();
@@ -495,10 +541,10 @@ public class BootstrapData implements CommandLineRunner {
         mpf2.setProdajnaVrednost(11700.00);
         mpf2.setRabatProcenat(0.00);
         mpf2.setPorezProcenat(20.00);
-        mpf2.setValuta("DIN");
+        mpf2.setValuta("RSD");
         mpf2.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
         mpf2.setTipDokumenta(TipDokumenta.FAKTURA);
-        mpf2.setKurs(117.00);
+        mpf2.setKurs(1.00);
         mpf2.setNaplata(0.00);
 
         Faktura mpf3 = new Faktura();
@@ -511,10 +557,10 @@ public class BootstrapData implements CommandLineRunner {
         mpf3.setProdajnaVrednost(24500.00);
         mpf3.setRabatProcenat(0.00);
         mpf3.setPorezProcenat(20.00);
-        mpf3.setValuta("DIN");
+        mpf3.setValuta("RSD");
         mpf3.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
         mpf3.setTipDokumenta(TipDokumenta.FAKTURA);
-        mpf3.setKurs(117.00);
+        mpf3.setKurs(1.00);
         mpf3.setNaplata(0.00);
 
         Faktura mpf4 = new Faktura();
@@ -527,10 +573,10 @@ public class BootstrapData implements CommandLineRunner {
         mpf4.setProdajnaVrednost(9200.00);
         mpf4.setRabatProcenat(0.00);
         mpf4.setPorezProcenat(20.00);
-        mpf4.setValuta("DIN");
+        mpf4.setValuta("RSD");
         mpf4.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
         mpf4.setTipDokumenta(TipDokumenta.FAKTURA);
-        mpf4.setKurs(117.00);
+        mpf4.setKurs(1.00);
         mpf4.setNaplata(0.00);
 
         Faktura mpf5 = new Faktura();
@@ -543,10 +589,10 @@ public class BootstrapData implements CommandLineRunner {
         mpf5.setProdajnaVrednost(8350.00);
         mpf5.setRabatProcenat(0.00);
         mpf5.setPorezProcenat(20.00);
-        mpf5.setValuta("DIN");
+        mpf5.setValuta("RSD");
         mpf5.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
         mpf5.setTipDokumenta(TipDokumenta.FAKTURA);
-        mpf5.setKurs(117.00);
+        mpf5.setKurs(1.00);
         mpf5.setNaplata(0.00);
 
         this.fakturaRepository.save(mpf1);
@@ -867,7 +913,6 @@ public class BootstrapData implements CommandLineRunner {
         this.kontoRepository.saveAll(Arrays.asList(
             k30, k301, k302, k306, k309, k31, k32, k33, k34, k35, k3t2, k3012, k3022, k3062, k3092, k312, k322, k332, k342,
             k51, k511, k52, k50, k521, k62, k60, k601, k5t2, k512, k5112, k522, k502, k5212, k622, k602, k6012));
-        //this.kontoRepository.saveAll(Arrays.asList(k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k20));
 
         log.info("Data loaded!");
     }
