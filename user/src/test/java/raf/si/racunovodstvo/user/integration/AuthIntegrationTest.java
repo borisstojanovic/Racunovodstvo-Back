@@ -17,7 +17,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import raf.si.racunovodstvo.user.config.EmbeddedMysqlServerConfig;
 import raf.si.racunovodstvo.user.model.User;
 import raf.si.racunovodstvo.user.repositories.UserRepository;
 import raf.si.racunovodstvo.user.requests.LoginRequest;
@@ -30,14 +29,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true",
-                classes = EmbeddedMysqlServerConfig.class,
-                webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisabledIfEnvironmentVariable(named = "WORKSPACE", matches = "CI")
-class AuthIntegrationTest {
+class AuthIntegrationTest extends BaseIT {
 
     private final static String URI = "/auth";
 

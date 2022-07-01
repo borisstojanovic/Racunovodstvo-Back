@@ -1,9 +1,8 @@
-package raf.si.racunovodstvo.user.configuration;
+package raf.si.racunovodstvo.user.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,8 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import raf.si.racunovodstvo.user.filters.JwtFilter;
 import raf.si.racunovodstvo.user.services.impl.UserService;
 
-
-@Profile("!test")
+@Profile("test")
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -39,29 +37,21 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
-                .cors()
-                .and()
-                .csrf()
-                .disable()
-                .authorizeRequests()
-                .antMatchers(EXCLUDED_URLS).permitAll()
-                .anyRequest().authenticated()
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .cors()
+            .and()
+            .csrf()
+            .disable()
+            .authorizeRequests()
+            .antMatchers(EXCLUDED_URLS).permitAll()
+            .anyRequest().authenticated()
+            .and().sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.addFilterBefore(this.jwtFilter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManager();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
-
