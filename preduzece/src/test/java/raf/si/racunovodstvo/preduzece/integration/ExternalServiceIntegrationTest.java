@@ -3,7 +3,6 @@ package raf.si.racunovodstvo.preduzece.integration;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -20,13 +19,26 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+import raf.si.racunovodstvo.preduzece.feign.TransakcijeFeignClient;
 import raf.si.racunovodstvo.preduzece.integration.test_model.LoginRequest;
 import raf.si.racunovodstvo.preduzece.integration.test_model.LoginResponse;
 import raf.si.racunovodstvo.preduzece.model.Obracun;
+import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
+import raf.si.racunovodstvo.preduzece.model.Preduzece;
+import raf.si.racunovodstvo.preduzece.model.Transakcija;
+import raf.si.racunovodstvo.preduzece.model.Zaposleni;
+import raf.si.racunovodstvo.preduzece.model.enums.PolZaposlenog;
+import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
+import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunRepository;
+import raf.si.racunovodstvo.preduzece.repositories.ObracunZaposleniRepository;
+import raf.si.racunovodstvo.preduzece.repositories.PreduzeceRepository;
+import raf.si.racunovodstvo.preduzece.repositories.ZaposleniRepository;
+import raf.si.racunovodstvo.preduzece.requests.ObracunTransakcijeRequest;
 import raf.si.racunovodstvo.preduzece.requests.ObracunZaradeConfigRequest;
 import raf.si.racunovodstvo.preduzece.responses.KursnaListaResponse;
 import raf.si.racunovodstvo.preduzece.responses.ObracunZaradeConfigResponse;
+import raf.si.racunovodstvo.preduzece.responses.SifraTransakcijeResponse;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,6 +63,7 @@ class ExternalServiceIntegrationTest extends BaseIT {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final RestTemplate restTemplate = new RestTemplate();
     private String token;
+    private Obracun obracun;
     private Long obracunId;
 
     private final static String URI_OBRACUN_CONFIG = "/api/obracun_zarade_config";
@@ -62,6 +75,18 @@ class ExternalServiceIntegrationTest extends BaseIT {
 
     @Autowired
     private ObracunRepository obracunRepository;
+
+    @Autowired
+    private ZaposleniRepository zaposleniRepository;
+
+    @Autowired
+    private ObracunZaposleniRepository obracunZaposleniRepository;
+
+    @Autowired
+    private PreduzeceRepository preduzeceRepository;
+
+    @Autowired
+    private TransakcijeFeignClient transakcijeFeignClient;
 
     private MockMvc mockMvc;
 
@@ -75,7 +100,7 @@ class ExternalServiceIntegrationTest extends BaseIT {
         LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
         token = loginResponse.getJwt();
 
-        Obracun obracun = new Obracun();
+        obracun = new Obracun();
         obracun.setNaziv(MOCK_NAZIV);
         obracun.setObradjen(false);
         obracun.setDatumObracuna(MOCK_DATUM_OBRACUNA);
@@ -122,13 +147,71 @@ class ExternalServiceIntegrationTest extends BaseIT {
                                .andReturn()
                                .getResponse()
                                .getContentAsString();
-        System.out.println(result);
         List<Obracun> response = mapper.readValue(result, new TypeReference<>() {
         });
-        System.out.println(response);
         Optional<Obracun> optionalObracun = response.stream().filter(obracun -> obracun.getObracunId().equals(obracunId)).findFirst();
         assertTrue(optionalObracun.isPresent());
         assertTrue(optionalObracun.get().isObradjen());
+    }
+
+    @Test
+    void getByIdTest() {
+        SifraTransakcijeResponse sifraTransakcijeResponse = transakcijeFeignClient.getById(1L, "Bearer " + token).getBody();
+
+        assertNotNull(sifraTransakcijeResponse);
+        assertEquals(1L, sifraTransakcijeResponse.getSifraTransakcijeId());
+    }
+
+    @Test
+    void obracunZaradeTransakcijeTest() {
+        ObracunZaposleni obracunZaposleni = createObracunZaposleni();
+        ObracunTransakcijeRequest obracunTransakcijeRequest = new ObracunTransakcijeRequest();
+        obracunTransakcijeRequest.setSifraTransakcijeId(1L);
+        obracunTransakcijeRequest.setDatum(obracunZaposleni.getObracun().getDatumObracuna());
+        obracunTransakcijeRequest.setIme(obracunZaposleni.getZaposleni().getIme());
+        obracunTransakcijeRequest.setIznos(obracunZaposleni.getNetoPlata());
+        obracunTransakcijeRequest.setPrezime(obracunZaposleni.getZaposleni().getPrezime());
+        obracunTransakcijeRequest.setPreduzeceId(obracunZaposleni.getZaposleni().getPreduzece().getPreduzeceId());
+        obracunTransakcijeRequest.setSifraZaposlenog(obracunZaposleni.getZaposleni().getZaposleniId().toString());
+        List<ObracunTransakcijeRequest> requestList = new ArrayList<>(List.of(obracunTransakcijeRequest));
+        List<Transakcija> responseList = transakcijeFeignClient.obracunZaradeTransakcije(requestList, "Bearer " + token).getBody();
+        assertNotNull(responseList);
+    }
+
+    private ObracunZaposleni createObracunZaposleni() {
+        Preduzece preduzece = preduzeceRepository.getById(1L);
+        Zaposleni zaposleni = new Zaposleni();
+        zaposleni.setRadnaPozicija(RadnaPozicija.RADNIK);
+        zaposleni.setPreduzece(preduzece);
+        zaposleni.setAdresa("testAdresa");
+        zaposleni.setIme("testIme");
+        zaposleni.setPrezime("testPrezime");
+        zaposleni.setBrojRacuna("123456789");
+        zaposleni.setDatumRodjenja(new Date());
+        zaposleni.setBrojRadneKnjizice(123L);
+        zaposleni.setPocetakRadnogOdnosa(new Date());
+        zaposleni.setStepenObrazovanja("Fakultet");
+        zaposleni.setPol(PolZaposlenog.MUSKO);
+        zaposleni.setGrad("testGrad");
+        zaposleni.setImeRoditelja("testImeRoditelja");
+        zaposleni.setJmbg("1234567891234");
+        zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
+        Zaposleni savedZaposleni = zaposleniRepository.save(zaposleni);
+        zaposleni.setZaposleniId(savedZaposleni.getZaposleniId());
+
+        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
+        obracunZaposleni.setObracun(obracun);
+        obracunZaposleni.setZaposleni(zaposleni);
+        obracunZaposleni.setNetoPlata(10000.0);
+        obracunZaposleni.setUkupanTrosakZarade(10000.0);
+        obracunZaposleni.setDoprinos1(1000.0);
+        obracunZaposleni.setDoprinos2(1000.0);
+        obracunZaposleni.setBrutoPlata(12000.0);
+        obracunZaposleni.setUcinak(95.0);
+        obracunZaposleni.setPorez(10.0);
+        ObracunZaposleni saved = obracunZaposleniRepository.save(obracunZaposleni);
+        obracunZaposleni.setObracunZaposleniId(saved.getObracunZaposleniId());
+        return obracunZaposleni;
     }
 
     @SneakyThrows

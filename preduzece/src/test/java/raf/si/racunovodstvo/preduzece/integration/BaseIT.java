@@ -51,8 +51,8 @@ class BaseIT {
         mySQLSlaveContainer1.start();
         eurekaContainer.start();
         gatewayContainer.start();
-        knjizenjeContainer.start();
         userContainer.start();
+        knjizenjeContainer.start();
 
         HostPortWaitStrategy redisWait = new HostPortWaitStrategy();
         redisWait.waitUntilReady(redisContainer);
@@ -70,8 +70,8 @@ class BaseIT {
 
         HostPortWaitStrategy gatewayWait = new HostPortWaitStrategy();
         gatewayWait.waitUntilReady(gatewayContainer);
-        knjizenjeContainer.waitingFor(gatewayWait);
         userContainer.waitingFor(gatewayWait);
+        knjizenjeContainer.waitingFor(gatewayWait);
     }
 
     @DynamicPropertySource
