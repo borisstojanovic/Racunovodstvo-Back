@@ -13,6 +13,7 @@ public class EurekaContainer extends GenericContainer<EurekaContainer> {
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("eureka"));
         withNetworkAliases("eureka");
         waitingFor(new HostPortWaitStrategy());
+        setStartupAttempts(3);
 
         addEnv("SERVER_PORT", port + "");
     }

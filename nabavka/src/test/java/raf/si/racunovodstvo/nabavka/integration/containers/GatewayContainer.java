@@ -16,7 +16,8 @@ public class GatewayContainer extends GenericContainer<GatewayContainer> {
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("gateway"));
         withNetworkAliases("gateway");
         waitingFor(new HostPortWaitStrategy());
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(10000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(25000)));
+        setStartupAttempts(3);
 
         addEnv("SPRING_PROFILES_ACTIVE", "prod");
         addEnv("SERVER_PORT", port + "");

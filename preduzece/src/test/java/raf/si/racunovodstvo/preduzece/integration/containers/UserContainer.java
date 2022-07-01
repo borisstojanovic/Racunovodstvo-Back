@@ -13,6 +13,7 @@ public class UserContainer extends GenericContainer<UserContainer> {
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("user"));
         withNetworkAliases("user");
         waitingFor(new HostPortWaitStrategy());
+        setStartupAttempts(3);
 
         addEnv("SERVER_PORT", port + "");
         addEnv("SPRING_PROFILES_ACTIVE", "prod");

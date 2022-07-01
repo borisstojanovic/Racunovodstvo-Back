@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisabledIfEnvironmentVariable(named = "WORKSPACE", matches = "CI")
 class UserIntegrationTest extends BaseIT {
 
     private final static String URI = "/api/users";

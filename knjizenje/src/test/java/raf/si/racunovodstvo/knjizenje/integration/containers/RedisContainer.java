@@ -13,5 +13,6 @@ public class RedisContainer extends GenericContainer<RedisContainer> {
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("redis"));
         withNetworkAliases("redis");
         waitingFor(new HostPortWaitStrategy());
+        setStartupAttempts(3);
     }
 }

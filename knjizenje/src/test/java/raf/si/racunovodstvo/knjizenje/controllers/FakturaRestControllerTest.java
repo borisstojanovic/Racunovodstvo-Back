@@ -21,6 +21,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,9 +86,12 @@ class FakturaRestControllerTest {
         Faktura faktura = new Faktura();
         faktura.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         faktura.setPreduzeceId(MOCK_ID);
+        faktura.setDatumPlacanja(new Date());
+        faktura.setDatumIzdavanja(new Date());
         Preduzece preduzece = new Preduzece();
         preduzece.setPreduzeceId(1L);
         given(preduzeceFeignClient.getPreduzeceById(MOCK_ID, TOKEN)).willReturn(ResponseEntity.ok(preduzece));
+        given(fakturaService.save(faktura)).willReturn(faktura);
 
         ResponseEntity<?> responseEntity = fakturaRestController.createFaktura(faktura, TOKEN);
         assertEquals(200, responseEntity.getStatusCodeValue());

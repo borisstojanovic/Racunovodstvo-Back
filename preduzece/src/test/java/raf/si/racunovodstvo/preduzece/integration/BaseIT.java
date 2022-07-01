@@ -1,5 +1,6 @@
 package raf.si.racunovodstvo.preduzece.integration;
 
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
@@ -15,23 +16,16 @@ import raf.si.racunovodstvo.preduzece.integration.containers.UserContainer;
 import raf.si.racunovodstvo.preduzece.integration.network.NetworkHolder;
 
 @Testcontainers
+@ActiveProfiles("test")
 class BaseIT {
 
-    //@Container
     protected static final EurekaContainer eurekaContainer = new EurekaContainer(NetworkHolder.network(), 8761);
-    //@Container
     protected static final KnjizenjeContainer knjizenjeContainer = new KnjizenjeContainer(NetworkHolder.network(), 8085);
-    //@Container
     protected static final UserContainer userContainer = new UserContainer(NetworkHolder.network(), 8086);
-    //@Container
     protected static final GatewayContainer gatewayContainer = new GatewayContainer(NetworkHolder.network(), 8100);
-    //@Container
     protected static final RedisContainer redisContainer = new RedisContainer(NetworkHolder.network(), 6379);
-    //@Container
     protected static final MySQLMasterContainer mySQLMasterContainer = new MySQLMasterContainer(NetworkHolder.network(), 3306);
-    //@Container
     protected static final MySQLSlaveContainer mySQLSlaveContainer = new MySQLSlaveContainer(NetworkHolder.network(), 3306, "mysql_slave");
-    //@Container
     protected static final MySQLSlaveContainer mySQLSlaveContainer1 =
         new MySQLSlaveContainer(NetworkHolder.network(), 3306, "mysql_slave_1");
 
@@ -45,33 +39,42 @@ class BaseIT {
         knjizenjeContainer.withReuse(true);
         userContainer.withReuse(true);
 
-        redisContainer.start();
+        eurekaContainer.start();
         mySQLMasterContainer.start();
         mySQLSlaveContainer.start();
         mySQLSlaveContainer1.start();
-        eurekaContainer.start();
-        gatewayContainer.start();
+        redisContainer.start();
         userContainer.start();
         knjizenjeContainer.start();
-
-        HostPortWaitStrategy redisWait = new HostPortWaitStrategy();
-        redisWait.waitUntilReady(redisContainer);
-        mySQLMasterContainer.waitingFor(redisWait);
-
-        HostPortWaitStrategy mysqlMasterWait = new HostPortWaitStrategy();
-        mysqlMasterWait.waitUntilReady(mySQLMasterContainer);
-        mySQLSlaveContainer1.waitingFor(mysqlMasterWait);
-        mySQLSlaveContainer.waitingFor(mysqlMasterWait);
-        eurekaContainer.waitingFor(mysqlMasterWait);
+        gatewayContainer.start();
 
         HostPortWaitStrategy eurekaWait = new HostPortWaitStrategy();
         eurekaWait.waitUntilReady(eurekaContainer);
-        gatewayContainer.waitingFor(eurekaWait);
+        mySQLMasterContainer.waitingFor(eurekaWait);
 
-        HostPortWaitStrategy gatewayWait = new HostPortWaitStrategy();
-        gatewayWait.waitUntilReady(gatewayContainer);
-        userContainer.waitingFor(gatewayWait);
-        knjizenjeContainer.waitingFor(gatewayWait);
+        HostPortWaitStrategy mysqlMasterWait = new HostPortWaitStrategy();
+        mysqlMasterWait.waitUntilReady(mySQLMasterContainer);
+        mySQLSlaveContainer.waitingFor(mysqlMasterWait);
+
+        HostPortWaitStrategy mysqlSlaveWait = new HostPortWaitStrategy();
+        mysqlSlaveWait.waitUntilReady(mySQLSlaveContainer);
+        mySQLSlaveContainer1.waitingFor(mysqlSlaveWait);
+
+        HostPortWaitStrategy mysqlSlave1Wait = new HostPortWaitStrategy();
+        mysqlSlave1Wait.waitUntilReady(mySQLSlaveContainer1);
+        redisContainer.waitingFor(mysqlSlave1Wait);
+
+        HostPortWaitStrategy redisWait = new HostPortWaitStrategy();
+        redisWait.waitUntilReady(redisContainer);
+        userContainer.waitingFor(redisWait);
+
+        HostPortWaitStrategy userWait = new HostPortWaitStrategy();
+        userWait.waitUntilReady(userContainer);
+        knjizenjeContainer.waitingFor(userWait);
+
+        HostPortWaitStrategy knjizenjeWait = new HostPortWaitStrategy();
+        knjizenjeWait.waitUntilReady(knjizenjeContainer);
+        gatewayContainer.waitingFor(knjizenjeWait);
     }
 
     @DynamicPropertySource

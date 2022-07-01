@@ -1,15 +1,16 @@
 package raf.si.racunovodstvo.user.integration;
 
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import raf.si.racunovodstvo.user.integration.containers.MySQLMasterContainer;
-import raf.si.racunovodstvo.user.integration.containers.MySQLSlaveContainer;
 import raf.si.racunovodstvo.user.integration.containers.RedisContainer;
 import raf.si.racunovodstvo.user.integration.network.NetworkHolder;
 
 @Testcontainers
+@ActiveProfiles("test")
 class BaseIT {
 
     protected static final RedisContainer redisContainer = new RedisContainer(NetworkHolder.network(), 6379);

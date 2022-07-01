@@ -14,13 +14,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import raf.si.racunovodstvo.nabavka.feign.PreduzeceFeignClient;
@@ -43,14 +39,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ExternalServiceIntegrationTest extends BaseIT {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private final RestTemplate restTemplate = new RestTemplate();
     private String token;
-    private PreduzeceRequest preduzece;
 
     private final static String URI_KONVERZIJE = "/api/konverzije";
 
@@ -70,20 +64,6 @@ class ExternalServiceIntegrationTest extends BaseIT {
         String loginUrl = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086) + "/auth/login";
         LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
         token = "Bearer " + loginResponse.getJwt();
-
-        PreduzeceRequest preduzeceRequest = new PreduzeceRequest();
-        preduzeceRequest.setPreduzeceId(null);
-        preduzeceRequest.setAdresa("testAdresa2");
-        preduzeceRequest.setGrad("testGrad2");
-        preduzeceRequest.setPib("987654321");
-        preduzeceRequest.setRacun("testRacun2");
-        preduzeceRequest.setNaziv("testNaziv2");
-        preduzeceRequest.setTelefon("testTelefon2");
-        preduzeceRequest.setFax("testFax2");
-        preduzeceRequest.setWebAdresa("testWebAdresa2");
-        String preduzecePostUrl =
-            "http://" + preduzeceContainer.getHost() + ":" + preduzeceContainer.getMappedPort(8087) + "/api/preduzece";
-        //      preduzece = postRest(preduzecePostUrl, preduzeceRequest, PreduzeceRequest.class);
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
     }

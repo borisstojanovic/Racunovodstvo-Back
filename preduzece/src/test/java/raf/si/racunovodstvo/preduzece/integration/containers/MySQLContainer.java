@@ -2,7 +2,10 @@ package raf.si.racunovodstvo.preduzece.integration.containers;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
+
+import java.time.Duration;
 
 public abstract class MySQLContainer extends GenericContainer<MySQLContainer> {
 
@@ -13,6 +16,7 @@ public abstract class MySQLContainer extends GenericContainer<MySQLContainer> {
         withNetworkAliases(hostName);
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName(hostName));
         waitingFor(new HostPortWaitStrategy());
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(20000)));
 
         addEnv("MYSQL_REPLICATION_USER", "repl_user");
         addEnv("MYSQL_REPLICATION_PASSWORD", "test");

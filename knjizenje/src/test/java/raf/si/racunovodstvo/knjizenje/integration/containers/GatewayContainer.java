@@ -2,7 +2,10 @@ package raf.si.racunovodstvo.knjizenje.integration.containers;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
+
+import java.time.Duration;
 
 public class GatewayContainer extends GenericContainer<GatewayContainer> {
 
@@ -12,7 +15,8 @@ public class GatewayContainer extends GenericContainer<GatewayContainer> {
         withNetwork(network);
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("gateway"));
         withNetworkAliases("gateway");
-        waitingFor(new HostPortWaitStrategy());
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(20000)));
+        setStartupAttempts(3);
 
         addEnv("SPRING_PROFILES_ACTIVE", "prod");
         addEnv("SERVER_PORT", port + "");

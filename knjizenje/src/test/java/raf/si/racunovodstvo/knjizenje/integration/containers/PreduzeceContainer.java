@@ -13,6 +13,7 @@ public class PreduzeceContainer extends GenericContainer<PreduzeceContainer> {
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("preduzece"));
         withNetworkAliases("preduzece");
         waitingFor(new HostPortWaitStrategy());
+        setStartupAttempts(3);
 
         addEnv("SERVER_PORT", port + "");
         addEnv("SPRING_PROFILES_ACTIVE", "prod");
