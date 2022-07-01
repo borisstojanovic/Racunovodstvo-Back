@@ -10,12 +10,13 @@ public class GatewayContainer extends GenericContainer<GatewayContainer> {
         super("ghcr.io/raf-si-2021/racunovodstvo-gateway:dev");
         withExposedPorts(port);
         withNetwork(network);
-        //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("gateway"));
+        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("gateway"));
         withNetworkAliases("gateway");
         waitingFor(new HostPortWaitStrategy());
 
+        addEnv("SPRING_PROFILES_ACTIVE", "prod");
         addEnv("SERVER_PORT", port + "");
-        addEnv("REGISTRY_HOST", "http://eureka:8761/eureka");
+        addEnv("REGISTRY_HOST", "eureka");
         addEnv("CORS_ORIGINS", "http://localhost:4200");
     }
 }

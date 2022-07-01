@@ -1,7 +1,5 @@
 package raf.si.racunovodstvo.preduzece.integration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
@@ -72,9 +70,15 @@ class BaseIT {
         String eurekaHost = "http://" + eurekaContainer.getHost() + ":" + eurekaContainer.getMappedPort(8761) + "/eureka";
         String mysqlHost =
             "jdbc:mysql://" + mySQLMasterContainer.getHost() + ":" + mySQLMasterContainer.getMappedPort(3306) + "/si?serverTimezone=UTC";
+        String knjizenjeExternalHost = "http://" + knjizenjeContainer.getHost() + ":" + knjizenjeContainer.getMappedPort(8085);
 
+        String knjizenjeHost = knjizenjeContainer.getContainerInfo().getConfig().getHostName();
         registry.add("spring.datasource.url", () -> mysqlHost);
         registry.add("eureka.client.service-url.defaultZone", () -> eurekaHost);
         registry.add("spring.datasource.password", () -> "test");
+        registry.add("service.knjizenje.url", () -> knjizenjeHost);
+        registry.add("eureka.client.enabled", () -> "false");
+        registry.add("spring.cloud.loadbalancer.ribbon.enabled", () -> "false");
+        registry.add("spring.cloud.discovery.client.simple.instances." + knjizenjeHost + "[0].uri", () -> knjizenjeExternalHost);
     }
 }

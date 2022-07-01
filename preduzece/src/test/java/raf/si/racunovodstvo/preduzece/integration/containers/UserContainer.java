@@ -10,12 +10,11 @@ public class UserContainer extends GenericContainer<UserContainer> {
         super("ghcr.io/raf-si-2021/racunovodstvo-user:dev");
         withNetwork(network);
         withExposedPorts(port);
-        //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("user"));
+        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("user"));
         withNetworkAliases("user");
         waitingFor(new HostPortWaitStrategy());
 
         addEnv("SERVER_PORT", port + "");
-        addEnv("REGISTRY_HOST", "http://eureka:8761/eureka");
         addEnv("SPRING_PROFILES_ACTIVE", "prod");
         addEnv("MYSQL_MASTER_HOST", "jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC");
         addEnv("MYSQL_SLAVE0_HOST", "jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC");

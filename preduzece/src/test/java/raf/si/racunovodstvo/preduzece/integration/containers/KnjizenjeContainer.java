@@ -10,13 +10,13 @@ public class KnjizenjeContainer extends GenericContainer<KnjizenjeContainer> {
         super("ghcr.io/raf-si-2021/racunovodstvo-knjizenje:dev");
         withExposedPorts(port);
         withNetwork(network);
-        //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("knjizenje"));
+        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("knjizenje"));
         withNetworkAliases("knjizenje");
         waitingFor(new HostPortWaitStrategy());
 
         addEnv("SERVER_PORT", port + "");
-        addEnv("REGISTRY_HOST", "http://eureka:8761/eureka");
         addEnv("SPRING_PROFILES_ACTIVE", "prod");
+        addEnv("EUREKA_INSTANCE_PREFERIPADDRESS", "true");
         addEnv("MYSQL_MASTER_HOST", "jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC");
         addEnv("MYSQL_SLAVE0_HOST", "jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC");
         addEnv("MYSQL_SLAVE1_HOST", "jdbc:mysql://mysql_slave_1:3306/si?serverTimezone=UTC");

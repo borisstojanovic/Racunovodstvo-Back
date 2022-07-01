@@ -8,10 +8,9 @@ public class EurekaContainer extends GenericContainer<EurekaContainer> {
 
     public EurekaContainer(Network network, int port) {
         super("ghcr.io/raf-si-2021/racunovodstvo-eureka:dev");
-        System.out.println("here");
         withExposedPorts(port);
         withNetwork(network);
-        //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("eureka"));
+        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("eureka"));
         withNetworkAliases("eureka");
         waitingFor(new HostPortWaitStrategy());
 
