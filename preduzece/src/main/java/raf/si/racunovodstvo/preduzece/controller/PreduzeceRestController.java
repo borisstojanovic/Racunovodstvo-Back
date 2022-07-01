@@ -53,6 +53,15 @@ public class PreduzeceRestController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createPreduzece(@Valid @RequestBody Preduzece preduzece){
+        System.out.println("INSIDE");
+        System.out.println("INSIDE");
+        System.out.println("INSIDE");
+        System.out.println("INSIDE");
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
         return ResponseEntity.ok(preduzeceService.savePreduzece(preduzece));
     }
 

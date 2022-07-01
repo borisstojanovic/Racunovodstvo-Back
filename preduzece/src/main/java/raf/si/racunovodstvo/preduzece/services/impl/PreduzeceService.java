@@ -1,6 +1,8 @@
 package raf.si.racunovodstvo.preduzece.services.impl;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -27,6 +29,8 @@ public class PreduzeceService implements IPreduzeceService {
 
     private final SearchUtil<Preduzece> searchUtil;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PreduzeceService.class);
+
     @Autowired
     public PreduzeceService(PreduzeceRepository preduzeceRepository, ModelMapper modelMapper) {
         this.preduzeceRepository = preduzeceRepository;
@@ -37,6 +41,23 @@ public class PreduzeceService implements IPreduzeceService {
     @Override
     @CachePut(value = RedisConstants.PREDUZECE_CACHE, key = "#result.preduzeceId")
     public Preduzece save(Preduzece preduzece) {
+        LOGGER.info("INSIDE3");
+        LOGGER.info("INSIDE3");
+        LOGGER.info("INSIDE3");
+        LOGGER.info("INSIDE3");
+        System.out.println("INSIDE3");
+        System.out.println("INSIDE3");
+        System.out.println("INSIDE3");
+        System.out.println("INSIDE3");
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
         preduzece.setIsActive(true);
         return preduzeceRepository.save(preduzece);
     }
@@ -67,6 +88,19 @@ public class PreduzeceService implements IPreduzeceService {
     @Override
     @CachePut(value = RedisConstants.PREDUZECE_CACHE, key = "#result.preduzeceId")
     public PreduzeceResponse savePreduzece(Preduzece preduzece) {
+        System.out.println("INSIDE2");
+        System.out.println("INSIDE2");
+        System.out.println("INSIDE2");
+        System.out.println("INSIDE2");
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        System.out.println(preduzece.getPreduzeceId());
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
+        LOGGER.info("Preduzece id: {}", preduzece.getPreduzeceId());
         return modelMapper.map(save(preduzece), PreduzeceResponse.class);
     }
 

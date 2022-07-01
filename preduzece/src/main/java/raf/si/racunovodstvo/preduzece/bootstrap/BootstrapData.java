@@ -14,6 +14,7 @@ import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 
 @Component
@@ -46,8 +47,6 @@ public class BootstrapData implements CommandLineRunner {
         log.info("Loading Data...");
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
-        log.info("Loading Data...");
 
         Preduzece p1 = new Preduzece();
         p1.setNaziv("ThinkStudio");
@@ -116,6 +115,8 @@ public class BootstrapData implements CommandLineRunner {
         p6.setEmail("office@fashionworld.com");
         p6.setWebAdresa("fashionworld.com");
         p6.setIsActive(false);
+
+        this.preduzeceRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6));
 
         Zaposleni z1 = new Zaposleni();
         z1.setIme("Darko");
@@ -220,29 +221,14 @@ public class BootstrapData implements CommandLineRunner {
         z5.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         z5.setPreduzece(p5);
 
+        this.zaposleniRepository.saveAll(Arrays.asList(z1, z2, z3, z4, z5));
+
         Plata pl5 = new Plata();
         pl5.setDatumOd(z5.getPocetakRadnogOdnosa());
         pl5.setNetoPlata(110000.00);
         pl5.setZaposleni(z5);
 
-        this.preduzeceRepository.save(p1);
-        this.preduzeceRepository.save(p2);
-        this.preduzeceRepository.save(p3);
-        this.preduzeceRepository.save(p4);
-        this.preduzeceRepository.save(p5);
-        this.preduzeceRepository.save(p6);
-
-        this.zaposleniRepository.save(z1);
-        this.zaposleniRepository.save(z2);
-        this.zaposleniRepository.save(z3);
-        this.zaposleniRepository.save(z4);
-        this.zaposleniRepository.save(z5);
-
-        this.plataRepository.save(pl1);
-        this.plataRepository.save(pl2);
-        this.plataRepository.save(pl3);
-        this.plataRepository.save(pl4);
-        this.plataRepository.save(pl5);
+        this.plataRepository.saveAll(Arrays.asList(pl1, pl2, pl3, pl4, pl5));
 
         Staz staz = new Staz();
         staz.setPocetakRada(simpleDateFormat.parse("22-01-2018"));
