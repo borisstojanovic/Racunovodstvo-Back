@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Entity
+@Entity(name = "sifra_transakcije")
 @Getter
 @Setter
 public class SifraTransakcije {
