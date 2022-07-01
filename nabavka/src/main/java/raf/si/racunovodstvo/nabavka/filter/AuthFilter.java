@@ -1,14 +1,11 @@
 package raf.si.racunovodstvo.nabavka.filter;
 
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
+import raf.si.racunovodstvo.nabavka.feign.UserFeignClient;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,9 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthFilter extends OncePerRequestFilter {
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    private static final String URL = "http://user/auth/access";
+    private UserFeignClient userFeignClient;
 
     private static final String[] EXCLUDED_URLS = {"/v3/api-docs", "/swagger-ui.html", "/swagger-ui/"};
 
@@ -35,16 +30,12 @@ public class AuthFilter extends OncePerRequestFilter {
             if (!skipFilter(httpServletRequest.getRequestURL().toString())) {
                 String authHeader = httpServletRequest.getHeader("Authorization");
 
-                HttpHeaders headers = new HttpHeaders();
-                headers.add("Authorization", authHeader);
-                HttpEntity request = new HttpEntity(headers);
-
                 // baca izuzetak ako nije ispravak token
-                ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.GET, request, String.class);
+                ResponseEntity<String> response = userFeignClient.validateToken(authHeader);
             }
             filterChain.doFilter(httpServletRequest, httpServletResponse);
 
-        } catch (HttpClientErrorException e) {
+        } catch (FeignException e) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is not valid.");
         }
 

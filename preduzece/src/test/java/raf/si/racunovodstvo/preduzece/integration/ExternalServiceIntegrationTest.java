@@ -87,18 +87,6 @@ class ExternalServiceIntegrationTest extends BaseIT {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
     }
 
-    @AfterAll
-    static void afterAll() {
-        eurekaContainer.stop();
-        knjizenjeContainer.stop();
-        userContainer.stop();
-        gatewayContainer.stop();
-        redisContainer.stop();
-        mySQLSlaveContainer.stop();
-        mySQLSlaveContainer1.stop();
-        mySQLMasterContainer.stop();
-    }
-
     @Test
     void setConfig() throws Exception {
         ObracunZaradeConfigRequest obracunZaradeConfigRequest = new ObracunZaradeConfigRequest();

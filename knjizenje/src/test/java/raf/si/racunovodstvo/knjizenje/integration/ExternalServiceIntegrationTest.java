@@ -1,0 +1,162 @@
+package raf.si.racunovodstvo.knjizenje.integration;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.WebApplicationContext;
+import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
+import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginRequest;
+import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginResponse;
+import raf.si.racunovodstvo.knjizenje.integration.test_model.PreduzeceRequest;
+import raf.si.racunovodstvo.knjizenje.model.Faktura;
+import raf.si.racunovodstvo.knjizenje.model.Preduzece;
+import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
+import raf.si.racunovodstvo.knjizenje.repositories.FakturaRepository;
+
+import java.util.Date;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ExternalServiceIntegrationTest extends BaseIT {
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final RestTemplate restTemplate = new RestTemplate();
+    private String token;
+    private PreduzeceRequest preduzece;
+
+    private final static String URI_IZVESTAJI = "/api/izvestaji";
+    private final static String URI_FAKTURA = "/api/faktura";
+
+    @Autowired
+    private WebApplicationContext wac;
+
+    @Autowired
+    private FakturaRepository fakturaRepository;
+
+    @Autowired
+    private PreduzeceFeignClient preduzeceFeignClient;
+
+    private MockMvc mockMvc;
+
+    @BeforeAll
+    void setup() {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        LoginRequest loginRequest = new LoginRequest("user1", "user1");
+        String loginUrl = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086) + "/auth/login";
+        LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
+        token = "Bearer " + loginResponse.getJwt();
+
+        PreduzeceRequest preduzeceRequest = new PreduzeceRequest();
+        preduzeceRequest.setAdresa("testAdresa");
+        preduzeceRequest.setGrad("testGrad");
+        preduzeceRequest.setPib("123456789");
+        preduzeceRequest.setRacun("testRacun");
+        preduzeceRequest.setNaziv("testNaziv");
+        String preduzecePostUrl =
+            "http://" + preduzeceContainer.getHost() + ":" + preduzeceContainer.getMappedPort(8087) + "/api/preduzece";
+        preduzece = postRest(preduzecePostUrl, preduzeceRequest, PreduzeceRequest.class);
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+    }
+
+    @Test
+    void getBilansStanjaTest() throws Exception {
+        Long preduzece = 1L;
+        String title = "title";
+        String datumOd = "2022-06-01";
+        String datumDo = "2022-06-30";
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("preduzece", preduzece + "");
+        params.add("title", title);
+        params.add("datumiOd", datumOd);
+        params.add("datumiDo", datumDo);
+        mockMvc.perform(get(URI_IZVESTAJI + "/stanje").params(params).header("Authorization", token))
+               .andExpect(status().isOk());
+    }
+
+    @Test
+    void createFakturaTest() throws Exception {
+        Faktura faktura = new Faktura();
+        faktura.setPreduzeceId(1L);
+        faktura.setTipFakture(TipFakture.ULAZNA_FAKTURA);
+        faktura.setRokZaPlacanje(new Date());
+        faktura.setBrojFakture("12345TEST");
+        faktura.setValuta("EUR");
+        faktura.setPorezProcenat(10.0);
+        faktura.setNaplata(1000.00);
+        faktura.setIznos(1100.00);
+        faktura.setKurs(117.00);
+        faktura.setDatumIzdavanja(new Date());
+        faktura.setBrojDokumenta("12345TEST");
+        String requestJson = mapper.writeValueAsString(faktura);
+        String result = mockMvc.perform(post(URI_FAKTURA).contentType(MediaType.APPLICATION_JSON)
+                                                         .content(requestJson)
+                                                         .header("Authorization", token))
+                               .andExpect(status().isOk())
+                               .andReturn()
+                               .getResponse()
+                               .getContentAsString();
+        Faktura createdFaktura = mapper.readValue(result, new TypeReference<>() {
+        });
+        Optional<Faktura> optionalFaktura = fakturaRepository.findByDokumentId(createdFaktura.getDokumentId());
+        assertTrue(optionalFaktura.isPresent());
+    }
+
+    @Test
+    void testPreduzeceFeign() {
+        Preduzece response = preduzeceFeignClient.getPreduzeceById(preduzece.getPreduzeceId(), token).getBody();
+
+        assertNotNull(response);
+        assertEquals(preduzece.getPreduzeceId(), response.getPreduzeceId());
+        assertEquals(preduzece.getNaziv(), response.getNaziv());
+    }
+
+    @SneakyThrows
+    private <R> R postRest(String url, Object req, Class<R> clazz) {
+        HttpHeaders headers = new HttpHeaders();
+        if (token != null && !token.isBlank()) {
+            headers.set(HttpHeaders.AUTHORIZATION, token);
+        }
+        System.out.println(url);
+        System.out.println(token);
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        HttpEntity<String> request = new HttpEntity<>(mapper.writeValueAsString(req), headers);
+        System.out.println(request.getBody());
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+
+        }
+        ResponseEntity<R> response = restTemplate.postForEntity(url, request, clazz);
+        return response.getBody();
+    }
+}
