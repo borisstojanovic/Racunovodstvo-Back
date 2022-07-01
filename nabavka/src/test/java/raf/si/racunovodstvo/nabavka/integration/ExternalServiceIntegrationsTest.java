@@ -23,7 +23,6 @@ import org.springframework.web.context.WebApplicationContext;
 import raf.si.racunovodstvo.nabavka.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.nabavka.integration.test_model.LoginRequest;
 import raf.si.racunovodstvo.nabavka.integration.test_model.LoginResponse;
-import raf.si.racunovodstvo.nabavka.integration.test_model.PreduzeceRequest;
 import raf.si.racunovodstvo.nabavka.requests.KonverzijaRequest;
 import raf.si.racunovodstvo.nabavka.requests.LokacijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KonverzijaResponse;
@@ -47,7 +46,6 @@ class ExternalServiceIntegrationsTest extends BaseIT {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final RestTemplate restTemplate = new RestTemplate();
     private String token;
-    private PreduzeceRequest preduzece;
 
     private final static String URI_KONVERZIJE = "/api/konverzije";
 
@@ -67,20 +65,6 @@ class ExternalServiceIntegrationsTest extends BaseIT {
         String loginUrl = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086) + "/auth/login";
         LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
         token = "Bearer " + loginResponse.getJwt();
-
-        PreduzeceRequest preduzeceRequest = new PreduzeceRequest();
-        preduzeceRequest.setPreduzeceId(null);
-        preduzeceRequest.setAdresa("testAdresa2");
-        preduzeceRequest.setGrad("testGrad2");
-        preduzeceRequest.setPib("987654322");
-        preduzeceRequest.setRacun("testRacun2");
-        preduzeceRequest.setNaziv("testNaziv2");
-        preduzeceRequest.setTelefon("testTelefon2");
-        preduzeceRequest.setFax("testFax2");
-        preduzeceRequest.setWebAdresa("testWebAdresa2");
-        String preduzecePostUrl =
-            "http://" + preduzeceContainer.getHost() + ":" + preduzeceContainer.getMappedPort(8087) + "/api/preduzece";
-//        preduzece = postRest(preduzecePostUrl, preduzeceRequest, PreduzeceRequest.class);
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
     }
@@ -120,7 +104,6 @@ class ExternalServiceIntegrationsTest extends BaseIT {
 
         assertNotNull(response);
         assertEquals(1L, response.getPreduzeceId());
-        //assertEquals(preduzece.getNaziv(), response.getNaziv());
     }
 
     @SneakyThrows
