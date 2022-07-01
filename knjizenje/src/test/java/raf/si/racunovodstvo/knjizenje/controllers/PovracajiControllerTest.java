@@ -10,7 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.knjizenje.model.Povracaj;
+import raf.si.racunovodstvo.knjizenje.responses.TransakcijaResponse;
 import raf.si.racunovodstvo.knjizenje.services.PovracajService;
+import raf.si.racunovodstvo.knjizenje.services.impl.ITransakcijaService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
@@ -19,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PovracajiControllerTest {
@@ -28,6 +32,8 @@ public class PovracajiControllerTest {
     private PovracajiController povracajiController;
     @Mock
     private PovracajService povracajService;
+    @Mock
+    private ITransakcijaService transakcijaService;
 
     @Test
     void findAll() {
@@ -40,6 +46,7 @@ public class PovracajiControllerTest {
     @Test
     void createPovracaj() {
         ResponseEntity<?> responseEntity = povracajiController.createPovracaj(new Povracaj());
+        lenient().when(transakcijaService.createFromPovracaj(any(Povracaj.class))).thenReturn(new TransakcijaResponse());
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 

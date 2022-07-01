@@ -84,12 +84,12 @@ class ObracunZaradeServiceTest {
         then(obracunZaradeRepository).should(times(0)).deleteById(MOCK_ID);
     }
 
-    /*@Test
+    @Test
     void makeObracunZarade(){
         ObracunZarade obracunZarade = new ObracunZarade();
         obracunZaradeService.makeObracunZarade(MOCK_DATE);
         then(obracunZaradeRepository).should(atLeast(0)).save(obracunZarade);
-    }*/
+    }
 
     @Test
     void updateObracunZaradeNaziv(){

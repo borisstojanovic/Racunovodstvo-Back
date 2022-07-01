@@ -7,7 +7,7 @@ import raf.si.racunovodstvo.knjizenje.model.enums.TipTransakcije;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
+@Entity(name = "transakcija")
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "dokumentId")

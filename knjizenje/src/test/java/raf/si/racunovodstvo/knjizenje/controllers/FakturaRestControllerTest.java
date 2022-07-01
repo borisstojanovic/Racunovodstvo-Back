@@ -14,6 +14,7 @@ import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.knjizenje.model.Faktura;
 import raf.si.racunovodstvo.knjizenje.model.Preduzece;
+import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
 import raf.si.racunovodstvo.knjizenje.services.FakturaService;
 
 import javax.persistence.EntityNotFoundException;
@@ -82,6 +83,7 @@ class FakturaRestControllerTest {
     @Test
     void createFaktura() throws IOException {
         Faktura faktura = new Faktura();
+        faktura.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         faktura.setPreduzeceId(MOCK_ID);
         Preduzece preduzece = new Preduzece();
         preduzece.setPreduzeceId(1L);
@@ -94,12 +96,14 @@ class FakturaRestControllerTest {
     @Test
     void createFakturaException() {
         Faktura faktura = new Faktura();
+        faktura.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         assertThrows(PersistenceException.class, () -> fakturaRestController.createFaktura(faktura, TOKEN));
     }
 
     @Test
     void updateFaktura() throws IOException {
         Faktura faktura = new Faktura();
+        faktura.setTipFakture(TipFakture.ULAZNA_FAKTURA);
         faktura.setPreduzeceId(MOCK_ID);
         faktura.setDokumentId(MOCK_ID);
         Preduzece preduzece = new Preduzece();
@@ -113,6 +117,7 @@ class FakturaRestControllerTest {
     @Test
     void updateFakturaEmpty() throws IOException {
         Faktura faktura = new Faktura();
+        faktura.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         faktura.setPreduzeceId(MOCK_ID);
         faktura.setDokumentId(MOCK_ID);
         Preduzece preduzece = new Preduzece();
