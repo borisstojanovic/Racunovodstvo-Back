@@ -16,7 +16,7 @@ public class PreduzeceContainer extends GenericContainer<PreduzeceContainer> {
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("preduzece"));
         withNetworkAliases("preduzece");
         waitingFor(new HostPortWaitStrategy());
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(25000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(50000)));
         setStartupAttempts(3);
 
         addEnv("SERVER_PORT", port + "");
