@@ -67,7 +67,7 @@ class UserAuthIntegrationTest extends BaseIT {
 
     @BeforeAll
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
 
         User user = new User();
         user.setUsername(MOCK_UID);
@@ -80,15 +80,15 @@ class UserAuthIntegrationTest extends BaseIT {
 
     @Test
     @Order(1)
-    void loginTest() throws Exception {
+    void loginTestFailure() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setPassword(MOCK_PASSWORD);
+        loginRequest.setPassword("");
         loginRequest.setUsername(MOCK_UID);
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(loginRequest);
 
         String result = mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
-                               .andExpect(status().isOk())
+                               .andExpect(status().isForbidden())
                                .andReturn()
                                .getResponse()
                                .getContentAsString();
