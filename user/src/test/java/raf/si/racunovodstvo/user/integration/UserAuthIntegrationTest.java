@@ -82,7 +82,7 @@ class UserAuthIntegrationTest extends BaseIT {
     @Order(1)
     void loginTestFailure() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setPassword("");
+        loginRequest.setPassword("WRONG");
         loginRequest.setUsername(MOCK_UID);
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(loginRequest);
