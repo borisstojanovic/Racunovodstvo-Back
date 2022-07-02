@@ -138,7 +138,7 @@ public class TransakcijaService implements ITransakcijaService {
         transakcija.setDatumTransakcije(faktura.getDatumPlacanja());
         transakcija.setTipTransakcije(TipTransakcije.UPLATA);
         transakcija.setIznos(faktura.getIznos());
-        this.sifraTransakcijeRepository.findBySifra(101L).ifPresent(transakcija::setSifraTransakcije);
+        this.sifraTransakcijeRepository.findAll().stream().findFirst().ifPresent(transakcija::setSifraTransakcije);
 
         return this.save(transakcija);
     }
