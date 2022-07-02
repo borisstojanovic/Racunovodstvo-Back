@@ -19,7 +19,7 @@ public class UserContainer extends GenericContainer<UserContainer> {
         addEnv("SPRING_PROFILES_ACTIVE", "prod");
         addEnv("MYSQL_MASTER_HOST", "jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC");
         addEnv("MYSQL_SLAVE0_HOST", "jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC");
-        addEnv("MYSQL_SLAVE1_HOST", "jdbc:mysql://mysql_slave_1:3306/si?serverTimezone=UTC");
+        addEnv("MYSQL_SLAVE1_HOST", "jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC");
         addEnv("MYSQL_MASTER_ROOT_PASSWORD", "test");
         addEnv("MYSQL_SLAVE_ROOT_PASSWORD", "test");
         addEnv("REDIS_HOST", "redis");

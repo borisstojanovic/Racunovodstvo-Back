@@ -4,10 +4,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import raf.si.racunovodstvo.preduzece.integration.containers.EurekaContainer;
-import raf.si.racunovodstvo.preduzece.integration.containers.GatewayContainer;
 import raf.si.racunovodstvo.preduzece.integration.containers.KnjizenjeContainer;
 import raf.si.racunovodstvo.preduzece.integration.containers.MySQLMasterContainer;
 import raf.si.racunovodstvo.preduzece.integration.containers.MySQLSlaveContainer;
@@ -22,31 +20,24 @@ class BaseIT {
     protected static final EurekaContainer eurekaContainer = new EurekaContainer(NetworkHolder.network(), 8761);
     protected static final KnjizenjeContainer knjizenjeContainer = new KnjizenjeContainer(NetworkHolder.network(), 8085);
     protected static final UserContainer userContainer = new UserContainer(NetworkHolder.network(), 8086);
-    protected static final GatewayContainer gatewayContainer = new GatewayContainer(NetworkHolder.network(), 8100);
     protected static final RedisContainer redisContainer = new RedisContainer(NetworkHolder.network(), 6379);
     protected static final MySQLMasterContainer mySQLMasterContainer = new MySQLMasterContainer(NetworkHolder.network(), 3306);
     protected static final MySQLSlaveContainer mySQLSlaveContainer = new MySQLSlaveContainer(NetworkHolder.network(), 3306, "mysql_slave");
-    protected static final MySQLSlaveContainer mySQLSlaveContainer1 =
-        new MySQLSlaveContainer(NetworkHolder.network(), 3306, "mysql_slave_1");
 
     static {
         redisContainer.withReuse(true);
         mySQLMasterContainer.withReuse(true);
         mySQLSlaveContainer.withReuse(true);
-        mySQLSlaveContainer1.withReuse(true);
         eurekaContainer.withReuse(true);
-        gatewayContainer.withReuse(true);
         knjizenjeContainer.withReuse(true);
         userContainer.withReuse(true);
 
         eurekaContainer.start();
         mySQLMasterContainer.start();
         mySQLSlaveContainer.start();
-        mySQLSlaveContainer1.start();
         redisContainer.start();
         userContainer.start();
         knjizenjeContainer.start();
-        gatewayContainer.start();
 
         HostPortWaitStrategy eurekaWait = new HostPortWaitStrategy();
         eurekaWait.waitUntilReady(eurekaContainer);
@@ -58,11 +49,7 @@ class BaseIT {
 
         HostPortWaitStrategy mysqlSlaveWait = new HostPortWaitStrategy();
         mysqlSlaveWait.waitUntilReady(mySQLSlaveContainer);
-        mySQLSlaveContainer1.waitingFor(mysqlSlaveWait);
-
-        HostPortWaitStrategy mysqlSlave1Wait = new HostPortWaitStrategy();
-        mysqlSlave1Wait.waitUntilReady(mySQLSlaveContainer1);
-        redisContainer.waitingFor(mysqlSlave1Wait);
+        redisContainer.waitingFor(mysqlSlaveWait);
 
         HostPortWaitStrategy redisWait = new HostPortWaitStrategy();
         redisWait.waitUntilReady(redisContainer);
@@ -71,10 +58,6 @@ class BaseIT {
         HostPortWaitStrategy userWait = new HostPortWaitStrategy();
         userWait.waitUntilReady(userContainer);
         knjizenjeContainer.waitingFor(userWait);
-
-        HostPortWaitStrategy knjizenjeWait = new HostPortWaitStrategy();
-        knjizenjeWait.waitUntilReady(knjizenjeContainer);
-        gatewayContainer.waitingFor(knjizenjeWait);
     }
 
     @DynamicPropertySource
