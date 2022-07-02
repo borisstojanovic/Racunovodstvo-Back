@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,34 +50,40 @@ class UserAuthIntegrationTest extends BaseIT {
     private UserRepository userRepository;
 
     @Autowired
+    private PermissionRepository permissionRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private MockMvc mockMvc;
 
-    private static final String MOCK_UID = "DUMMY_USERNAME";
+    private static final String MOCK_UID = "MOCK_UID_2";
     private static final String MOCK_EMAIL = "MOCK_EMAIL_2";
     private static final String MOCK_PASSWORD = "MOCK_PASSWORD_2";
-    private String token;
+    private String jwtToken;
 
     @BeforeAll
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
+
+        User user = new User();
+        user.setUsername(MOCK_UID);
+        user.setEmail(MOCK_EMAIL);
+        user.setPassword(passwordEncoder.encode(MOCK_PASSWORD));
+        user.setPermissions(permissionRepository.findAll());
+        userRepository.save(user);
+        jwtToken = jwtUtil.generateToken(user.getUsername());
     }
 
     @Test
     @Order(1)
     void loginTest() throws Exception {
-        User user = new User();
-        user.setUsername(MOCK_UID);
-        user.setEmail(MOCK_EMAIL);
-        user.setPreduzeceId(1L);
-        user.setFirstName("TEST");
-        user.setLastName("TEST");
-        user.setPassword(passwordEncoder.encode(MOCK_PASSWORD));
-        userRepository.save(user);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPassword(MOCK_PASSWORD);
-        loginRequest.setUsername(user.getUsername());
+        loginRequest.setUsername(MOCK_UID);
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(loginRequest);
 
@@ -87,14 +94,14 @@ class UserAuthIntegrationTest extends BaseIT {
                                .getContentAsString();
         Map<String, String> resultMap = mapper.readValue(result, new TypeReference<>() {
         });
-        token = resultMap.get("jwt");
-        System.out.println(token);
+        jwtToken = resultMap.getOrDefault("jwt", jwtToken);
+        System.out.println(jwtToken);
     }
     
     @Test
     @Order(2)
     void getAllTest() throws Exception {
-        mockMvc.perform(get(URI + "/all").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
+        mockMvc.perform(get(URI + "/all").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
     }
 
     @Test
@@ -107,20 +114,20 @@ class UserAuthIntegrationTest extends BaseIT {
     @Order(2)
     void getByIdTest() throws Exception {
         Long userId = userRepository.findByUsername(MOCK_UID).get().getUserId();
-        mockMvc.perform(get(URI).param("userId", userId.toString()).header("Authorization", "Bearer " + token))
+        mockMvc.perform(get(URI).param("userId", userId.toString()).header("Authorization", "Bearer " + jwtToken))
                .andExpect(status().isOk());
     }
 
     @Test
     @Order(2)
     void getByIdNotFoundTest() throws Exception {
-        mockMvc.perform(get(URI).param("userId", "-1").header("Authorization", "Bearer " + token)).andExpect(status().isNotFound());
+        mockMvc.perform(get(URI).param("userId", "-1").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isNotFound());
     }
 
     @Test
     @Order(2)
     void getLoginUserTest() throws Exception {
-        mockMvc.perform(get(URI + "/loginuser").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
+        mockMvc.perform(get(URI + "/loginuser").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
     }
 
     @Test
@@ -132,7 +139,7 @@ class UserAuthIntegrationTest extends BaseIT {
     @Test
     @Order(2)
     void accessTest() throws Exception {
-        mockMvc.perform(get(AUTH_URI + "/access").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
+        mockMvc.perform(get(AUTH_URI + "/access").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
     }
 
     @Test
@@ -144,14 +151,14 @@ class UserAuthIntegrationTest extends BaseIT {
     @Test
     @Order(3)
     void deleteUserNotFoundTest() throws Exception {
-        mockMvc.perform(delete(URI + "/" + -1).header("Authorization", "Bearer " + token)).andExpect(status().isNotFound());
+        mockMvc.perform(delete(URI + "/" + -1).header("Authorization", "Bearer " + jwtToken)).andExpect(status().isNotFound());
     }
 
     @Test
     @Order(4)
     void deleteUserTest() throws Exception {
         Long userId = userRepository.findByUsername(MOCK_UID).get().getUserId();
-        mockMvc.perform(delete(URI + "/" + userId).header("Authorization", "Bearer " + token)).andExpect(status().isNoContent());
+        mockMvc.perform(delete(URI + "/" + userId).header("Authorization", "Bearer " + jwtToken)).andExpect(status().isNoContent());
         assertTrue(userRepository.findByUsername(MOCK_UID).isEmpty());
     }
 }
