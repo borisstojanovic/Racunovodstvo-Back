@@ -77,7 +77,7 @@ class UserAuthIntegrationTest extends BaseIT {
         userRepository.save(user);
         jwtToken = jwtUtil.generateToken(user.getUsername());
     }
-
+/*
     @Test
     @Order(1)
     void loginTest() throws Exception {
@@ -97,9 +97,10 @@ class UserAuthIntegrationTest extends BaseIT {
         jwtToken = resultMap.getOrDefault("jwt", jwtToken);
         System.out.println(jwtToken);
     }
+ */
     
     @Test
-    @Order(2)
+    @Order(1)
     void getAllTest() throws Exception {
         mockMvc.perform(get(URI + "/all").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
     }
