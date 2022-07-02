@@ -40,9 +40,20 @@ public class BootstrapData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Kalkulacija k1 = napraviDefaultKalkulaciju("AAA");
+        k1.setLokacija(new Lokacija());
+        Lokacija l1 = new Lokacija();
+        l1.setAdresa("Beograd");
+        l1.setNaziv("BG naziv");
+        lokacijaRepository.save(l1);
+        k1.setLokacija(l1);
         kalkulacijaRepository.save(k1);
 
         Kalkulacija k2 = napraviDefaultKalkulaciju("BBB");
+        l1 = new Lokacija();
+        l1.setAdresa("Novi Sad");
+        l1.setNaziv("NS naziv");
+        lokacijaRepository.save(l1);
+        k1.setLokacija(l1);
         kalkulacijaRepository.save(k2);
 
         Kalkulacija k3 = napraviDefaultKalkulaciju("CCC");
@@ -50,12 +61,16 @@ public class BootstrapData implements CommandLineRunner {
         troskoviNabavke.setNaziv("Test");
         troskoviNabavke.setCena(100.0);
         k3.setTroskoviNabavke(List.of(troskoviNabavke));
+        l1 = new Lokacija();
+        l1.setAdresa("Kragujevac");
+        l1.setNaziv("KG naziv");
+        lokacijaRepository.save(l1);
         kalkulacijaRepository.save(k3);
 
         Konverzija konverzija = new Konverzija();
         konverzija.setBrojKonverzije("ABC");
         konverzija.setTroskoviNabavke(new ArrayList<>());
-        Lokacija l1 = new Lokacija();
+        l1 = new Lokacija();
         l1.setAdresa("adresa");
         l1.setNaziv("naziv");
         l1 = lokacijaRepository.save(l1);

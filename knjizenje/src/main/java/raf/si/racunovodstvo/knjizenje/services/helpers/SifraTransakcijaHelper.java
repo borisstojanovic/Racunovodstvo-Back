@@ -44,7 +44,7 @@ public class SifraTransakcijaHelper {
             row.add(sifraTransakcije.getSaldo().toString());
             table.add(row);
         }
-        return new TableReport("author", String.format("Naslov: %s", title), "footer", HEADER, table);
+        return new TableReport("author", String.format("Naslov: %s", title), "", HEADER, table);
     }
 
     private void sort() {

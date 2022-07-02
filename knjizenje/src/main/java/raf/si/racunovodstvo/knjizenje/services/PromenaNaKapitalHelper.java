@@ -62,7 +62,7 @@ public class PromenaNaKapitalHelper {
             listOfStringRows.add(newRow);
         }
         headers.addFirst(opis);
-        return new TableReport("author", "title", "footer", headers, listOfStringRows);
+        return new TableReport("author", "Izvestaj o promenama na kapitalu", "", headers, listOfStringRows);
     }
 
     private List<String> addFirstColumn(int i, List<String> stringRow, int godina1, int godina2) {
