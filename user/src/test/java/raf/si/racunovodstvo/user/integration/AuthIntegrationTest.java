@@ -16,10 +16,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import raf.si.racunovodstvo.user.model.Permission;
+import raf.si.racunovodstvo.user.model.PermissionType;
 import raf.si.racunovodstvo.user.model.User;
+import raf.si.racunovodstvo.user.repositories.PermissionRepository;
 import raf.si.racunovodstvo.user.repositories.UserRepository;
 import raf.si.racunovodstvo.user.requests.LoginRequest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -43,6 +48,9 @@ class AuthIntegrationTest extends BaseIT {
     private UserRepository userRepository;
 
     @Autowired
+    private PermissionRepository permissionRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private MockMvc mockMvc;
@@ -63,13 +71,18 @@ class AuthIntegrationTest extends BaseIT {
         User user = new User();
         user.setUsername(MOCK_UID);
         user.setEmail(MOCK_EMAIL);
+        user.setPreduzeceId(1L);
+        user.setFirstName("TEST");
+        user.setLastName("TEST");
+        user.setPermissions(permissionRepository.findAll());
         user.setPassword(passwordEncoder.encode(MOCK_PASSWORD));
         userRepository.save(user);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPassword(MOCK_PASSWORD);
-        loginRequest.setUsername(MOCK_UID);
+        loginRequest.setUsername(user.getUsername());
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(loginRequest);
+        System.out.println(requestJson);
 
         String result = mockMvc.perform(post(URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
                                .andExpect(status().isOk())
