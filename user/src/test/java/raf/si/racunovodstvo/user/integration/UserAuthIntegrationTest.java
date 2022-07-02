@@ -67,7 +67,7 @@ class UserAuthIntegrationTest extends BaseIT {
 
     @BeforeAll
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply().build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
         User user = new User();
         user.setUsername(MOCK_UID);
