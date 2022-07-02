@@ -67,7 +67,7 @@ class UserAuthIntegrationTest extends BaseIT {
 
     @BeforeAll
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply().build();
 
         User user = new User();
         user.setUsername(MOCK_UID);
@@ -77,7 +77,7 @@ class UserAuthIntegrationTest extends BaseIT {
         userRepository.save(user);
         jwtToken = jwtUtil.generateToken(user.getUsername());
     }
-/*
+
     @Test
     @Order(1)
     void loginTest() throws Exception {
@@ -97,11 +97,11 @@ class UserAuthIntegrationTest extends BaseIT {
         jwtToken = resultMap.getOrDefault("jwt", jwtToken);
         System.out.println(jwtToken);
     }
- */
     
     @Test
-    @Order(1)
+    @Order(2)
     void getAllTest() throws Exception {
+        System.out.println(jwtToken);
         mockMvc.perform(get(URI + "/all").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
     }
 
