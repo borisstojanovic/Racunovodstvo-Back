@@ -87,17 +87,10 @@ class UserAuthIntegrationTest extends BaseIT {
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(loginRequest);
 
-        String result = mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
-                               .andExpect(status().isForbidden())
-                               .andReturn()
-                               .getResponse()
-                               .getContentAsString();
-        Map<String, String> resultMap = mapper.readValue(result, new TypeReference<>() {
-        });
-        jwtToken = resultMap.getOrDefault("jwt", jwtToken);
-        System.out.println(jwtToken);
+        mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
+               .andExpect(status().isForbidden());
     }
-    
+
     @Test
     @Order(2)
     void getAllTest() throws Exception {
@@ -148,7 +141,7 @@ class UserAuthIntegrationTest extends BaseIT {
     void accessUnauthenticatedTest() throws Exception {
         mockMvc.perform(get(AUTH_URI + "/access")).andExpect(status().isForbidden());
     }
-    
+
     @Test
     @Order(3)
     void deleteUserNotFoundTest() throws Exception {
