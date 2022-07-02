@@ -49,16 +49,7 @@ class UserAuthIntegrationTest extends BaseIT {
     private UserRepository userRepository;
 
     @Autowired
-    private PermissionRepository permissionRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     private MockMvc mockMvc;
 
@@ -81,7 +72,6 @@ class UserAuthIntegrationTest extends BaseIT {
         user.setPreduzeceId(1L);
         user.setFirstName("TEST");
         user.setLastName("TEST");
-        user.setPermissions(permissionRepository.findAll());
         user.setPassword(passwordEncoder.encode(MOCK_PASSWORD));
         userRepository.save(user);
         LoginRequest loginRequest = new LoginRequest();
