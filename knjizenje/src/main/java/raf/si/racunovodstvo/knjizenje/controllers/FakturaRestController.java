@@ -25,7 +25,6 @@ import raf.si.racunovodstvo.knjizenje.model.Preduzece;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
 import raf.si.racunovodstvo.knjizenje.services.FakturaService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IFakturaService;
-import raf.si.racunovodstvo.knjizenje.services.impl.ISifraTransakcijeService;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITransakcijaService;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
 import raf.si.racunovodstvo.knjizenje.utils.SearchUtil;
@@ -119,7 +118,7 @@ public class FakturaRestController {
         if(getPreduzeceById(faktura.getPreduzeceId(), token)== null){
             throw new PersistenceException(String.format("Ne postoji preduzece sa id-jem %s",faktura.getPreduzeceId()));
         }
-        fakturaService.save(faktura);
+        faktura = fakturaService.save(faktura);
 
         if (faktura.getTipFakture() == TipFakture.MALOPRODAJNA_FAKTURA) {
             this.transakcijaService.createFromMPFaktura(faktura);

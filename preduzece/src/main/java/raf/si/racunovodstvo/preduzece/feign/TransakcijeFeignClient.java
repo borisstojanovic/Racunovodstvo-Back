@@ -10,12 +10,12 @@ import raf.si.racunovodstvo.preduzece.responses.SifraTransakcijeResponse;
 
 import java.util.List;
 
-@FeignClient(value = "knjizenje/api")
+@FeignClient(value = "${service.knjizenje.url}")
 public interface TransakcijeFeignClient {
 
-    @PostMapping("/transakcije/obracun_plata")
+    @PostMapping("/api/transakcije/obracun_plata")
     ResponseEntity<List<Transakcija>> obracunZaradeTransakcije(List<ObracunTransakcijeRequest> obracunTransakcijeRequests, @RequestHeader("Authorization") String token);
 
-    @GetMapping(value = "/sifraTransakcije/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/sifraTransakcije/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SifraTransakcijeResponse> getById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token);
 }
