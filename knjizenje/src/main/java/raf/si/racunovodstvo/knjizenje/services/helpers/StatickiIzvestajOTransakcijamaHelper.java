@@ -36,7 +36,7 @@ public class StatickiIzvestajOTransakcijamaHelper {
             table.add(row);
         }
         table.add(List.of("", "", prefix(iznos) + iznos));
-        return new TableReport("author", String.format("Naslov: %s\nIme komitenta: %s", naslov,preduzece.getNaziv()), "footer", HEADER, table);
+        return new TableReport("author", String.format("Naslov: %s\nIme komitenta: %s", naslov,preduzece.getNaziv()), "", HEADER, table);
     }
 
     private String prefix(double iznos) {
