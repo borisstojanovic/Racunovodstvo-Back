@@ -803,6 +803,7 @@ public class BootstrapData implements CommandLineRunner {
         kg601.setBrojKonta("601");
         kg601.setNazivKonta("Naziv kontne grupe 601");
 
+
         KontnaGrupa kg6t = new KontnaGrupa();
         kg6t.setBrojKonta("6");
         kg6t.setNazivKonta("Naziv kontne grupe 6");
