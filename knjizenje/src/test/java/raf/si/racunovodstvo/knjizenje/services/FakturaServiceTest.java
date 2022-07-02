@@ -111,6 +111,7 @@ class FakturaServiceTest {
         ocekivanaFaktura.setRabat(123.1);
         ocekivanaFaktura.setPorez(123.1);
         ocekivanaFaktura.setIznos(123.1);
+        ocekivanaFaktura.setKurs(1.0);
 
         when(fakturaRepository.save(ocekivanaFaktura)).thenReturn(ocekivanaFaktura);
         Faktura vracenaFaktura = fakturaService.save(ocekivanaFaktura);
