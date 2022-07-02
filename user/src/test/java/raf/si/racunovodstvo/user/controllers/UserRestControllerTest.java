@@ -136,6 +136,7 @@ class UserRestControllerTest {
     @Test
     void updateUser() throws IOException {
         User user = new User();
+        user.setPreduzeceId(MOCK_ID);
         UpdateUserRequest updateUserRequest = new UpdateUserRequest();
         updateUserRequest.setUserId(MOCK_ID);
         updateUserRequest.setPreduzeceId(MOCK_ID);

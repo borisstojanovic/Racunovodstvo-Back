@@ -17,7 +17,6 @@ public abstract class MySQLContainer extends GenericContainer<MySQLContainer> {
         withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName(hostName));
         waitingFor(new HostPortWaitStrategy());
         setStartupAttempts(3);
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(15000)));
 
         addEnv("MYSQL_REPLICATION_USER", "repl_user");
         addEnv("MYSQL_REPLICATION_PASSWORD", "test");

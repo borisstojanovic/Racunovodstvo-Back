@@ -95,6 +95,9 @@ public class UserRestController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> updateUser(@RequestBody UpdateUserRequest updatedUser, @RequestHeader(name="Authorization") String token) throws IOException {
         Optional<User> optionalUser = userService.findById(updatedUser.getUserId());
+        System.out.println(optionalUser.isPresent());
+        System.out.println("HERE HERE");
+        System.out.println();
         if (optionalUser.isPresent() && getPreduzeceById(optionalUser.get().getPreduzeceId(), token) != null){
             optionalUser.get().setUsername(updatedUser.getUsername());
             optionalUser.get().setFirstName(updatedUser.getFirstName());
