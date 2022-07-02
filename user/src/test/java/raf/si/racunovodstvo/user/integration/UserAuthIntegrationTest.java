@@ -15,20 +15,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
-import raf.si.racunovodstvo.user.model.Permission;
-import raf.si.racunovodstvo.user.model.PermissionType;
 import raf.si.racunovodstvo.user.model.User;
 import raf.si.racunovodstvo.user.repositories.PermissionRepository;
 import raf.si.racunovodstvo.user.repositories.UserRepository;
 import raf.si.racunovodstvo.user.requests.LoginRequest;
+import raf.si.racunovodstvo.user.utils.JwtUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,9 +37,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class AuthIntegrationTest extends BaseIT {
+class UserAuthIntegrationTest extends BaseIT {
 
-    private final static String URI = "/auth";
+    private final static String URI = "/api/users";
+    private final static String AUTH_URI = "/auth";
 
     @Autowired
     private WebApplicationContext wac;
@@ -53,16 +54,22 @@ class AuthIntegrationTest extends BaseIT {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     private MockMvc mockMvc;
 
-    private static final String MOCK_UID = "MOCK_UID";
-    private static final String MOCK_EMAIL = "MOCK_EMAIL";
-    private static final String MOCK_PASSWORD = "MOCK_PASSWORD";
-    private String jwtToken = "";
+    private static final String MOCK_UID = "DUMMY_USERNAME";
+    private static final String MOCK_EMAIL = "MOCK_EMAIL_2";
+    private static final String MOCK_PASSWORD = "MOCK_PASSWORD_2";
+    private String token;
 
     @BeforeAll
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
     }
 
     @Test
@@ -82,28 +89,79 @@ class AuthIntegrationTest extends BaseIT {
         loginRequest.setUsername(user.getUsername());
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(loginRequest);
-        System.out.println(requestJson);
 
-        String result = mockMvc.perform(post(URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
+        String result = mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
                                .andExpect(status().isOk())
                                .andReturn()
                                .getResponse()
                                .getContentAsString();
         Map<String, String> resultMap = mapper.readValue(result, new TypeReference<>() {
         });
-        jwtToken = resultMap.get("jwt");
-        System.out.println(jwtToken);
+        token = resultMap.get("jwt");
+        System.out.println(token);
+    }
+    
+    @Test
+    @Order(2)
+    void getAllTest() throws Exception {
+        mockMvc.perform(get(URI + "/all").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(2)
+    void getAllUnauthenticatedTest() throws Exception {
+        mockMvc.perform(get(URI + "/all")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Order(2)
+    void getByIdTest() throws Exception {
+        Long userId = userRepository.findByUsername(MOCK_UID).get().getUserId();
+        mockMvc.perform(get(URI).param("userId", userId.toString()).header("Authorization", "Bearer " + token))
+               .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(2)
+    void getByIdNotFoundTest() throws Exception {
+        mockMvc.perform(get(URI).param("userId", "-1").header("Authorization", "Bearer " + token)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(2)
+    void getLoginUserTest() throws Exception {
+        mockMvc.perform(get(URI + "/loginuser").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(2)
+    void getLoginUserUnauthenticatedTest() throws Exception {
+        mockMvc.perform(get(URI + "/loginuser")).andExpect(status().isForbidden());
     }
 
     @Test
     @Order(2)
     void accessTest() throws Exception {
-        mockMvc.perform(get(URI + "/access").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
+        mockMvc.perform(get(AUTH_URI + "/access").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
     }
 
     @Test
     @Order(2)
     void accessUnauthenticatedTest() throws Exception {
-        mockMvc.perform(get(URI + "/access")).andExpect(status().isForbidden());
+        mockMvc.perform(get(AUTH_URI + "/access")).andExpect(status().isForbidden());
+    }
+    
+    @Test
+    @Order(3)
+    void deleteUserNotFoundTest() throws Exception {
+        mockMvc.perform(delete(URI + "/" + -1).header("Authorization", "Bearer " + token)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(4)
+    void deleteUserTest() throws Exception {
+        Long userId = userRepository.findByUsername(MOCK_UID).get().getUserId();
+        mockMvc.perform(delete(URI + "/" + userId).header("Authorization", "Bearer " + token)).andExpect(status().isNoContent());
+        assertTrue(userRepository.findByUsername(MOCK_UID).isEmpty());
     }
 }
