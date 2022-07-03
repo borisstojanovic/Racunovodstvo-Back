@@ -130,7 +130,7 @@ public class TransakcijaService implements ITransakcijaService {
     public TransakcijaResponse createFromMPFaktura(Faktura faktura) {
         TransakcijaRequest transakcija = new TransakcijaRequest();
 
-        String brojTransakcije = this.generateBrojTransakcije("MPF", this.fakturaService.countMPFakture());
+        String brojTransakcije = this.generateBrojTransakcije("MPT" + faktura.getBrojFakture(), this.fakturaService.countMPFakture());
         transakcija.setBrojDokumenta(brojTransakcije);
         transakcija.setTipDokumenta(TipDokumenta.TRANSAKCIJA);
         transakcija.setBrojTransakcije(brojTransakcije);
