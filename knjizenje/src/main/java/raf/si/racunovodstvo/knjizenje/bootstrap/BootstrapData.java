@@ -597,11 +597,11 @@ public class BootstrapData implements CommandLineRunner {
         mpf5.setKurs(1.00);
         mpf5.setNaplata(0.00);
 
-        this.fakturaRepository.save(mpf1);
-        this.fakturaRepository.save(mpf2);
-        this.fakturaRepository.save(mpf3);
-        this.fakturaRepository.save(mpf4);
-        this.fakturaRepository.save(mpf5);
+        this.fakturaService.save(mpf1);
+        this.fakturaService.save(mpf2);
+        this.fakturaService.save(mpf3);
+        this.fakturaService.save(mpf4);
+        this.fakturaService.save(mpf5);
 
         Povracaj pov1 = new Povracaj();
         pov1.setBrojPovracaja("P01");
