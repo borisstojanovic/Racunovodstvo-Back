@@ -98,6 +98,7 @@ class ExternalServiceIntegrationTest extends BaseIT {
         String loginUrl = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086) + "/auth/login";
         LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
         token = loginResponse.getJwt();
+        System.out.println("TOKEN: " + token);
 
         obracun = new Obracun();
         obracun.setNaziv(MOCK_NAZIV);
@@ -109,6 +110,14 @@ class ExternalServiceIntegrationTest extends BaseIT {
         obracunId = obracun.getObracunId();
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+    }
+
+    @Test
+    void getKursnaLista() throws Exception {
+        String result = mockMvc.perform(get(URI_KURSNA_LISTA)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        KursnaListaResponse response = mapper.readValue(result, new TypeReference<>() {
+        });
+        assertNotNull(response.getResult());
     }
 
     @Test
@@ -129,14 +138,6 @@ class ExternalServiceIntegrationTest extends BaseIT {
         ObracunZaradeConfigResponse response = mapper.readValue(result, new TypeReference<>() {
         });
         assertEquals(1L, response.getSifraTransakcije().getSifraTransakcijeId());
-    }
-
-    @Test
-    void getKursnaLista() throws Exception {
-        String result = mockMvc.perform(get(URI_KURSNA_LISTA)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        KursnaListaResponse response = mapper.readValue(result, new TypeReference<>() {
-        });
-        assertNotNull(response.getResult());
     }
 
     @Test
