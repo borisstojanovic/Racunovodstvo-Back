@@ -29,6 +29,7 @@ public class KnjizenjeConverter implements IConverter<List<Knjizenje>, Page<Knji
 
             if (currKnjizenje.getDokument() != null) {
                 response.setDokumentId(currKnjizenje.getDokument().getDokumentId());
+                response.setBrojDokumenta(currKnjizenje.getDokument().getBrojDokumenta());
             }
 
             response.setKnjizenjeId(currKnjizenje.getKnjizenjeId());
