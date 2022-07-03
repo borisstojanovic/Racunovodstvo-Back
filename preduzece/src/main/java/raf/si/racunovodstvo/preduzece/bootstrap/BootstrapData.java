@@ -9,12 +9,14 @@ import raf.si.racunovodstvo.preduzece.model.enums.PolZaposlenog;
 import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 import raf.si.racunovodstvo.preduzece.repositories.*;
+import raf.si.racunovodstvo.preduzece.requests.PlataRequest;
 import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
+import raf.si.racunovodstvo.preduzece.services.impl.PlataService;
+import raf.si.racunovodstvo.preduzece.services.impl.ZaposleniService;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
 
 @Component
@@ -23,20 +25,26 @@ public class BootstrapData implements CommandLineRunner {
     private final Logger log = LoggerFactory.getLogger(BootstrapData.class);
     private final PreduzeceRepository preduzeceRepository;
     private final ZaposleniRepository zaposleniRepository;
+    private final ZaposleniService zaposleniService;
     private final StazRepository stazRepository;
     private final PlataRepository plataRepository;
+    private final PlataService plataService;
     private final KoeficijentRepository koeficijentRepository;
     private final ObracunZaposleniService obracunZaposleniService;
 
     public BootstrapData(PreduzeceRepository preduzeceRepository,
                          ZaposleniRepository zaposleniRepository,
-                         StazRepository stazRepository,
+                         ZaposleniService zaposleniService, StazRepository stazRepository,
                          PlataRepository plataRepository,
-                         KoeficijentRepository koeficijentRepository, ObracunZaposleniService obracunZaposleniService) {
+                         PlataService plataService,
+                         KoeficijentRepository koeficijentRepository,
+                         ObracunZaposleniService obracunZaposleniService) {
         this.preduzeceRepository = preduzeceRepository;
         this.zaposleniRepository = zaposleniRepository;
+        this.zaposleniService = zaposleniService;
         this.stazRepository = stazRepository;
         this.plataRepository = plataRepository;
+        this.plataService = plataService;
         this.koeficijentRepository = koeficijentRepository;
         this.obracunZaposleniService = obracunZaposleniService;
     }
@@ -118,6 +126,26 @@ public class BootstrapData implements CommandLineRunner {
         p6.setWebAdresa("fashionworld.com");
         p6.setIsActive(false);
 
+        this.preduzeceRepository.save(p1);
+        this.preduzeceRepository.save(p2);
+        this.preduzeceRepository.save(p3);
+        this.preduzeceRepository.save(p4);
+        this.preduzeceRepository.save(p5);
+        this.preduzeceRepository.save(p6);
+
+        Koeficijent koeficijent = new Koeficijent();
+        koeficijent.setKoeficijentPoreza(1d);
+        koeficijent.setNezaposlenost1(2d);
+        koeficijent.setNezaposlenost2(10d);
+        koeficijent.setPenzionoOsiguranje1(5d);
+        koeficijent.setPenzionoOsiguranje2(50d);
+        koeficijent.setNajnizaOsnovica(1d);
+        koeficijent.setNajvisaOsnovica(1d);
+        koeficijent.setZdravstvenoOsiguranje1(5d);
+        koeficijent.setZdravstvenoOsiguranje2(5d);
+        koeficijent.setPoreskoOslobadjanje(23.4);
+        koeficijentRepository.save(koeficijent);
+
         Zaposleni z1 = new Zaposleni();
         z1.setIme("Darko");
         z1.setPrezime("Stanković");
@@ -134,10 +162,9 @@ public class BootstrapData implements CommandLineRunner {
         z1.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         z1.setRadnaPozicija(RadnaPozicija.MENADZER);
         z1.setPreduzece(p1);
+        zaposleniRepository.save(z1);
 
-        Plata pl1 = new Plata();
-        pl1.setDatumOd(z1.getPocetakRadnogOdnosa());
-        pl1.setNetoPlata(70000.00);
+        Plata pl1 = this.plataService.save(new PlataRequest(1L, 70000.00, z1.getPocetakRadnogOdnosa(), z1.getZaposleniId()));
         pl1.setZaposleni(z1);
 
         Zaposleni z2 = new Zaposleni();
@@ -156,10 +183,9 @@ public class BootstrapData implements CommandLineRunner {
         z1.setRadnaPozicija(RadnaPozicija.RADNIK);
         z2.setKomentar("omladinska");
         z2.setPreduzece(p2);
+        zaposleniRepository.save(z2);
 
-        Plata pl2 = new Plata();
-        pl2.setDatumOd(z2.getPocetakRadnogOdnosa());
-        pl2.setNetoPlata(70000.00);
+        Plata pl2 = this.plataService.save(new PlataRequest(2L, 70000.00, z2.getPocetakRadnogOdnosa(), z2.getZaposleniId()));
         pl2.setZaposleni(z2);
 
         Zaposleni z3 = new Zaposleni();
@@ -178,10 +204,9 @@ public class BootstrapData implements CommandLineRunner {
         z3.setBrojRadneKnjizice(33456L);
         z3.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         z3.setPreduzece(p3);
+        zaposleniRepository.save(z3);
 
-        Plata pl3 = new Plata();
-        pl3.setDatumOd(z3.getPocetakRadnogOdnosa());
-        pl3.setNetoPlata(115300.00);
+        Plata pl3 = this.plataService.save(new PlataRequest(3L, 115300.00, z3.getPocetakRadnogOdnosa(), z3.getZaposleniId()));
         pl3.setZaposleni(z3);
 
         Zaposleni z4 = new Zaposleni();
@@ -199,10 +224,9 @@ public class BootstrapData implements CommandLineRunner {
         z4.setStepenObrazovanja("6");
         z4.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         z4.setPreduzece(p4);
+        zaposleniRepository.save(z4);
 
-        Plata pl4 = new Plata();
-        pl4.setDatumOd(z4.getPocetakRadnogOdnosa());
-        pl4.setNetoPlata(230000.00);
+        Plata pl4 = this.plataService.save(new PlataRequest(4L, 230000.00, z4.getPocetakRadnogOdnosa(), z4.getZaposleniId()));
         pl4.setZaposleni(z4);
 
         Zaposleni z5 = new Zaposleni();
@@ -220,30 +244,16 @@ public class BootstrapData implements CommandLineRunner {
         z5.setStepenObrazovanja("6");
         z5.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         z5.setPreduzece(p5);
+        zaposleniRepository.save(z5);
 
-        Plata pl5 = new Plata();
-        pl5.setDatumOd(z5.getPocetakRadnogOdnosa());
-        pl5.setNetoPlata(110000.00);
+        Plata pl5 = this.plataService.save(new PlataRequest(5L, 110000.00, z5.getPocetakRadnogOdnosa(), z5.getZaposleniId()));
         pl5.setZaposleni(z5);
-
-        this.preduzeceRepository.save(p1);
-        this.preduzeceRepository.save(p2);
-        this.preduzeceRepository.save(p3);
-        this.preduzeceRepository.save(p4);
-        this.preduzeceRepository.save(p5);
-        this.preduzeceRepository.save(p6);
 
         this.zaposleniRepository.save(z1);
         this.zaposleniRepository.save(z2);
         this.zaposleniRepository.save(z3);
         this.zaposleniRepository.save(z4);
         this.zaposleniRepository.save(z5);
-
-        this.plataRepository.save(pl1);
-        this.plataRepository.save(pl2);
-        this.plataRepository.save(pl3);
-        this.plataRepository.save(pl4);
-        this.plataRepository.save(pl5);
 
         Staz staz = new Staz();
         staz.setPocetakRada(simpleDateFormat.parse("22-01-2018"));
@@ -274,19 +284,6 @@ public class BootstrapData implements CommandLineRunner {
         staz5.setKrajRada(null);
         staz5.setZaposleni(z5);
         stazRepository.save(staz5);
-
-        Koeficijent koeficijent = new Koeficijent();
-        koeficijent.setKoeficijentPoreza(1d);
-        koeficijent.setNezaposlenost1(2d);
-        koeficijent.setNezaposlenost2(10d);
-        koeficijent.setPenzionoOsiguranje1(5d);
-        koeficijent.setPenzionoOsiguranje2(50d);
-        koeficijent.setNajnizaOsnovica(1d);
-        koeficijent.setNajvisaOsnovica(1d);
-        koeficijent.setZdravstvenoOsiguranje1(5d);
-        koeficijent.setZdravstvenoOsiguranje2(5d);
-        koeficijent.setPoreskoOslobadjanje(23.4);
-        koeficijentRepository.save(koeficijent);
 
        obracunZaposleniService.makeObracun(new Date(), 1);
 
