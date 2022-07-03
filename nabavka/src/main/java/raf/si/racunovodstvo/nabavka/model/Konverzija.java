@@ -5,9 +5,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity(name = "konverzija")
@@ -17,7 +17,6 @@ public class Konverzija extends BaznaKonverzijaKalkulacija {
 
     @Column(nullable = false, unique = true)
     private String brojKonverzije;
-    @OneToMany
-    @JoinColumn(name = "konverzija")
+    @OneToMany(mappedBy = "baznaKonverzijaKalkulacija", cascade = CascadeType.ALL)
     private List<KonverzijaArtikal> artikli;
 }
