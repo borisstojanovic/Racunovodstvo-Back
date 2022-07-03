@@ -15,6 +15,7 @@ import raf.si.racunovodstvo.knjizenje.repositories.*;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipTransakcije;
 import raf.si.racunovodstvo.knjizenje.responses.KursResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KursnaListaResponse;
+import raf.si.racunovodstvo.knjizenje.services.FakturaService;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -35,7 +36,7 @@ public class BootstrapData implements CommandLineRunner {
     private final TransakcijaRepository transakcijaRepository;
     private final SifraTransakcijeRepository sifraTransakcijeRepository;
     private final KursnaListaFeignClient kursnaListaFeignClient;
-
+    private final FakturaService fakturaService;
 
     @Autowired
     public BootstrapData(FakturaRepository fakturaRepository,
@@ -47,8 +48,8 @@ public class BootstrapData implements CommandLineRunner {
                          TroskovniCentarRepository troskovniCentarRepository,
                          BazniKontoRepository bazniKontoRepository,
                          PovracajRepository povracajRepository,
-                         KursnaListaFeignClient kursnaListaFeignClient
-    ) {
+                         KursnaListaFeignClient kursnaListaFeignClient,
+                         FakturaService fakturaService) {
         this.fakturaRepository = fakturaRepository;
         this.kontoRepository = kontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
@@ -60,6 +61,7 @@ public class BootstrapData implements CommandLineRunner {
         this.bazniKontoRepository = bazniKontoRepository;
         this.povracajRepository = povracajRepository;
         this.kursnaListaFeignClient = kursnaListaFeignClient;
+        this.fakturaService = fakturaService;
     }
 
     private Faktura getDefaultFaktura() {
@@ -423,21 +425,21 @@ public class BootstrapData implements CommandLineRunner {
         fi6.setKurs(kursResponseUsd21518.getSre());
         fi6.setNaplata(0.00);
 
-        this.fakturaRepository.save(fu1);
-        this.fakturaRepository.save(fu2);
-        this.fakturaRepository.save(fu3);
-        this.fakturaRepository.save(fu4);
-        this.fakturaRepository.save(fu5);
-        this.fakturaRepository.save(fu6);
-        this.fakturaRepository.save(fu7);
-        this.fakturaRepository.save(fu8);
-        this.fakturaRepository.save(fu9);
-        this.fakturaRepository.save(fi1);
-        this.fakturaRepository.save(fi2);
-        this.fakturaRepository.save(fi3);
-        this.fakturaRepository.save(fi4);
-        this.fakturaRepository.save(fi5);
-        this.fakturaRepository.save(fi6);
+        this.fakturaService.save(fu1);
+        this.fakturaService.save(fu2);
+        this.fakturaService.save(fu3);
+        this.fakturaService.save(fu4);
+        this.fakturaService.save(fu5);
+        this.fakturaService.save(fu6);
+        this.fakturaService.save(fu7);
+        this.fakturaService.save(fu8);
+        this.fakturaService.save(fu9);
+        this.fakturaService.save(fi1);
+        this.fakturaService.save(fi2);
+        this.fakturaService.save(fi3);
+        this.fakturaService.save(fi4);
+        this.fakturaService.save(fi5);
+        this.fakturaService.save(fi6);
 
         SifraTransakcije st1 = new SifraTransakcije();
         st1.setSifra(124L);
