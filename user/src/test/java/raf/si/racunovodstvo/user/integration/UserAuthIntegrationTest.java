@@ -93,6 +93,19 @@ class UserAuthIntegrationTest extends BaseIT {
 
     @Test
     @Order(2)
+    void loginTestSuccess() throws Exception {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setPassword(MOCK_PASSWORD);
+        loginRequest.setUsername(MOCK_UID);
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(loginRequest);
+
+        mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
+               .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(2)
     void getAllTest() throws Exception {
         System.out.println(jwtToken);
         mockMvc.perform(get(URI + "/all").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
