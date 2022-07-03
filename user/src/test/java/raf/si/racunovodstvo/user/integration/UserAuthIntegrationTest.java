@@ -88,7 +88,7 @@ class UserAuthIntegrationTest extends BaseIT {
         String requestJson = mapper.writeValueAsString(loginRequest);
 
         mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
-               .andExpect(status().isForbidden());
+               .andExpect(status().is4xxClientError());
     }
 
     @Test
