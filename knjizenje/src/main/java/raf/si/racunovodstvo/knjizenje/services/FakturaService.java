@@ -126,7 +126,8 @@ public class FakturaService implements IFakturaService {
 
         faktura.setRabat(rabat);
         faktura.setPorez(porez);
-        faktura.setIznos(Math.round(iznos * 100) / 100 * 1.0);
+        faktura.setIznos(iznos);
+        faktura.setNaplata(Math.round(iznos * 100) / 100 * 1.0);
         faktura.setTipDokumenta(TipDokumenta.FAKTURA);
 
         return fakturaRepository.save(faktura);
