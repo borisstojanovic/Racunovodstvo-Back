@@ -15,7 +15,7 @@ public class KnjizenjeContainer extends GenericContainer<KnjizenjeContainer> {
         withNetwork(network);
         withNetworkAliases("knjizenje");
         waitingFor(new HostPortWaitStrategy());
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(28000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(30000)));
 
         addEnv("SERVER_PORT", port + "");
         addEnv("SPRING_PROFILES_ACTIVE", "prod");
