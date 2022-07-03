@@ -122,7 +122,7 @@ public class FakturaService implements IFakturaService {
             porez = FakturaUtil.calculatePorez(prodajnaVrednost, rabat, porezProcenat);
         }
 
-        Double iznos = FakturaUtil.calculateIznos(prodajnaVrednost, rabat, porez) * faktura.getKurs();
+        Double iznos = FakturaUtil.calculateIznos(prodajnaVrednost, rabat, porez);
 
         faktura.setRabat(rabat);
         faktura.setPorez(porez);
