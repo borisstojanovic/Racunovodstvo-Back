@@ -16,7 +16,7 @@ public class UserContainer extends GenericContainer<UserContainer> {
         //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("user"));
         withNetworkAliases("user");
         waitingFor(new HostPortWaitStrategy());
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(20000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(25000)));
         setStartupAttempts(3);
 
         addEnv("SERVER_PORT", port + "");
