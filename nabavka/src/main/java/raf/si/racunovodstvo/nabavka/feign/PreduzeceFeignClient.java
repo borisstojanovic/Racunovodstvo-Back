@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import raf.si.racunovodstvo.nabavka.responses.PreduzeceResponse;
 
-@FeignClient(value = "preduzece/api")
+@FeignClient(value = "${service.preduzece.url}")
 public interface PreduzeceFeignClient {
 
-    @GetMapping("/preduzece/{id}")
+    @GetMapping("/api/preduzece/{id}")
     ResponseEntity<PreduzeceResponse> getPreduzeceById(@PathVariable(name = "id") Long id, @RequestHeader("Authorization") String token);
 }

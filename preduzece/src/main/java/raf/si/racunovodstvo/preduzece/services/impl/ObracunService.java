@@ -52,13 +52,16 @@ public class ObracunService implements IObracunService {
         obracunTransakcijeRequest.setIme(obracunZaposleni.getZaposleni().getIme());
         obracunTransakcijeRequest.setPrezime(obracunZaposleni.getZaposleni().getPrezime());
         obracunTransakcijeRequest.setIznos(obracunZaposleni.getUkupanTrosakZarade());
-        obracunTransakcijeRequest.setPreduzeceId(obracunZaposleni.getZaposleni().getPreduzece().getPreduzeceId());
+        if (obracunZaposleni.getZaposleni().getPreduzece() != null) {
+            obracunTransakcijeRequest.setPreduzeceId(obracunZaposleni.getZaposleni().getPreduzece().getPreduzeceId());
+        }
         obracunTransakcijeRequest.setSifraZaposlenog(obracunZaposleni.getZaposleni().getZaposleniId().toString());
         obracunTransakcijeRequest.setSifraTransakcijeId(obracunZaposleni.getObracun().getSifraTransakcije());
 
         return obracunTransakcijeRequest;
 
     }
+
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Obracun obradiObracun(Long obracunId, String token) {
 
@@ -74,12 +77,11 @@ public class ObracunService implements IObracunService {
             throw new RuntimeException("Obracun je vec obradjen");
         }
 
-        if(obracun.getSifraTransakcije() == 0){
+        if (obracun.getSifraTransakcije() == 0) {
             throw new RuntimeException("Nije postavljena sifra transakcije!");
         }
 
         List<ObracunZaposleni> obracunZaposleniList = obracun.getObracunZaposleniList();
-
 
         List<ObracunTransakcijeRequest> obracunTransakcijeRequestList = new ArrayList<>();
 
@@ -87,13 +89,12 @@ public class ObracunService implements IObracunService {
         for (ObracunZaposleni obracunZaposleni : obracunZaposleniList) {
             obracunZaposleniMap.put(obracunZaposleni.getZaposleni().getZaposleniId().toString(), obracunZaposleni);
 
-
             obracunTransakcijeRequestList.add(getObracunTransakcijeRequest(obracunZaposleni));
         }
 
         ResponseEntity<List<Transakcija>> response = transakcijeFeignClient.obracunZaradeTransakcije(obracunTransakcijeRequestList, token);
 
-        if(response.getStatusCodeValue() != 200){
+        if (response.getStatusCodeValue() != 200) {
             throw new RuntimeException("Obrada nije uspela - dovlacenje transakcija nije uspelo");
         }
 

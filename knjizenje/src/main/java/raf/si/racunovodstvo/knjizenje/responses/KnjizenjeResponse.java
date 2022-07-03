@@ -11,6 +11,7 @@ public class KnjizenjeResponse {
     String brojNaloga;
     Date datumKnjizenja;
     Long dokumentId;
+    String brojDokumenta;
     Double saldo;
     Double duguje;
     Double potrazuje;

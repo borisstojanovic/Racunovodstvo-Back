@@ -37,7 +37,6 @@ public class ObracunZaradeRestController {
     public ResponseEntity<ObracunZaradeConfigResponse> setConfig(@Validated(OnCreate.class) @RequestBody ObracunZaradeConfigRequest obracunZaradeConfigRequest,  @RequestHeader("Authorization") String token) {
 
         try {
-
             ResponseEntity<SifraTransakcijeResponse> response =
                     transakcijeFeignClient.getById(obracunZaradeConfigRequest.getSifraTransakcijeId(), token);
 
