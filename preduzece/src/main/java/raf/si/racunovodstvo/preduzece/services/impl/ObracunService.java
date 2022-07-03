@@ -52,7 +52,9 @@ public class ObracunService implements IObracunService {
         obracunTransakcijeRequest.setIme(obracunZaposleni.getZaposleni().getIme());
         obracunTransakcijeRequest.setPrezime(obracunZaposleni.getZaposleni().getPrezime());
         obracunTransakcijeRequest.setIznos(obracunZaposleni.getUkupanTrosakZarade());
-        obracunTransakcijeRequest.setPreduzeceId(obracunZaposleni.getZaposleni().getPreduzece().getPreduzeceId());
+        if (obracunZaposleni.getZaposleni().getPreduzece() != null) {
+            obracunTransakcijeRequest.setPreduzeceId(obracunZaposleni.getZaposleni().getPreduzece().getPreduzeceId());
+        }
         obracunTransakcijeRequest.setSifraZaposlenog(obracunZaposleni.getZaposleni().getZaposleniId().toString());
         obracunTransakcijeRequest.setSifraTransakcijeId(obracunZaposleni.getObracun().getSifraTransakcije());
 
