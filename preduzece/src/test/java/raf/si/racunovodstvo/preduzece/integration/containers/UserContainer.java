@@ -13,7 +13,6 @@ public class UserContainer extends GenericContainer<UserContainer> {
         super("ghcr.io/raf-si-2021/racunovodstvo-user:dev");
         withNetwork(network);
         withExposedPorts(port);
-        //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("user"));
         withNetworkAliases("user");
         waitingFor(new HostPortWaitStrategy());
         withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(25000)));
