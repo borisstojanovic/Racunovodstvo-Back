@@ -15,7 +15,7 @@ public class UserContainer extends GenericContainer<UserContainer> {
         withExposedPorts(port);
         withNetworkAliases("user");
         waitingFor(new HostPortWaitStrategy());
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(25000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(27000)));
         setStartupAttempts(3);
 
         addEnv("SERVER_PORT", port + "");
