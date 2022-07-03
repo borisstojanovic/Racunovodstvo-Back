@@ -45,10 +45,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ExternalServiceIntegrationTest extends BaseIT {
+class ExternalServiceIntegrationTest extends DefaultBaseIT {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final RestTemplate restTemplate = new RestTemplate();
     private String token;
 
     private final static String URI_IZVESTAJI = "/api/izvestaji";
@@ -131,17 +129,5 @@ class ExternalServiceIntegrationTest extends BaseIT {
 
         assertNotNull(response);
         assertEquals(1L, response.getPreduzeceId());
-    }
-
-    @SneakyThrows
-    private <R> R postRest(String url, Object req, Class<R> clazz) {
-        HttpHeaders headers = new HttpHeaders();
-        if (token != null && !token.isBlank()) {
-            headers.set(HttpHeaders.AUTHORIZATION, token);
-        }
-        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        HttpEntity<String> request = new HttpEntity<>(mapper.writeValueAsString(req), headers);
-        ResponseEntity<R> response = restTemplate.postForEntity(url, request, clazz);
-        return response.getBody();
     }
 }
